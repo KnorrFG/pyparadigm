@@ -1,0 +1,197 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>The Surface Composition module &#8212; PyParadigm 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-pyparadigm.surface_composition">
+<span id="the-surface-composition-module"></span><h1>The Surface Composition module<a class="headerlink" href="#module-pyparadigm.surface_composition" title="Permalink to this headline">¶</a></h1>
+<p>Create pygame-surfaces in a declarative way</p>
+<p>The purpose of this module is to make it easy to compose the 
+frames that are displayed in a paradigm.</p>
+<p>When you use simple pygame to write a paradigm, you will spend a lot 
+of time writing code to compute the positions of the elemnts the surface
+is composed of. This module addresses this time-sink by offering a way to 
+define these postions in a declarative way. E.g. the code</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">surface</span> <span class="o">=</span> <span class="n">Surface</span><span class="p">(</span><span class="n">screen</span><span class="o">.</span><span class="n">get_size</span><span class="p">(),</span> <span class="n">LinLayout</span><span class="p">(</span><span class="s2">&quot;h&quot;</span><span class="p">))(</span>
+    <span class="n">LLItem</span><span class="p">(</span><span class="mi">2</span><span class="p">)(</span><span class="n">red_ball</span><span class="p">),</span>
+    <span class="n">LinLayout</span><span class="p">(</span><span class="s2">&quot;v&quot;</span><span class="p">)(</span>
+        <span class="n">green_ball</span><span class="p">,</span>
+        <span class="n">Box</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)(</span><span class="n">green_ball</span><span class="p">),</span> 
+        <span class="n">green_ball</span><span class="p">),</span>
+    <span class="n">red_ball</span>
+<span class="p">)</span> 
+</pre></div>
+</div>
+<p>will create the following screen:</p>
+<div class="figure">
+<a class="reference internal image-reference" href="_images/example_screen.png"><img alt="example" src="_images/example_screen.png" style="width: 401.0px; height: 320.0px;" /></a>
+</div>
+<p>Of course there is code missing to create the balls and display 
+the surface on screen.</p>
+<p>The system works by returning context-objects, which all implement a
+draw-method. This basically creates a scene tree, where the Box-contexts are the
+leave-objects, and handle the actual drawing. The Layouts just call draw on
+their children with the correct rectangles</p>
+<dl class="function">
+<dt id="pyparadigm.surface_composition.Box">
+<code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">Box</code><span class="sig-paren">(</span><em>margin=Margin(left=1</em>, <em>right=1</em>, <em>top=1</em>, <em>bottom=1)</em>, <em>scale=0</em>, <em>smooth=True</em>, <em>background=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Box"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Box" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wraps a pygame surface.</p>
+<p>The Box is the connection between the absolute world of surfaces and the
+relative world of the composition functions. A surface can be bigger than
+the space that is available to the box, or smaller, the box does the actual
+blitting, and determines the concrete position, and if necessary (or
+desired) scales the input surface.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>margin</strong> (<em>Margin object</em>) – used to determine the exact location of the surface within 
+the box. The margin value represents the proportion of the free space, along
+an axis, i.e. Margin(1, 1, 1, 1) is centered, Margin(0, 1, 1, 2) is as far
+left as possible and one/third on the way down.</li>
+<li><strong>scale</strong> (<em>float</em>) – If 0 &lt; scale &lt;= 1 the longer side of the surface is scaled to 
+to the given fraction of the available space, the aspect ratio is 
+will be preserved.
+If scale is 0 the will be no scaling if the image is smaller than the
+available space. It will still be scaled down if it is too big.</li>
+<li><strong>smooth</strong> (<em>float</em>) – if True the result of the scaling will be smoothed</li>
+<li><strong>background</strong> (<em>pygame.Color</em><em> or </em><em>compatible int</em>) – if given the image will
+be filled with the color before the contents are rendered</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyparadigm.surface_composition.LLItem">
+<code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">LLItem</code><span class="sig-paren">(</span><em>relative_size</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#LLItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.LLItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the relative size of an element in a LinLayout</p>
+<p>All Elements that are passed to a linear layout are automatically wrapped
+into an LLItem with relative_size=1. Therefore by default all elements
+within a layout will be of the same size. To change the proportions a LLItem
+can be used explicitely with another relative size</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyparadigm.surface_composition.LinLayout">
+<code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">LinLayout</code><span class="sig-paren">(</span><em>orientation</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#LinLayout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.LinLayout" title="Permalink to this definition">¶</a></dt>
+<dd><p>A linear layout to order items horizontally or vertically.</p>
+<p>Every element in the layout is automatically wrapped within a LLItem with
+relative_size=1, i.e. all elements get assigned an equal amount of space, to
+change that elements can be wrappend in LLItems manually to get desired
+proportions</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>orientation</strong> (<em>str</em>) – orientation of the layout, either ‘v’ for vertica, or
+‘h’ for horizontal.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="pyparadigm.surface_composition.Margin">
+<em class="property">class </em><code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">Margin</code><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Margin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Margin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the relative position of an item within a box, for details see Box.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyparadigm.surface_composition.Surface">
+<code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">Surface</code><span class="sig-paren">(</span><em>target</em>, <em>root=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Surface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Surface" title="Permalink to this definition">¶</a></dt>
+<dd><p>Top level function to create a surface.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>target</strong> – the pygame.Surface to blit on. Or a (width, height) tuple
+in which case a new surface will be created</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/surface_composition.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Felix G. Knorr.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/surface_composition.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

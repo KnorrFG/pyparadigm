@@ -1,0 +1,39 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+Box	../pyparadigm/surface_composition.py	/^def Box(margin=Margin(1, 1, 1, 1), scale=0, smooth=True, background=None):$/;"	kind:function	line:178
+LLItem	../pyparadigm/surface_composition.py	/^def LLItem(relative_size):$/;"	kind:function	line:215
+LinLayout	../pyparadigm/surface_composition.py	/^def LinLayout(orientation):$/;"	kind:function	line:155
+Margin	../pyparadigm/surface_composition.py	/^class Margin(Tuple.left[1].right[1].top[1].bottom[1]): $/;"	kind:class	line:122
+Surface	../pyparadigm/surface_composition.py	/^def Surface(target, root=None):$/;"	kind:function	line:127
+_BoxContext	../pyparadigm/surface_composition.py	/^class _BoxContext(Tuple.child.margin.scale.smooth.background):$/;"	kind:class	line:79
+_LLItem	../pyparadigm/surface_composition.py	/^class _LLItem(Tuple.item.relative_size[1]): $/;"	kind:class	line:117
+_LinLayoutContext	../pyparadigm/surface_composition.py	/^class _LinLayoutContext(Tuple.orientation.children):$/;"	kind:class	line:54
+__init__.py	../pyparadigm/__init__.py	1;"	kind:file	line:1
+__init__.py	../tests/__init__.py	1;"	kind:file	line:1
+__version__	../pyparadigm/__init__.py	/^__version__ = '0.1'$/;"	kind:variable	line:8
+_dp	../pyparadigm/surface_composition.py	/^_dp = do(print)$/;"	kind:variable	line:40
+_inner_func_anot	../pyparadigm/surface_composition.py	/^def _inner_func_anot(func):$/;"	kind:function	line:44
+_lmap	../pyparadigm/surface_composition.py	/^_lmap = compose(list, map)$/;"	kind:variable	line:39
+_wrap_surface_in_box	../pyparadigm/surface_composition.py	/^     Box()(elem) if type(elem) == pygame.Surface else elem$/;"	kind:variable	line:42
+box	../tests/test_surface_composition.py	/^    def box():$/;"	kind:member	line:39
+compute_child_rects	../pyparadigm/surface_composition.py	/^    def compute_child_rects(self, target_rect):$/;"	kind:member	line:60
+determine_target_size	../pyparadigm/surface_composition.py	/^    def determine_target_size(child, target_rect, scale):$/;"	kind:member	line:86
+draw	../pyparadigm/surface_composition.py	/^    def draw(self, surface, target_rect):$/;"	kind:member	line:55
+draw	../pyparadigm/surface_composition.py	/^    def draw(self, surface, target_rect):$/;"	kind:member	line:95
+green_ball	../tests/test_surface_composition.py	/^green_ball = None$/;"	kind:variable	line:8
+inner_layout	../pyparadigm/surface_composition.py	/^    def inner_layout(*children):$/;"	kind:function	line:170
+inner_surface	../pyparadigm/surface_composition.py	/^    def inner_surface(*children):$/;"	kind:function	line:136
+layout	../tests/test_surface_composition.py	/^    def layout():$/;"	kind:member	line:24
+new_func	../pyparadigm/surface_composition.py	/^    def new_func(*args):$/;"	kind:function	line:49
+red_ball	../tests/test_surface_composition.py	/^red_ball = None$/;"	kind:variable	line:7
+scale_to_target	../pyparadigm/surface_composition.py	/^    def scale_to_target(source, target_rect, smooth=False):$/;"	kind:member	line:81
+screen	../tests/test_surface_composition.py	/^screen = None$/;"	kind:variable	line:9
+setUp	../tests/test_surface_composition.py	/^    def setUp(cls):$/;"	kind:member	line:13
+surface_composition.py	../pyparadigm/surface_composition.py	1;"	kind:file	line:1
+testSurface	../tests/test_surface_composition.py	/^class testSurface:$/;"	kind:class	line:11
+test_basics	../tests/test_surface_composition.py	/^    def test_basics(cls):$/;"	kind:member	line:47
+test_surface_composition.py	../tests/test_surface_composition.py	1;"	kind:file	line:1
