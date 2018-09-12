@@ -1,6 +1,7 @@
 import pygame
 
 from pyparadigm.surface_composition import *
+from pyparadigm.surface_composition import _text
 
 from time import sleep
 
@@ -14,7 +15,7 @@ class testSurface:
         global screen, red_ball, green_ball
         pygame.init()
         pygame.font.init()
-        screen = pygame.display.set_mode((800, 600))
+        screen = pygame.display.set_mode((1280, 800))
         red_ball = pygame.Surface((100, 100))
         green_ball = pygame.Surface((100, 100))
         pygame.draw.circle(red_ball, 0xFF0000, (50, 50), 50)
@@ -33,34 +34,54 @@ class testSurface:
 
         screen.blit(frame, (0, 0))
         pygame.display.flip()
-        sleep(3)
+        sleep(1)
 
     @staticmethod
     def circle_brush_and_padding():
         frame = compose(screen.get_size(), LinLayout("h"))(
-            Circle(0x0000FF),
+            LinLayout("v")(
+                LLItem(1), 
+                Circle(0x0000FF)
+            ),
             Padding(0.2, 0.3, 0, 0.4)(Circle(0xFF00FF, 2))
         )
         screen.blit(frame, (0, 0))
         pygame.display.flip()
-        sleep(3)
+        sleep(1)
 
     @staticmethod
     def fill_padding_overlay():
-        frame = compose(screen.get_size(), Overlay())(
+        frame = compose(screen.get_size(), Overlay)(
             Circle(0xFF00FF),
             Padding(0.1, 0.1, 0.1, 0.1)(Fill(0xFF0000)(
-                Circle(0xFFFF00))),
+                 Padding.from_scale(0.5)(
+                     Padding.from_scale(0.5, 1)(
+                        Cross(width=10))))),
             green_ball
         )
         screen.blit(frame, (0, 0))
         pygame.display.flip()
-        sleep(3)
+        sleep(1)
+
+    @staticmethod
+    def text_and_grid():
+        font = Font(size=60)
+        text = lambda text, color, align: Fill(color)(Text(text, font, antialias=True, align=align))
+        frame = compose(screen.get_size(), Fill(0xFFFFFF))(GridLayout(
+            row_proportions=[2, 1], col_proportions=[1, 2]
+        )(
+            [text("Top left\nLine2", 0xFF0000, "left"), text("Top right\nLine2Blalalal", 0xFF00FF, "right")],
+            [text("Bottom left", 0xFFFF00, "center"), _text("Bottom right", font)]
+        ))
+        screen.blit(frame, (0, 0))
+        pygame.display.flip()
+        sleep(1)
 
     @classmethod
     def test_basics(cls):
         testSurface.layout_surface()
         testSurface.fill_padding_overlay()
         testSurface.circle_brush_and_padding()
+        testSurface.text_and_grid()
 
 

@@ -33,19 +33,20 @@ draw-method. This basically creates a scene tree, where the
 leave-objects, and handle the actual drawing. The Layouts just call draw on
 their children with the correct rectangles
 """
-from functools import reduce, wraps
-from operator import add
+from functools import reduce, wraps, lru_cache, partial
+from itertools import accumulate
+from operator import add, methodcaller
 
 import pygame
 from fields import Fields, Tuple
-from toolz import compose as t_compose
-from toolz import  pipe, accumulate
-from toolz.curried import do, map
 
-_lmap = t_compose(list, map)
-_dp = do(print)
+_lmap = wraps(map)(lambda *args, **kwargs:list(map(*args, **kwargs)))
 _wrap_surface = lambda elem:\
      Surface()(elem) if type(elem) == pygame.Surface else elem
+_round_to_int = lambda val: int(round(val))
+_call_function = lambda elem:\
+    elem() if callable(elem) else elem
+
 
 def _inner_func_anot(func):
     """must be applied to all inner functions that return contexts.
@@ -57,115 +58,45 @@ def _inner_func_anot(func):
     return new_func
 
 
-class _LinLayoutContext(Tuple.orientation.children):
-    def draw(self, surface, target_rect):
-        child_rects = self.compute_child_rects(target_rect)
-        for child, rect in zip(self.children, child_rects):
-            child.item.draw(surface, rect)
-
-    def compute_child_rects(self, target_rect):
-        flip_if_not_horizontal = lambda t: \
-            t if self.orientation == "h" else (t[1], t[0])
-        target_rect_size = target_rect.size
-        divider, full = flip_if_not_horizontal(target_rect_size) 
-        dyn_size_per_unit = divider / sum(child.relative_size for child in self.children)
-        strides = [child.relative_size * dyn_size_per_unit for child in self.children]
-        dyn_offsets = [0] + list(accumulate(add, strides))[:-1]
-        left_offsets, top_offsets = flip_if_not_horizontal((dyn_offsets, 
-                                                            [0] * len(self.children)))
-        widths, heights = flip_if_not_horizontal((strides, [full] * len(self.children)))
-
-        return [pygame.Rect(target_rect.left + left_offset, 
-                            target_rect.top + top_offset,
-                            w, h)
-                for left_offset, top_offset, w, h in 
-                    zip(left_offsets, top_offsets, widths, heights)]
+def _wrap_children(children):
+    try:
+        return _lmap(_wrap_surface, children)
+    except TypeError:
+        return _wrap_surface(children)
 
 
-class _SurfaceContext(Tuple.child.margin.scale.smooth):
-    @staticmethod
-    def scale_to_target(source, target_rect, smooth=False):
-        target_size = source.get_rect().fit(target_rect).size
-        return pygame.transform.scale(source, target_size) \
-            if not smooth else pygame.transform.smoothscale(source, target_size) 
-            
-    def determine_target_size(child, target_rect, scale):
-        if scale > 0:
-            return tuple(dist * scale for dist in target_rect.size)
-        elif all(s_dim <= t_dim 
-                for s_dim, t_dim in zip(child.get_size(), target_rect.size)):
-            return 0
-        else:
-            return target_rect.size
-        
-    def draw(self, surface, target_rect):
-        if self.child is None:
-            return
-        target_size = _SurfaceContext.determine_target_size(self.child, target_rect, 
-                                                        self.scale)
-        content = _SurfaceContext.scale_to_target(self.child, (0, 0, *target_size), 
-                                            self.smooth)\
-                if target_size else self.child
-        remaining_h_space = target_rect.w - content.get_rect().w
-        remaining_v_space = target_rect.h - content.get_rect().h
-        offset_by_margins = lambda space, one, two: space * one / (one + two)
-        surface.blit(content, (
-            target_rect.left + offset_by_margins(remaining_h_space,
-                self.margin.left, self.margin.right),
-            target_rect.top + offset_by_margins(remaining_v_space,
-                self.margin.top, self.margin.bottom)))
+def _check_call_op(child): 
+    if child is not None:
+        raise RuntimeError("Call operator was called twice")
 
 
-class _PaddingContext(Tuple.child.left.right.top.bottom):
-    def draw(self, surface, target_rect):
-        child_rect = pygame.Rect(
-            target_rect.left + target_rect.w * self.left,
-            target_rect.top + target_rect.h * self.top,
-            target_rect.w * (1 - self.left - self.right),
-            target_rect.h * (1 - self.top - self.bottom)
-        )
-        self.child.draw(surface, child_rect)
-            
+class LLItem: 
+    """Defines the relative size of an element in a LinLayout
 
-class _LLItem(Tuple.item.relative_size[1]): 
-    """Wrapper around items in layout, which stores the associated relative size"""
-    pass
-
-
-class Margin(Tuple.left[1].right[1].top[1].bottom[1]): 
-    """Defines the relative position of an item within a box, for details see Surface."""
-    pass
-
-
-def compose(target, root=None):
-    """Top level function to create a surface.
+    All Elements that are passed to a linear layout are automatically wrapped
+    into an LLItem with relative_size=1. Therefore by default all elements
+    within a layout will be of the same size. To change the proportions a LLItem
+    can be used explicitely with another relative size.
     
-    :param target: the pygame.Surface to blit on. Or a (width, height) tuple
-        in which case a new surface will be created
+    It is also possible to use an LLItem as placeholde in a layout, to generate
+    an empty space like this:
+    
+    :Example:
 
-    :type target: -
+    LinLayout("h")(
+        LLItem(1),
+        LLItem(1)(Circle(0xFFFF00)))
     """
-    @_inner_func_anot
-    def inner_compose(*children):
-        if root:
-            root_context = root(*children)
-        else:
-            assert len(children) == 1
-            root_context = children[0]
+    def __init__(self, relative_size):
+        self.child = Surface()
+        self.relative_size = relative_size
 
-        if type(target) == pygame.Surface:
-            surface = target
-            size = target.get_size()
-        else:
-            size = target
-            surface = pygame.Surface(size)
-
-        root_context.draw(surface, pygame.Rect(0, 0, *size))
-        return surface
-    return inner_compose
+    def __call__(self, child):
+        self.child = _wrap_children(child)
+        return self
 
 
-def LinLayout(orientation):
+class LinLayout:
     """A linear layout to order items horizontally or vertically.
     
     Every element in the layout is automatically wrapped within a LLItem with
@@ -178,17 +109,52 @@ def LinLayout(orientation):
     
     :type orientation: str
     """
-    assert orientation in ["v", "h"]
-    @_inner_func_anot
-    def inner_layout(*children):
-        return _LinLayoutContext(orientation, _lmap(
-            lambda child: 
-                child if type(child) == _LLItem else _LLItem(child), 
-            children))
-    return inner_layout
+    def __init__(self, orientation):
+        assert orientation in ["v", "h"]
+        self.orientation = orientation
+        self.children = None
 
 
-def Surface(margin=Margin(1, 1, 1, 1), scale=0, smooth=True):
+    def __call__(self, *children):
+        _check_call_op(self.children)
+        self.children = _lmap(lambda child: 
+                                child if type(child) == LLItem else LLItem(1)(child), 
+                              _wrap_children(children))
+        return self
+
+
+    def _draw(self, surface, target_rect):
+        child_rects = self._compute_child_rects(target_rect)
+        for child, rect in zip(self.children, child_rects):
+            child.child._draw(surface, rect)
+
+    def _compute_child_rects(self, target_rect):
+        flip_if_not_horizontal = lambda t: \
+            t if self.orientation == "h" else (t[1], t[0])
+        target_rect_size = target_rect.size
+        divider, full = flip_if_not_horizontal(target_rect_size) 
+        dyn_size_per_unit = divider / sum(child.relative_size for child in self.children)
+        strides = [child.relative_size * dyn_size_per_unit for child in self.children]
+        dyn_offsets = [0] + list(accumulate(strides))[:-1]
+        left_offsets, top_offsets = flip_if_not_horizontal((dyn_offsets, 
+                                                            [0] * len(self.children)))
+        widths, heights = flip_if_not_horizontal((strides, [full] * len(self.children)))
+
+        return [pygame.Rect(target_rect.left + left_offset, 
+                            target_rect.top + top_offset,
+                            w, h)
+                for left_offset, top_offset, w, h in 
+                    zip(left_offsets, top_offsets, widths, heights)]
+
+
+class Margin(Tuple.left[1].right[1].top[1].bottom[1]): 
+    """Defines the relative position of an item within a Surface. 
+    For details see Surface.
+    """
+    pass
+
+
+class Surface:
     """Wraps a pygame surface.
 
     The Surface is the connection between the absolute world of pygame.Surfaces and the
@@ -216,40 +182,114 @@ def Surface(margin=Margin(1, 1, 1, 1), scale=0, smooth=True):
     :param smooth: if True the result of the scaling will be smoothed
 
     :type smooth: float
-   """
-    assert 0 <= scale <= 1
-    return lambda child=None: _SurfaceContext(child, margin, scale, smooth)
+    """
+    def __init__(self, margin=Margin(1, 1, 1, 1), scale=0, smooth=True):
+        assert 0 <= scale <= 1
+        self.child = None 
+        self.margin = margin
+        self.scale = scale
+        self.smooth = smooth
+    
+    def __call__(self, child):
+        _check_call_op(self.child)
+        self.child = child
+        return self
+
+    @staticmethod
+    def _scale_to_target(source, target_rect, smooth=False):
+        target_size = source.get_rect().fit(target_rect).size
+        return pygame.transform.scale(source, target_size) \
+            if not smooth else pygame.transform.smoothscale(source, target_size) 
+            
+    def _determine_target_size(child, target_rect, scale):
+        if scale > 0:
+            return tuple(dist * scale for dist in target_rect.size)
+        elif all(s_dim <= t_dim 
+                for s_dim, t_dim in zip(child.get_size(), target_rect.size)):
+            return 0
+        else:
+            return target_rect.size
+        
+    def _draw(self, surface, target_rect):
+        if self.child is None:
+            return
+        target_size = Surface._determine_target_size(self.child, target_rect, 
+                                                        self.scale)
+        content = Surface._scale_to_target(self.child, (0, 0, *target_size), 
+                                            self.smooth)\
+                if target_size else self.child
+        remaining_h_space = target_rect.w - content.get_rect().w
+        remaining_v_space = target_rect.h - content.get_rect().h
+        offset_by_margins = lambda space, one, two: space * one / (one + two)
+        surface.blit(content, (
+            target_rect.left + offset_by_margins(remaining_h_space,
+                self.margin.left, self.margin.right),
+            target_rect.top + offset_by_margins(remaining_v_space,
+                self.margin.top, self.margin.bottom)))
 
 
-def LLItem(relative_size):
-    """Defines the relative size of an element in a LinLayout
-
-    All Elements that are passed to a linear layout are automatically wrapped
-    into an LLItem with relative_size=1. Therefore by default all elements
-    within a layout will be of the same size. To change the proportions a LLItem
-    can be used explicitely with another relative size"""
-    return _inner_func_anot(lambda child: _LLItem(child, relative_size))
-
-
-def Padding(left, right, top, bottom):
+class Padding:
     """Pads a child element
 
     Each argument refers to a percentage of the axis it belongs to.
-    A padding of (0.25, 0.25, 0.25) would generate blocked area a quater of the
+    A padding of (0.25, 0.25, 0.25, 0.25) would generate blocked area a quater of the
     available height in size above and below the child, and a quarter of the 
     available width left and right of the child.
 
     If left and right or top and bottom sum up to one that would mean no space
     for the child is remaining
     """
-    assert all(0 <= side < 1 for side in [left, right, top, bottom])
-    assert left + right < 1
-    assert top + bottom < 1
-    return _inner_func_anot(lambda child: 
-        _PaddingContext(child, left, right, top, bottom))
+    def _draw(self, surface, target_rect):
+        assert self.child is not None
+
+        child_rect = pygame.Rect(
+            target_rect.left + target_rect.w * self.left,
+            target_rect.top + target_rect.h * self.top,
+            target_rect.w * (1 - self.left - self.right),
+            target_rect.h * (1 - self.top - self.bottom)
+        )
+        self.child._draw(surface, child_rect)
+
+    def __init__(self, left, right, top, bottom):
+        assert all(0 <= side < 1 for side in [left, right, top, bottom])
+        assert left + right < 1
+        assert top + bottom < 1
+        self.left = left
+        self.right = right
+        self.top = top
+        self.bottom = bottom
+        self.child = None
 
 
-def Circle(color, width=0):
+    def __call__(self, child):
+        _check_call_op(self.child)
+        self.child = _wrap_children(child)
+        return self
+
+
+    @staticmethod
+    def from_scale(scale_w, scale_h=None):
+        """Creates a padding by the remaining space after scaling the content.
+
+        E.g. Padding.from_scale(0.5) would produce Padding(0.25, 0.25, 0.25, 0.25) and
+        Padding.from_scale(0.5, 1) would produce Padding(0.25, 0.25, 0, 0)
+        because the content would not be scaled (since scale_h=1) and therefore
+        there would be no vertical padding.
+        
+        If scale_h is not specified scale_h=scale_w is used as default
+
+        :param scale_w: horizontal scaling factors
+        :type scale_w: float
+        :param scale_h: vertical scaling factor
+        :type scale_h: float
+        """
+        if not scale_h: scale_h = scale_w
+        w_padding = [(1 - scale_w) * 0.5] * 2
+        h_padding = [(1 - scale_h) * 0.5] * 2
+        return Padding(*w_padding, *h_padding)
+
+
+class Circle(Fields.color.width[0]):
     """Draws a Circle in the assigned space.
     
     The circle will always be centered, and the radius will be half of the
@@ -263,33 +303,173 @@ def Circle(color, width=0):
     
     :type width: int
     """
-    class _CircleBrush:
-        @staticmethod
-        def draw(surface, target_rect):
-            pygame.draw.circle(surface, color, target_rect.center, 
-                int(round(min(target_rect.w, target_rect.h) * 0.5)), width)
-    return _CircleBrush     
+    def _draw(self, surface, target_rect):
+        pygame.draw.circle(surface, self.color, target_rect.center, 
+            int(round(min(target_rect.w, target_rect.h) * 0.5)), self.width)
 
 
-def Fill(color):
+class Fill:
     """Fills the assigned area. Afterwards, the children are rendered
 
     :param color: the color with which the area is filled
 
     :type color: pygame.Color or int
     """
-    class _FillContext(Tuple.child.color):
-        def draw(self, surface, target_rect):
-            surface.fill(self.color, target_rect)
-            self.child.draw(surface, target_rect)
-    return _inner_func_anot(lambda child: _FillContext(child, color))
+    def __init__(self, color):
+        self.color = color
+        self.child = None
+
+    def __call__(self, child):
+        _check_call_op(self.child)
+        self.child = _wrap_children(child)
+        return self
+    
+    def _draw(self, surface, target_rect):
+        surface.fill(self.color, target_rect)
+        self.child._draw(surface, target_rect)
 
 
-def Overlay():
+class Overlay:
     """Draws all its children on top of each other in the same rect"""
-    class _OverlayContext(Tuple.dummy.children):
-        def draw(self, surface, target_rect):
-            for child in self.children:
-                child.draw(surface, target_rect)
-    return _inner_func_anot(lambda *children: _OverlayContext(None, children))
+    def __init__(self, *children):
+        self.children = _wrap_children(children)
 
+    def _draw(self, surface, target_rect):
+        for child in self.children:
+            child._draw(surface, target_rect)
+
+
+class Cross(Fields.width[3].color[0]):
+    """Draws a cross centered in the target area
+
+    :param width: width of the lines of the cross in pixels
+    :type width: int
+    :param color: color of the lines of the cross
+    :type color: pygame.Color
+    """
+    def _draw(self, surface, target_rect):
+        #draw vertical
+        pygame.draw.line(surface, self.color, (
+                _round_to_int(target_rect.left + target_rect.width * 0.5), 
+                target_rect.top), (
+                _round_to_int(target_rect.left + target_rect.width * 0.5), 
+                target_rect.top + target_rect.h - 1), 
+            self.width)
+        #draw horizontal
+        pygame.draw.line(surface, self.color, (
+                target_rect.left, 
+                _round_to_int(target_rect.top + target_rect.h * 0.5)), (
+                target_rect.left + target_rect.w - 1, 
+                _round_to_int(target_rect.top + target_rect.h * 0.5)),
+            self.width)
+
+
+_fill_col = lambda target_len: lambda col: col + [None] * (target_len - len(col))
+_to_h_layout = lambda cols: lambda children: LinLayout("h")(
+    *_lmap(lambda it, child: it(child), map(LLItem, cols),  
+                                         _lmap(_wrap_surface, children)))
+
+def GridLayout(row_proportions=None, col_proportions=None):
+    def inner_grid_layout(*children):
+        nonlocal row_proportions, col_proportions
+        assert all(type(child) == list for child in children)
+        if row_proportions is None: row_proportions = [1] * len(children)
+        else: assert len(row_proportions) == len(children)
+
+        col_width = max(map(len, children))
+        if col_proportions: assert len(col_proportions) == col_width
+        else: col_proportions = [1] * col_width
+        filled_cols = _lmap(_fill_col(col_width), children)
+        
+        return LinLayout("v")(*_lmap(
+            lambda it, child: it(child), 
+            map(LLItem, row_proportions),
+            _lmap(_to_h_layout(col_proportions), children)))
+
+    return inner_grid_layout
+    
+
+def compose(target, root=None):
+    """Top level function to create a surface.
+    
+    :param target: the pygame.Surface to blit on. Or a (width, height) tuple
+        in which case a new surface will be created
+
+    :type target: -
+    """
+    if type(root) == Surface:
+        raise ValueError("A Surface may not be used as root, please add "
+                        +"it as a single child i.e. compose(...)(Surface(...))")
+    @_inner_func_anot
+    def inner_compose(*children):
+        if root:
+            root_context = root(*children)
+        else:
+            assert len(children) == 1
+            root_context = children[0]
+
+        if type(target) == pygame.Surface:
+            surface = target
+            size = target.get_size()
+        else:
+            size = target
+            surface = pygame.Surface(size)
+
+        root_context._draw(surface, pygame.Rect(0, 0, *size))
+        return surface
+    return inner_compose 
+
+
+@lru_cache(128)
+def Font(name=None, source="sys", italic=False, bold=False, size=20):
+    """Unifies loading of fonts.
+
+    :param name: name of system-font or filepath, if None is passed the default
+        system-font is loaded
+
+    :type name: str
+    :param source: "sys" for system font, or "file" to load a file
+    :type source: str
+    """
+    assert source in ["sys", "file"]
+    if not name:
+        return pygame.font.SysFont(pygame.font.get_default_font(), 
+        size, bold=bold, italic=italic)
+    if source == "sys":
+        return pygame.font.SysFont(name, 
+        size, bold=bold, italic=italic)
+    else:
+        f = pygame.font.Font(name, size)
+        f.set_italic(italic)
+        f.set_bold(bold)
+        return f
+        
+
+def _text(text, font, color=pygame.Color(0, 0, 0), antialias=False):
+    return font.render(text, antialias, color).convert_alpha()
+
+
+def Text(text, font, color=pygame.Color(0, 0, 0), antialias=False, align="center"):
+    """Renders a text. Supports multiline text, the background will be transparent.
+    
+    :param align: text-alignment must be "center", "left", or "righ"
+    :type align: str
+    :return: the input text
+    :rtype: pygame.Surface
+    """
+    assert align in ["center", "left", "right"]
+    margin_l, margin_r = 1, 1
+    if align == "left": margin_l = 0
+    elif align == "right": margin_r = 0
+    margin = Margin(margin_l, margin_r)
+    color_key = pygame.Color(0, 0, 1) if pygame.Color(0, 0, 1) != color else 0x000002
+    
+    text_surfaces = _lmap(lambda text: _text(text, font=font, 
+                                   color=color, antialias=antialias),
+                                   map(methodcaller("strip"), text.split("\n")))
+    w = max(surf.get_rect().w for surf in text_surfaces)
+    h = sum(surf.get_rect().h for surf in text_surfaces)
+    surf = compose((w, h), Fill(color_key))(LinLayout("v")(
+        *_lmap(lambda s: Surface(margin)(s), text_surfaces)))
+    surf.set_colorkey(color_key)
+    return surf.convert_alpha()

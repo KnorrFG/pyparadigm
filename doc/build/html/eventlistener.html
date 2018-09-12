@@ -1,0 +1,249 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>The EventListener module &#8212; PyParadigm 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="The Surface Composition module" href="surfacecomposition.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-pyparadigm.eventlistener">
+<span id="the-eventlistener-module"></span><h1>The EventListener module<a class="headerlink" href="#module-pyparadigm.eventlistener" title="Permalink to this headline">¶</a></h1>
+<p>The Eventlistener wraps pygames event-loop.</p>
+<p>The Core method is the listen() method.
+It gathers the events that have piled up in pygame so far
+and processes them acording to handler functions.
+This allows for a main-loop free script design, which is more suited for
+experimental paradigms.
+In a typical experiment the script just waits for a userinput and does nothing,
+or only a very few things in between. Approaching this need with a main
+event-loop requires the implementation of some sort of statemachine, which again
+requires quite some code.</p>
+<p>The EventListener enables one to write scripts in a time-linear manner, and only
+dab into local event-loops whenever neccessary throught the listen-function.</p>
+<p>There are a few pre-implemented methods, which cover most of those use-cases in
+the developement of experimental paradigms.</p>
+<ul class="simple">
+<li>wait_for_keypress() will return once a key was pressed n times.</li>
+<li><dl class="first docutils">
+<dt>wait_for_keys_timed_out() will wait for one of multiple possible keys, </dt>
+<dd>but return after the given timeout in any case</dd>
+</dl>
+</li>
+<li>and wait_for_seconds will simply wait the given time, but in the mean-time run
+what ever handlers were passed to the EventListener.</li>
+</ul>
+<p>By default, there is one permanent handler, which will call exit(1) when 
+Ctrl + c is pressed.</p>
+<dl class="class">
+<dt id="pyparadigm.eventlistener.EventConsumerInfo">
+<em class="property">class </em><code class="descclassname">pyparadigm.eventlistener.</code><code class="descname">EventConsumerInfo</code><a class="reference internal" href="_modules/pyparadigm/eventlistener.html#EventConsumerInfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.eventlistener.EventConsumerInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Can be returned by event-handler functions to communicate with the listener.
+For Details see EventListener</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="pyparadigm.eventlistener.EventListener">
+<em class="property">class </em><code class="descclassname">pyparadigm.eventlistener.</code><code class="descname">EventListener</code><span class="sig-paren">(</span><em>permanent_handlers=None</em>, <em>use_ctrl_c_handler=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/eventlistener.html#EventListener"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.eventlistener.EventListener" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>permanent_handlers</strong> (<em>iterable</em>) – iterable of permanent handlers</li>
+<li><strong>use_ctrl_c_handler</strong> (<em>Bool</em>) – specifies whether a handler that quits the
+script when ctrl + c is pressed should be used</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="pyparadigm.eventlistener.EventListener.listen">
+<code class="descname">listen</code><span class="sig-paren">(</span><em>temporary_handlers=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/eventlistener.html#EventListener.listen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.eventlistener.EventListener.listen" title="Permalink to this definition">¶</a></dt>
+<dd><p>When listen() is called all queued pygame.Events will be passed to all
+registered listeners. There are two ways to register a listener:</p>
+<ol class="arabic simple">
+<li><dl class="first docutils">
+<dt>as a permanent listener, that is always executed for every event. These</dt>
+<dd>are registered by passing the handler-functions during construction</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>as a temporary listener, that will only be executed during the current</dt>
+<dd>call to listen(). These are registered by passing the handler functions
+as arguments to listen()</dd>
+</dl>
+</li>
+</ol>
+<p>When a handler is called it can provoke three different reactions through
+its return value.</p>
+<ol class="arabic simple">
+<li><dl class="first docutils">
+<dt>It can return EventConsumerInfo.DONT_CARE in which case the EventListener</dt>
+<dd>will pass the event to the next handler in line, or go to the next event,
+if the last handler was called.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>It can return EventConsumerInfo.CONSUMED in which case the event will not</dt>
+<dd>be passed to following handlers, and the next event in line will be
+processed.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>It can return anything else (including None, which will be returned if no</dt>
+<dd>return value is specified) in this case the listen()-method will return
+the result of the handler, and drop all further events in the queue.</dd>
+</dl>
+</li>
+</ol>
+<p>Therefore all permanent handlers should usually return
+EventConsumerInfo.DONT_CARE</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyparadigm.eventlistener.EventListener.wait_for_keypress">
+<code class="descname">wait_for_keypress</code><span class="sig-paren">(</span><em>key</em>, <em>n=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/eventlistener.html#EventListener.wait_for_keypress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.eventlistener.EventListener.wait_for_keypress" title="Permalink to this definition">¶</a></dt>
+<dd><p>Waits till one key was pressed n times.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>key</strong> (<em>int</em>) – the key to be pressed as defined by pygame. E.g.
+pygame.K_LEFT for the left arrow key</li>
+<li><strong>n</strong> (<em>int</em>) – number of repetitions till the function returns</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyparadigm.eventlistener.EventListener.wait_for_keys_timed_out">
+<code class="descname">wait_for_keys_timed_out</code><span class="sig-paren">(</span><em>keys</em>, <em>timeout=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/eventlistener.html#EventListener.wait_for_keys_timed_out"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.eventlistener.EventListener.wait_for_keys_timed_out" title="Permalink to this definition">¶</a></dt>
+<dd><p>Waits until one of the specified keys was pressed, and returns 
+which key was pressed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>keys</strong> (<em>iterable</em>) – iterable of integers of pygame-keycodes</li>
+<li><strong>timeout</strong> (<em>float</em>) – number of seconds to wait till the function returns</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The keycode of the pressed key, or None in case of timeout</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyparadigm.eventlistener.EventListener.wait_for_seconds">
+<code class="descname">wait_for_seconds</code><span class="sig-paren">(</span><em>seconds</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/eventlistener.html#EventListener.wait_for_seconds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.eventlistener.EventListener.wait_for_seconds" title="Permalink to this definition">¶</a></dt>
+<dd><p>basically time.sleep() but in the mean-time the permanent handlers 
+are executed</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
+<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
+<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">The EventListener module</a></li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="surfacecomposition.html" title="previous chapter">The Surface Composition module</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/eventlistener.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Felix G. Knorr.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/eventlistener.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

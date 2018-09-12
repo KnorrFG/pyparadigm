@@ -1,0 +1,243 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>pyparadigm.eventlistener &#8212; PyParadigm 0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for pyparadigm.eventlistener</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;The Eventlistener wraps pygames event-loop.</span>
+
+<span class="sd">The Core method is the listen() method.</span>
+<span class="sd">It gathers the events that have piled up in pygame so far</span>
+<span class="sd">and processes them acording to handler functions.</span>
+<span class="sd">This allows for a main-loop free script design, which is more suited for</span>
+<span class="sd">experimental paradigms.</span>
+<span class="sd">In a typical experiment the script just waits for a userinput and does nothing,</span>
+<span class="sd">or only a very few things in between. Approaching this need with a main</span>
+<span class="sd">event-loop requires the implementation of some sort of statemachine, which again</span>
+<span class="sd">requires quite some code.</span>
+
+<span class="sd">The EventListener enables one to write scripts in a time-linear manner, and only</span>
+<span class="sd">dab into local event-loops whenever neccessary throught the listen-function.</span>
+
+<span class="sd">There are a few pre-implemented methods, which cover most of those use-cases in</span>
+<span class="sd">the developement of experimental paradigms.</span>
+
+<span class="sd">* wait_for_keypress() will return once a key was pressed n times.</span>
+<span class="sd">* wait_for_keys_timed_out() will wait for one of multiple possible keys, </span>
+<span class="sd">    but return after the given timeout in any case</span>
+<span class="sd">* and wait_for_seconds will simply wait the given time, but in the mean-time run</span>
+<span class="sd">  what ever handlers were passed to the EventListener.</span>
+
+<span class="sd">By default, there is one permanent handler, which will call exit(1) when </span>
+<span class="sd">Ctrl + c is pressed.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">pygame</span>
+
+<span class="kn">from</span> <span class="nn">enum</span> <span class="k">import</span> <span class="n">Enum</span>
+
+<span class="kn">import</span> <span class="nn">time</span>
+
+<div class="viewcode-block" id="EventConsumerInfo"><a class="viewcode-back" href="../../eventlistener.html#pyparadigm.eventlistener.EventConsumerInfo">[docs]</a><span class="k">class</span> <span class="nc">EventConsumerInfo</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Can be returned by event-handler functions to communicate with the listener.</span>
+<span class="sd">    For Details see EventListener&quot;&quot;&quot;</span>
+    <span class="n">DONT_CARE</span> <span class="o">=</span> <span class="mi">0</span></div>
+    <span class="n">CONSUMED</span> <span class="o">=</span> <span class="mi">1</span>
+
+
+<div class="viewcode-block" id="EventListener"><a class="viewcode-back" href="../../eventlistener.html#pyparadigm.eventlistener.EventListener">[docs]</a><span class="k">class</span> <span class="nc">EventListener</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :param permanent_handlers: iterable of permanent handlers</span>
+<span class="sd">    :type permanent_handlers: iterable</span>
+<span class="sd">    :param use_ctrl_c_handler: specifies whether a handler that quits the</span>
+<span class="sd">        script when ctrl + c is pressed should be used</span>
+<span class="sd">    :type use_ctrl_c_handler: Bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_exit_on_ctrl_c</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">KEYDOWN</span> \
+            <span class="ow">and</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_c</span> \
+            <span class="ow">and</span> <span class="n">pygame</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">get_mods</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">pygame</span><span class="o">.</span><span class="n">KMOD_CTRL</span><span class="p">:</span>
+            <span class="n">pygame</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+            <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">EventConsumerInfo</span><span class="o">.</span><span class="n">DONT_CARE</span>
+
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">permanent_handlers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_ctrl_c_handler</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">use_ctrl_c_handler</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">permanent_handlers</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">EventListener</span><span class="o">.</span><span class="n">_exit_on_ctrl_c</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">permanent_handlers</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">permanent_handlers</span> <span class="o">+=</span> <span class="n">permanent_handlers</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">permanent_handlers</span> <span class="o">=</span> <span class="n">permanent_handlers</span> <span class="ow">or</span> <span class="p">[]</span>
+
+
+<div class="viewcode-block" id="EventListener.listen"><a class="viewcode-back" href="../../eventlistener.html#pyparadigm.eventlistener.EventListener.listen">[docs]</a>    <span class="k">def</span> <span class="nf">listen</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">temporary_handlers</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;When listen() is called all queued pygame.Events will be passed to all</span>
+<span class="sd">        registered listeners. There are two ways to register a listener:</span>
+
+<span class="sd">        1. as a permanent listener, that is always executed for every event. These</span>
+<span class="sd">            are registered by passing the handler-functions during construction</span>
+<span class="sd">        </span>
+<span class="sd">        2. as a temporary listener, that will only be executed during the current</span>
+<span class="sd">            call to listen(). These are registered by passing the handler functions</span>
+<span class="sd">            as arguments to listen()</span>
+
+<span class="sd">        When a handler is called it can provoke three different reactions through</span>
+<span class="sd">        its return value.</span>
+
+<span class="sd">        1. It can return EventConsumerInfo.DONT_CARE in which case the EventListener</span>
+<span class="sd">            will pass the event to the next handler in line, or go to the next event,</span>
+<span class="sd">            if the last handler was called.</span>
+
+<span class="sd">        2. It can return EventConsumerInfo.CONSUMED in which case the event will not</span>
+<span class="sd">            be passed to following handlers, and the next event in line will be</span>
+<span class="sd">            processed.</span>
+
+<span class="sd">        3. It can return anything else (including None, which will be returned if no</span>
+<span class="sd">            return value is specified) in this case the listen()-method will return</span>
+<span class="sd">            the result of the handler, and drop all further events in the queue.</span>
+
+<span class="sd">        Therefore all permanent handlers should usually return</span>
+<span class="sd">        EventConsumerInfo.DONT_CARE</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">temporary_handlers</span><span class="p">:</span>
+            <span class="n">funcs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">permanent_handlers</span> <span class="o">+</span> <span class="n">temporary_handlers</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">funcs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">permanent_handlers</span>
+
+        <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">pygame</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">funcs</span><span class="p">:</span>
+                <span class="c1">#import ipdb; ipdb.set_trace()</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">ret</span> <span class="o">==</span> <span class="n">EventConsumerInfo</span><span class="o">.</span><span class="n">CONSUMED</span><span class="p">:</span> <span class="k">break</span>
+                <span class="k">if</span> <span class="n">ret</span> <span class="o">==</span> <span class="n">EventConsumerInfo</span><span class="o">.</span><span class="n">DONT_CARE</span><span class="p">:</span> <span class="k">continue</span></div>
+                <span class="k">else</span><span class="p">:</span> <span class="k">return</span> <span class="n">ret</span>
+
+
+<div class="viewcode-block" id="EventListener.wait_for_keypress"><a class="viewcode-back" href="../../eventlistener.html#pyparadigm.eventlistener.EventListener.wait_for_keypress">[docs]</a>    <span class="k">def</span> <span class="nf">wait_for_keypress</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Waits till one key was pressed n times.</span>
+<span class="sd">        </span>
+<span class="sd">        :param key: the key to be pressed as defined by pygame. E.g.</span>
+<span class="sd">            pygame.K_LEFT for the left arrow key</span>
+<span class="sd">        :type key: int</span>
+<span class="sd">        :param n: number of repetitions till the function returns</span>
+<span class="sd">        :type n: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">my_const</span> <span class="o">=</span> <span class="s2">&quot;key_consumed&quot;</span>
+        <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">keypress_listener</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">my_const</span> \
+            <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">KEYDOWN</span> <span class="ow">and</span> <span class="n">e</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="n">key</span> \
+            <span class="k">else</span> <span class="n">EventConsumerInfo</span><span class="o">.</span><span class="n">DONT_CARE</span>
+
+        <span class="k">while</span> <span class="n">counter</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">listen</span><span class="p">((</span><span class="n">keypress_listener</span><span class="p">,))</span> <span class="o">==</span> <span class="n">my_const</span><span class="p">:</span></div>
+                <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+
+
+<div class="viewcode-block" id="EventListener.wait_for_keys_timed_out"><a class="viewcode-back" href="../../eventlistener.html#pyparadigm.eventlistener.EventListener.wait_for_keys_timed_out">[docs]</a>    <span class="k">def</span> <span class="nf">wait_for_keys_timed_out</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keys</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Waits until one of the specified keys was pressed, and returns </span>
+<span class="sd">        which key was pressed.</span>
+
+<span class="sd">        :param keys: iterable of integers of pygame-keycodes</span>
+<span class="sd">        :type keys: iterable</span>
+<span class="sd">        :param timeout: number of seconds to wait till the function returns</span>
+<span class="sd">        :type timeout: float</span>
+
+<span class="sd">        :returns: The keycode of the pressed key, or None in case of timeout</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">listeners</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="k">lambda</span> <span class="n">e</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">:</span> <span class="n">key</span> \
+                        <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">KEYDOWN</span> <span class="ow">and</span> <span class="n">e</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="n">key</span> \
+                        <span class="k">else</span> <span class="n">EventConsumerInfo</span><span class="o">.</span><span class="n">DONT_CARE</span> 
+                    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">)</span>
+        
+        <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="k">while</span> <span class="n">timeout</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span> <span class="o">&lt;</span> <span class="n">timeout</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="n">listeners</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">res</span>
+</div>
+        <span class="k">return</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="EventListener.wait_for_seconds"><a class="viewcode-back" href="../../eventlistener.html#pyparadigm.eventlistener.EventListener.wait_for_seconds">[docs]</a>    <span class="k">def</span> <span class="nf">wait_for_seconds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seconds</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;basically time.sleep() but in the mean-time the permanent handlers </span>
+<span class="sd">        are executed&quot;&quot;&quot;</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="k">while</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span> <span class="o">&lt;</span> <span class="n">seconds</span><span class="p">:</span></div></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">listen</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Felix G. Knorr.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
