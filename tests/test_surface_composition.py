@@ -77,11 +77,26 @@ class testSurface:
         pygame.display.flip()
         sleep(1)
 
+    def rectangle_shaper():
+        frame = compose(screen.get_size())(
+            RectangleShaper(1, 2)(Fill(0xFFFFFF)(
+                RectangleShaper(2, 1)(Fill(0xFF)(
+                    RectangleShaper()(
+                        Fill(0x00FF00)
+                    )
+                ))
+            ))
+        )
+        screen.blit(frame, (0, 0))
+        pygame.display.flip()
+        sleep(10)
+
     @classmethod
     def test_basics(cls):
         testSurface.layout_surface()
         testSurface.fill_padding_overlay()
         testSurface.circle_brush_and_padding()
         testSurface.text_and_grid()
+        testSurface.rectangle_shaper()
 
 

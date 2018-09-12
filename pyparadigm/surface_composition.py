@@ -289,6 +289,48 @@ class Padding:
         return Padding(*w_padding, *h_padding)
 
 
+class RectangleShaper:
+    """Creates a padding, defined by a target Shape.
+
+    Width and height are the relative proportions of the target rectangle.
+    And comperator declares from which rec
+    E.g RectangleShaper(1, 1) would create a square. and RectangleShaper(2, 1)
+    would create a rectangle which is twice as wide as it is high.
+    The rectangle always has the maximal possible size within the parent area.
+    """
+    def __init__(self, width=1, height=1):
+        self.child = None
+        self.width = width
+        self.height = height
+
+    def __call__(self, child):
+        _check_call_op(self.child)
+        self.child = _wrap_children(child)
+        return self
+        
+    def _draw(self, surface, target_rect):
+        parent_w_factor = target_rect.w / target_rect.h
+        my_w_factor = self.width / self.height
+        if parent_w_factor > my_w_factor:
+            my_h = target_rect.h
+            my_w = my_h * my_w_factor
+            my_h_offset = 0
+            my_w_offset = _round_to_int((target_rect.w - my_w) * 0.5)
+        else:
+            my_w = target_rect.w
+            my_h = my_w / self.width * self.height
+            my_w_offset = 0
+            my_h_offset = _round_to_int((target_rect.h - my_h) * 0.5)
+        self.child._draw(surface, pygame.Rect(
+            target_rect.left + my_w_offset,
+            target_rect.top + my_h_offset,
+            my_w,
+            my_h
+        ))
+        
+
+
+
 class Circle(Fields.color.width[0]):
     """Draws a Circle in the assigned space.
     
@@ -326,7 +368,8 @@ class Fill:
     
     def _draw(self, surface, target_rect):
         surface.fill(self.color, target_rect)
-        self.child._draw(surface, target_rect)
+        if self.child:
+            self.child._draw(surface, target_rect)
 
 
 class Overlay:
