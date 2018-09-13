@@ -50,13 +50,13 @@ class testSurface:
         sleep(1)
 
     @staticmethod
-    def fill_padding_overlay():
+    def fill_padding_overlay_cross_border():
         frame = compose(screen.get_size(), Overlay)(
             Circle(0xFF00FF),
             Padding(0.1, 0.1, 0.1, 0.1)(Fill(0xFF0000)(
                  Padding.from_scale(0.5)(
                      Padding.from_scale(0.5, 1)(
-                        Cross(width=10))))),
+                        Border()(Cross(width=10)))))),
             green_ball
         )
         screen.blit(frame, (0, 0))
@@ -89,12 +89,12 @@ class testSurface:
         )
         screen.blit(frame, (0, 0))
         pygame.display.flip()
-        sleep(10)
+        sleep(1)
 
     @classmethod
     def test_basics(cls):
         testSurface.layout_surface()
-        testSurface.fill_padding_overlay()
+        testSurface.fill_padding_overlay_cross_border()
         testSurface.circle_brush_and_padding()
         testSurface.text_and_grid()
         testSurface.rectangle_shaper()

@@ -382,7 +382,7 @@ class Overlay:
             child._draw(surface, target_rect)
 
 
-class Cross(Fields.width[3].color[0]):
+def Cross(width=3, color=0):
     """Draws a cross centered in the target area
 
     :param width: width of the lines of the cross in pixels
@@ -390,22 +390,74 @@ class Cross(Fields.width[3].color[0]):
     :param color: color of the lines of the cross
     :type color: pygame.Color
     """
+    return Overlay(Line("h", width, color), Line("v", width, color))
+
+
+class Border:
+    """Draws a border around the contained area. Can have a single child.
+
+    :param width: width of the border in pixels
+    :type width: int
+    :param color: color of the border
+    :type color: pygame.Color
+    """
+    def __init__(self, width=3, color=0):
+        v_line = Line("v", width, color)
+        h_line = Line("h", width, color)
+        self.child_was_added = False
+        self.overlay = Overlay(
+            LinLayout("h")(
+                LLItem(0)(v_line),
+                LLItem(1),
+                LLItem(0)(v_line)
+            ),
+            LinLayout("v")(
+                LLItem(0)(h_line),
+                LLItem(1),
+                LLItem(0)(h_line)
+            )
+        )
+
+    def __call__(self, child):
+        _check_call_op(None if not self.child_was_added else 1)
+        self.overlay.children.append(child)
+        return self
+
     def _draw(self, surface, target_rect):
-        #draw vertical
-        pygame.draw.line(surface, self.color, (
-                _round_to_int(target_rect.left + target_rect.width * 0.5), 
-                target_rect.top), (
-                _round_to_int(target_rect.left + target_rect.width * 0.5), 
-                target_rect.top + target_rect.h - 1), 
-            self.width)
-        #draw horizontal
-        pygame.draw.line(surface, self.color, (
+        self.overlay._draw(surface, target_rect)
+
+
+class Line:
+    """Draws a line.
+
+    :param width: width of the line in pixels
+    :type widht: int
+    :param orientation: "v" or "h". Indicates whether the line should be
+        horizontal or vertical.
+    :type orientation: str
+    """
+    def __init__(self, orientation, width=3, color=0):
+        assert orientation in ["h", "v"]
+        assert width > 0
+        self.orientation = orientation
+        self.width = width
+        self.color = color
+
+    def _draw(self, surface, target_rect):
+        if self.orientation == "h":
+            pygame.draw.line(surface, self.color, (
                 target_rect.left, 
                 _round_to_int(target_rect.top + target_rect.h * 0.5)), (
                 target_rect.left + target_rect.w - 1, 
                 _round_to_int(target_rect.top + target_rect.h * 0.5)),
             self.width)
-
+        else:
+            pygame.draw.line(surface, self.color, (
+                _round_to_int(target_rect.left + target_rect.width * 0.5), 
+                target_rect.top), (
+                _round_to_int(target_rect.left + target_rect.width * 0.5), 
+                target_rect.top + target_rect.h - 1), 
+            self.width)
 
 _fill_col = lambda target_len: lambda col: col + [None] * (target_len - len(col))
 _to_h_layout = lambda cols: lambda children: LinLayout("h")(
