@@ -117,7 +117,7 @@ processed.</dd>
 <li><dl class="first docutils">
 <dt>It can return anything else (including None, which will be returned if no</dt>
 <dd>return value is specified) in this case the listen()-method will return
-the result of the handler, and drop all further events in the queue.</dd>
+the result of the handler.</dd>
 </dl>
 </li>
 </ol>
@@ -126,27 +126,8 @@ EventConsumerInfo.DONT_CARE</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="pyparadigm.eventlistener.EventListener.wait_for_keypress">
-<code class="descname">wait_for_keypress</code><span class="sig-paren">(</span><em>key</em>, <em>n=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/eventlistener.html#EventListener.wait_for_keypress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.eventlistener.EventListener.wait_for_keypress" title="Permalink to this definition">¶</a></dt>
-<dd><p>Waits till one key was pressed n times.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>key</strong> (<em>int</em>) – the key to be pressed as defined by pygame. E.g.
-pygame.K_LEFT for the left arrow key</li>
-<li><strong>n</strong> (<em>int</em>) – number of repetitions till the function returns</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyparadigm.eventlistener.EventListener.wait_for_keys_timed_out">
-<code class="descname">wait_for_keys_timed_out</code><span class="sig-paren">(</span><em>keys</em>, <em>timeout=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/eventlistener.html#EventListener.wait_for_keys_timed_out"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.eventlistener.EventListener.wait_for_keys_timed_out" title="Permalink to this definition">¶</a></dt>
+<dt id="pyparadigm.eventlistener.EventListener.wait_for_keys">
+<code class="descname">wait_for_keys</code><span class="sig-paren">(</span><em>keys</em>, <em>timeout=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/eventlistener.html#EventListener.wait_for_keys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.eventlistener.EventListener.wait_for_keys" title="Permalink to this definition">¶</a></dt>
 <dd><p>Waits until one of the specified keys was pressed, and returns 
 which key was pressed.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -170,6 +151,25 @@ which key was pressed.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="pyparadigm.eventlistener.EventListener.wait_for_n_keypresses">
+<code class="descname">wait_for_n_keypresses</code><span class="sig-paren">(</span><em>key</em>, <em>n=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/eventlistener.html#EventListener.wait_for_n_keypresses"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.eventlistener.EventListener.wait_for_n_keypresses" title="Permalink to this definition">¶</a></dt>
+<dd><p>Waits till one key was pressed n times.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>key</strong> (<em>int</em>) – the key to be pressed as defined by pygame. E.g.
+pygame.K_LEFT for the left arrow key</li>
+<li><strong>n</strong> (<em>int</em>) – number of repetitions till the function returns</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="pyparadigm.eventlistener.EventListener.wait_for_seconds">
 <code class="descname">wait_for_seconds</code><span class="sig-paren">(</span><em>seconds</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/eventlistener.html#EventListener.wait_for_seconds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.eventlistener.EventListener.wait_for_seconds" title="Permalink to this definition">¶</a></dt>
 <dd><p>basically time.sleep() but in the mean-time the permanent handlers 
@@ -179,27 +179,13 @@ are executed</p>
 </dd></dl>
 
 </div>
-<div class="section" id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
-<ul class="simple">
-<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
-<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
-<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
-</ul>
-</div>
 
 
           </div>
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">The EventListener module</a></li>
-<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
-</ul>
-<div class="relations">
+        <div class="sphinxsidebarwrapper"><div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>

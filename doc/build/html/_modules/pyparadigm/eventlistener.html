@@ -62,6 +62,7 @@
 <span class="kn">from</span> <span class="nn">enum</span> <span class="k">import</span> <span class="n">Enum</span>
 
 <span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">itertools</span> <span class="k">as</span> <span class="nn">itt</span>
 
 <div class="viewcode-block" id="EventConsumerInfo"><a class="viewcode-back" href="../../eventlistener.html#pyparadigm.eventlistener.EventConsumerInfo">[docs]</a><span class="k">class</span> <span class="nc">EventConsumerInfo</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Can be returned by event-handler functions to communicate with the listener.</span>
@@ -91,6 +92,7 @@
 
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">permanent_handlers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_ctrl_c_handler</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_q</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">if</span> <span class="n">use_ctrl_c_handler</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">permanent_handlers</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">EventListener</span><span class="o">.</span><span class="n">_exit_on_ctrl_c</span><span class="p">,</span>
@@ -99,6 +101,11 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">permanent_handlers</span> <span class="o">+=</span> <span class="n">permanent_handlers</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">permanent_handlers</span> <span class="o">=</span> <span class="n">permanent_handlers</span> <span class="ow">or</span> <span class="p">[]</span>
+
+
+    <span class="k">def</span> <span class="nf">_get_q</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_q</span> <span class="o">=</span> <span class="n">itt</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_q</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_q</span>
 
 
 <div class="viewcode-block" id="EventListener.listen"><a class="viewcode-back" href="../../eventlistener.html#pyparadigm.eventlistener.EventListener.listen">[docs]</a>    <span class="k">def</span> <span class="nf">listen</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">temporary_handlers</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
@@ -125,7 +132,7 @@
 
 <span class="sd">        3. It can return anything else (including None, which will be returned if no</span>
 <span class="sd">            return value is specified) in this case the listen()-method will return</span>
-<span class="sd">            the result of the handler, and drop all further events in the queue.</span>
+<span class="sd">            the result of the handler.</span>
 
 <span class="sd">        Therefore all permanent handlers should usually return</span>
 <span class="sd">        EventConsumerInfo.DONT_CARE</span>
@@ -135,16 +142,15 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">funcs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">permanent_handlers</span>
 
-        <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">pygame</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_q</span><span class="p">():</span>
             <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">funcs</span><span class="p">:</span>
-                <span class="c1">#import ipdb; ipdb.set_trace()</span>
                 <span class="n">ret</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">ret</span> <span class="o">==</span> <span class="n">EventConsumerInfo</span><span class="o">.</span><span class="n">CONSUMED</span><span class="p">:</span> <span class="k">break</span>
                 <span class="k">if</span> <span class="n">ret</span> <span class="o">==</span> <span class="n">EventConsumerInfo</span><span class="o">.</span><span class="n">DONT_CARE</span><span class="p">:</span> <span class="k">continue</span></div>
                 <span class="k">else</span><span class="p">:</span> <span class="k">return</span> <span class="n">ret</span>
 
 
-<div class="viewcode-block" id="EventListener.wait_for_keypress"><a class="viewcode-back" href="../../eventlistener.html#pyparadigm.eventlistener.EventListener.wait_for_keypress">[docs]</a>    <span class="k">def</span> <span class="nf">wait_for_keypress</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="EventListener.wait_for_n_keypresses"><a class="viewcode-back" href="../../eventlistener.html#pyparadigm.eventlistener.EventListener.wait_for_n_keypresses">[docs]</a>    <span class="k">def</span> <span class="nf">wait_for_n_keypresses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Waits till one key was pressed n times.</span>
 <span class="sd">        </span>
 <span class="sd">        :param key: the key to be pressed as defined by pygame. E.g.</span>
@@ -164,7 +170,7 @@
                 <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
 
 
-<div class="viewcode-block" id="EventListener.wait_for_keys_timed_out"><a class="viewcode-back" href="../../eventlistener.html#pyparadigm.eventlistener.EventListener.wait_for_keys_timed_out">[docs]</a>    <span class="k">def</span> <span class="nf">wait_for_keys_timed_out</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keys</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<div class="viewcode-block" id="EventListener.wait_for_keys"><a class="viewcode-back" href="../../eventlistener.html#pyparadigm.eventlistener.EventListener.wait_for_keys">[docs]</a>    <span class="k">def</span> <span class="nf">wait_for_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keys</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Waits until one of the specified keys was pressed, and returns </span>
 <span class="sd">        which key was pressed.</span>
 

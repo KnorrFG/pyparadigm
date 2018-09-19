@@ -16,7 +16,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="The EventListener module" href="eventlistener.html" />
-    <link rel="prev" title="Welcome to PyParadigm’s documentation!" href="index.html" />
+    <link rel="prev" title="Examples" href="examples.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -33,36 +33,30 @@
             
   <div class="section" id="module-pyparadigm.surface_composition">
 <span id="the-surface-composition-module"></span><h1>The Surface Composition module<a class="headerlink" href="#module-pyparadigm.surface_composition" title="Permalink to this headline">¶</a></h1>
-<p>Create pygame-surfaces in a declarative way</p>
 <p>The purpose of this module is to make it easy to compose the 
-frames that are displayed in a paradigm.</p>
-<p>When you use simple pygame to write a paradigm, you will spend a lot 
-of time writing code to compute the positions of the elemnts the surface
-is composed of. This module addresses this time-sink by offering a way to 
-define these postions in a declarative way. E.g. the code</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">frame</span> <span class="o">=</span> <span class="n">compose</span><span class="p">(</span><span class="n">screen</span><span class="o">.</span><span class="n">get_size</span><span class="p">(),</span> <span class="n">LinLayout</span><span class="p">(</span><span class="s2">&quot;h&quot;</span><span class="p">))(</span>
-    <span class="n">LLItem</span><span class="p">(</span><span class="mi">2</span><span class="p">)(</span><span class="n">red_ball</span><span class="p">),</span>
-    <span class="n">LinLayout</span><span class="p">(</span><span class="s2">&quot;v&quot;</span><span class="p">)(</span>
-        <span class="n">green_ball</span><span class="p">,</span>
-        <span class="n">Surface</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)(</span><span class="n">green_ball</span><span class="p">),</span> 
-        <span class="n">green_ball</span><span class="p">),</span>
-    <span class="n">red_ball</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<p>will create the following screen:</p>
-<div class="figure">
-<a class="reference internal image-reference" href="_images/example_screen.png"><img alt="example" src="_images/example_screen.png" style="width: 401.0px; height: 320.0px;" /></a>
-</div>
-<p>Of course there is code missing to create the balls and display 
-the surface on screen.</p>
-<p>The system works by returning context-objects, which all implement a
-draw-method. This basically creates a scene tree, where the 
-leave-objects, and handle the actual drawing. The Layouts just call draw on
-their children with the correct rectangles</p>
-<dl class="function">
+frames that are displayed in a paradigm. For an introduction, please refer to
+the <a class="reference internal" href="tutorial.html#creating-surfaces"><span class="std std-ref">tutorial</span></a></p>
+<dl class="class">
+<dt id="pyparadigm.surface_composition.Border">
+<em class="property">class </em><code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">Border</code><span class="sig-paren">(</span><em>width=3</em>, <em>color=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Border"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Border" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draws a border around the contained area. Can have a single child.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>width</strong> (<em>int</em>) – width of the border in pixels</li>
+<li><strong>color</strong> (<em>pygame.Color</em>) – color of the border</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
 <dt id="pyparadigm.surface_composition.Circle">
-<code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">Circle</code><span class="sig-paren">(</span><em>color</em>, <em>width=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Circle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Circle" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">Circle</code><span class="sig-paren">(</span><em>color</em>, <em>width=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Circle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Circle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draws a Circle in the assigned space.</p>
 <p>The circle will always be centered, and the radius will be half of the
 shorter side of the assigned space.</p>
@@ -98,9 +92,9 @@ shorter side of the assigned space.</p>
 </table>
 </dd></dl>
 
-<dl class="function">
+<dl class="class">
 <dt id="pyparadigm.surface_composition.Fill">
-<code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">Fill</code><span class="sig-paren">(</span><em>color</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Fill"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Fill" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">Fill</code><span class="sig-paren">(</span><em>color</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Fill"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Fill" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fills the assigned area. Afterwards, the children are rendered</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -131,9 +125,9 @@ system-font is loaded</li>
 </table>
 </dd></dl>
 
-<dl class="function">
+<dl class="class">
 <dt id="pyparadigm.surface_composition.LLItem">
-<code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">LLItem</code><span class="sig-paren">(</span><em>relative_size</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#LLItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.LLItem" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">LLItem</code><span class="sig-paren">(</span><em>relative_size</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#LLItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.LLItem" title="Permalink to this definition">¶</a></dt>
 <dd><p>Defines the relative size of an element in a LinLayout</p>
 <p>All Elements that are passed to a linear layout are automatically wrapped
 into an LLItem with relative_size=1. Therefore by default all elements
@@ -156,9 +150,9 @@ LLItem(1)(Circle(0xFFFF00)))</dd>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="class">
 <dt id="pyparadigm.surface_composition.LinLayout">
-<code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">LinLayout</code><span class="sig-paren">(</span><em>orientation</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#LinLayout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.LinLayout" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">LinLayout</code><span class="sig-paren">(</span><em>orientation</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#LinLayout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.LinLayout" title="Permalink to this definition">¶</a></dt>
 <dd><p>A linear layout to order items horizontally or vertically.</p>
 <p>Every element in the layout is automatically wrapped within a LLItem with
 relative_size=1, i.e. all elements get assigned an equal amount of space, to
@@ -176,20 +170,40 @@ proportions</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="pyparadigm.surface_composition.Margin">
-<em class="property">class </em><code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">Margin</code><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Margin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Margin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Defines the relative position of an item within a box, for details see Surface.</p>
+<dt id="pyparadigm.surface_composition.Line">
+<em class="property">class </em><code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">Line</code><span class="sig-paren">(</span><em>orientation</em>, <em>width=3</em>, <em>color=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Line" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draws a line.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>width</strong> – width of the line in pixels</li>
+<li><strong>orientation</strong> (<em>str</em>) – “v” or “h”. Indicates whether the line should be
+horizontal or vertical.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
-<dl class="function">
+<dl class="class">
+<dt id="pyparadigm.surface_composition.Margin">
+<em class="property">class </em><code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">Margin</code><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Margin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Margin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the relative position of an item within a Surface. 
+For details see Surface.</p>
+</dd></dl>
+
+<dl class="class">
 <dt id="pyparadigm.surface_composition.Overlay">
-<code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">Overlay</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Overlay"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Overlay" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">Overlay</code><span class="sig-paren">(</span><em>*children</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Overlay"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Overlay" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draws all its children on top of each other in the same rect</p>
 </dd></dl>
 
 <dl class="class">
 <dt id="pyparadigm.surface_composition.Padding">
-<em class="property">class </em><code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">Padding</code><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Padding"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Padding" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">Padding</code><span class="sig-paren">(</span><em>left</em>, <em>right</em>, <em>top</em>, <em>bottom</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Padding"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Padding" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pads a child element</p>
 <p>Each argument refers to a percentage of the axis it belongs to.
 A padding of (0.25, 0.25, 0.25, 0.25) would generate blocked area a quater of the
@@ -211,7 +225,7 @@ there would be no vertical padding.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>scale_w</strong> (<em>float</em>) – horizontal scaling factor</li>
+<li><strong>scale_w</strong> (<em>float</em>) – horizontal scaling factors</li>
 <li><strong>scale_h</strong> (<em>float</em>) – vertical scaling factor</li>
 </ul>
 </td>
@@ -222,9 +236,19 @@ there would be no vertical padding.</p>
 
 </dd></dl>
 
-<dl class="function">
+<dl class="class">
+<dt id="pyparadigm.surface_composition.RectangleShaper">
+<em class="property">class </em><code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">RectangleShaper</code><span class="sig-paren">(</span><em>width=1</em>, <em>height=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#RectangleShaper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.RectangleShaper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a padding, defined by a target Shape.</p>
+<p>Width and height are the relative proportions of the target rectangle.
+E.g RectangleShaper(1, 1) would create a square. and RectangleShaper(2, 1)
+would create a rectangle which is twice as wide as it is high.
+The rectangle always has the maximal possible size within the parent area.</p>
+</dd></dl>
+
+<dl class="class">
 <dt id="pyparadigm.surface_composition.Surface">
-<code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">Surface</code><span class="sig-paren">(</span><em>margin=Margin(left=1</em>, <em>right=1</em>, <em>top=1</em>, <em>bottom=1)</em>, <em>scale=0</em>, <em>smooth=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Surface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Surface" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">Surface</code><span class="sig-paren">(</span><em>margin=Margin(left=1</em>, <em>right=1</em>, <em>top=1</em>, <em>bottom=1)</em>, <em>scale=0</em>, <em>smooth=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Surface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Surface" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wraps a pygame surface.</p>
 <p>The Surface is the connection between the absolute world of pygame.Surfaces and the
 relative world of the composition functions. A pygame.Surfaces can be bigger than
@@ -298,7 +322,7 @@ in which case a new surface will be created</td>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="index.html" title="previous chapter">Welcome to PyParadigm’s documentation!</a></li>
+      <li>Previous: <a href="examples.html" title="previous chapter">Examples</a></li>
       <li>Next: <a href="eventlistener.html" title="next chapter">The EventListener module</a></li>
   </ul></li>
 </ul>

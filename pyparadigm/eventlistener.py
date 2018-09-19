@@ -112,14 +112,13 @@ class EventListener(object):
 
         for event in self._get_q():
             for func in funcs:
-                #import ipdb; ipdb.set_trace()
                 ret = func(event)
                 if ret == EventConsumerInfo.CONSUMED: break
                 if ret == EventConsumerInfo.DONT_CARE: continue
                 else: return ret
 
 
-    def wait_for_keypress(self, key, n=1):
+    def wait_for_n_keypresses(self, key, n=1):
         """Waits till one key was pressed n times.
         
         :param key: the key to be pressed as defined by pygame. E.g.
@@ -139,7 +138,7 @@ class EventListener(object):
                 counter += 1
 
 
-    def wait_for_keys_timed_out(self, keys, timeout=0):
+    def wait_for_keys(self, keys, timeout=0):
         """Waits until one of the specified keys was pressed, and returns 
         which key was pressed.
 

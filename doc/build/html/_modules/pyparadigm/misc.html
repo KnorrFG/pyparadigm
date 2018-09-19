@@ -1,0 +1,165 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>pyparadigm.misc &#8212; PyParadigm 0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for pyparadigm.misc</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;misc&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">pygame</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">surface_composition</span> <span class="k">as</span> <span class="n">sc</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">lru_cache</span>
+
+
+<div class="viewcode-block" id="init"><a class="viewcode-back" href="../../misc.html#pyparadigm.misc.init">[docs]</a><span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="n">resolution</span><span class="p">,</span> <span class="n">pygame_flags</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">display_pos</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)):</span>
+    <span class="sd">&quot;&quot;&quot;Creates a window of given resolution.</span>
+
+<span class="sd">    :param resolution: the resolution of the windows as (width, height) in</span>
+<span class="sd">        pixels</span>
+<span class="sd">    :type resolution: tuple</span>
+<span class="sd">    :param pygame_flags: modify the creation of the window.</span>
+<span class="sd">        For further information see :ref:`creating_a_window`</span>
+<span class="sd">    :type pygame_flags: int</span>
+<span class="sd">    :param display_pos: determines the position on the desktop where the</span>
+<span class="sd">        window is created. In a multi monitor system this can be used to position</span>
+<span class="sd">        the window on a different monitor. E.g. the monitor to the right of the</span>
+<span class="sd">        main-monitor would be at position (1920, 0) if the main monitor has the</span>
+<span class="sd">        width 1920.</span>
+<span class="sd">    :type display_pos: tuple</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;SDL_VIDEO_WINDOW_POS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">, </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">display_pos</span><span class="p">)</span>
+    <span class="n">pygame</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+    <span class="n">pygame</span><span class="o">.</span><span class="n">font</span><span class="o">.</span><span class="n">init</span><span class="p">()</span></div>
+    <span class="n">screen</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">set_mode</span><span class="p">(</span><span class="n">resolution</span><span class="p">,</span> <span class="n">pygame_flags</span><span class="p">)</span>
+
+<div class="viewcode-block" id="display"><a class="viewcode-back" href="../../misc.html#pyparadigm.misc.display">[docs]</a><span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="n">surface</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Displays a pygame.Surface in the window.</span>
+<span class="sd">    </span>
+<span class="sd">    in pygame the window is represented through a surface, on which you can draw</span>
+<span class="sd">    as on any other pygame.Surface. A refernce to to the screen can be optained</span>
+<span class="sd">    via the :py:func:`pygame.display.get_surface` function. To display the</span>
+<span class="sd">    contents of the screen surface in the window :py:func:`pygame.display.flip`</span>
+<span class="sd">    needs to be called.</span>
+<span class="sd">    </span>
+<span class="sd">    :py:func:`display` draws the surface onto the screen surface at the postion</span>
+<span class="sd">    (0, 0), and then calls :py:func:`flip`.</span>
+<span class="sd">    </span>
+<span class="sd">    :param surface: the pygame.Surface to display</span>
+<span class="sd">    :type surface: pygame.Surface</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">screen</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">get_surface</span><span class="p">()</span>
+    <span class="n">screen</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">surface</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span></div>
+    <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="slide_show"><a class="viewcode-back" href="../../misc.html#pyparadigm.misc.slide_show">[docs]</a><span class="k">def</span> <span class="nf">slide_show</span><span class="p">(</span><span class="n">slides</span><span class="p">,</span> <span class="n">continue_handler</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Displays one &quot;slide&quot; after another.</span>
+
+<span class="sd">    After displaying a slide, continue_handler is called without arguments.</span>
+<span class="sd">    When continue_handler returns, the next slide is displayed.</span>
+
+<span class="sd">    Usage example ::</span>
+
+<span class="sd">        slide_show(text_screens,</span>
+<span class="sd">                   partial(event_listener.wait_for_n_keypresses, pygame.K_RETURN))  </span>
+
+<span class="sd">    (partial is imported from the functools module.) </span>
+
+<span class="sd">    :param slides: pygame.Surfaces to be displayed.</span>
+<span class="sd">    :type slides: iterable</span>
+<span class="sd">    :param continue_handler: function, that returns when the next slide should</span>
+<span class="sd">        be displayed.</span>
+<span class="sd">    :type continue_handler: callable with arity 0.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">slide</span> <span class="ow">in</span> <span class="n">slides</span><span class="p">:</span>
+        <span class="n">display</span><span class="p">(</span><span class="n">slide</span><span class="p">)</span></div>
+        <span class="n">continue_handler</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="empty_surface"><a class="viewcode-back" href="../../misc.html#pyparadigm.misc.empty_surface">[docs]</a><span class="k">def</span> <span class="nf">empty_surface</span><span class="p">(</span><span class="n">fill_color</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns an empty surface filled with fill_color.</span>
+
+<span class="sd">    :param fill_color: color to fill the surface with</span>
+<span class="sd">    :type fill_color: pygame.Color</span>
+
+<span class="sd">    :param size: the size of the new surface, if None its created</span>
+<span class="sd">        to be the same size as the screen</span>
+<span class="sd">    :type size: int-2-tuple</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sr</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">get_surface</span><span class="p">()</span><span class="o">.</span><span class="n">get_rect</span><span class="p">()</span>
+    <span class="n">surf</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Surface</span><span class="p">(</span><span class="n">size</span> <span class="ow">or</span> <span class="p">(</span><span class="n">sr</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="n">sr</span><span class="o">.</span><span class="n">h</span><span class="p">))</span>
+    <span class="n">surf</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">fill_color</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">surf</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Felix G. Knorr.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,37 +1,6 @@
-"""Create pygame-surfaces in a declarative way
-
-The purpose of this module is to make it easy to compose the 
-frames that are displayed in a paradigm.
-
-When you use simple pygame to write a paradigm, you will spend a lot 
-of time writing code to compute the positions of the elemnts the surface
-is composed of. This module addresses this time-sink by offering a way to 
-define these postions in a declarative way. E.g. the code
-
-.. code-block:: python
-
-    frame = compose(screen.get_size(), LinLayout("h"))(
-        LLItem(2)(red_ball),
-        LinLayout("v")(
-            green_ball,
-            Surface(scale=0.1)(green_ball), 
-            green_ball),
-        red_ball
-    )
-
-will create the following screen:
-
-.. figure:: ../../doc/source/image/example_screen.png
-   :scale: 50 %
-   :alt: example
-
-Of course there is code missing to create the balls and display 
-the surface on screen.
-
-The system works by returning context-objects, which all implement a
-draw-method. This basically creates a scene tree, where the 
-leave-objects, and handle the actual drawing. The Layouts just call draw on
-their children with the correct rectangles
+"""The purpose of this module is to make it easy to compose the 
+frames that are displayed in a paradigm. For an introduction, please refer to
+the :ref:`tutorial<creating_surfaces>`
 """
 from functools import reduce, wraps, lru_cache, partial
 from itertools import accumulate
@@ -163,6 +132,9 @@ class Surface:
     blitting, and determines the concrete position, and if necessary (or
     desired) scales the input surface.
 
+    Warning: When images are scaled with smoothing, colors will change decently, which
+    makes it inappropriate to use in combination with colorkeys.
+
     :param margin: used to determine the exact location of the pygame.Surfaces within 
         the available space. The margin value represents the proportion of 
         the free space, along
@@ -260,12 +232,10 @@ class Padding:
         self.bottom = bottom
         self.child = None
 
-
     def __call__(self, child):
         _check_call_op(self.child)
         self.child = _wrap_children(child)
         return self
-
 
     @staticmethod
     def from_scale(scale_w, scale_h=None):
@@ -293,7 +263,6 @@ class RectangleShaper:
     """Creates a padding, defined by a target Shape.
 
     Width and height are the relative proportions of the target rectangle.
-    And comperator declares from which rec
     E.g RectangleShaper(1, 1) would create a square. and RectangleShaper(2, 1)
     would create a rectangle which is twice as wide as it is high.
     The rectangle always has the maximal possible size within the parent area.

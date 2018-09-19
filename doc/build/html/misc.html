@@ -1,0 +1,182 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>The Misc-Module &#8212; PyParadigm 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="The EventListener module" href="eventlistener.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-pyparadigm.misc">
+<span id="the-misc-module"></span><h1>The Misc-Module<a class="headerlink" href="#module-pyparadigm.misc" title="Permalink to this headline">¶</a></h1>
+<p>misc</p>
+<dl class="function">
+<dt id="pyparadigm.misc.display">
+<code class="descclassname">pyparadigm.misc.</code><code class="descname">display</code><span class="sig-paren">(</span><em>surface</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/misc.html#display"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.misc.display" title="Permalink to this definition">¶</a></dt>
+<dd><p>Displays a pygame.Surface in the window.</p>
+<p>in pygame the window is represented through a surface, on which you can draw
+as on any other pygame.Surface. A refernce to to the screen can be optained
+via the <code class="xref py py-func docutils literal notranslate"><span class="pre">pygame.display.get_surface()</span></code> function. To display the
+contents of the screen surface in the window <code class="xref py py-func docutils literal notranslate"><span class="pre">pygame.display.flip()</span></code>
+needs to be called.</p>
+<p><a class="reference internal" href="#pyparadigm.misc.display" title="pyparadigm.misc.display"><code class="xref py py-func docutils literal notranslate"><span class="pre">display()</span></code></a> draws the surface onto the screen surface at the postion
+(0, 0), and then calls <code class="xref py py-func docutils literal notranslate"><span class="pre">flip()</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>surface</strong> (<em>pygame.Surface</em>) – the pygame.Surface to display</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyparadigm.misc.empty_surface">
+<code class="descclassname">pyparadigm.misc.</code><code class="descname">empty_surface</code><span class="sig-paren">(</span><em>fill_color</em>, <em>size=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/misc.html#empty_surface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.misc.empty_surface" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an empty surface filled with fill_color.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>fill_color</strong> (<em>pygame.Color</em>) – color to fill the surface with</li>
+<li><strong>size</strong> (<em>int-2-tuple</em>) – the size of the new surface, if None its created
+to be the same size as the screen</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyparadigm.misc.init">
+<code class="descclassname">pyparadigm.misc.</code><code class="descname">init</code><span class="sig-paren">(</span><em>resolution</em>, <em>pygame_flags=0</em>, <em>display_pos=(0</em>, <em>0)</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/misc.html#init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.misc.init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a window of given resolution.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>resolution</strong> (<em>tuple</em>) – the resolution of the windows as (width, height) in
+pixels</li>
+<li><strong>pygame_flags</strong> (<em>int</em>) – modify the creation of the window.
+For further information see <a class="reference internal" href="tutorial.html#creating-a-window"><span class="std std-ref">Creating a Window</span></a></li>
+<li><strong>display_pos</strong> (<em>tuple</em>) – determines the position on the desktop where the
+window is created. In a multi monitor system this can be used to position
+the window on a different monitor. E.g. the monitor to the right of the
+main-monitor would be at position (1920, 0) if the main monitor has the
+width 1920.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyparadigm.misc.slide_show">
+<code class="descclassname">pyparadigm.misc.</code><code class="descname">slide_show</code><span class="sig-paren">(</span><em>slides</em>, <em>continue_handler</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/misc.html#slide_show"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.misc.slide_show" title="Permalink to this definition">¶</a></dt>
+<dd><p>Displays one “slide” after another.</p>
+<p>After displaying a slide, continue_handler is called without arguments.
+When continue_handler returns, the next slide is displayed.</p>
+<p>Usage example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slide_show</span><span class="p">(</span><span class="n">text_screens</span><span class="p">,</span>
+           <span class="n">partial</span><span class="p">(</span><span class="n">event_listener</span><span class="o">.</span><span class="n">wait_for_n_keypresses</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_RETURN</span><span class="p">))</span>  
+</pre></div>
+</div>
+<p>(partial is imported from the functools module.)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>slides</strong> (<em>iterable</em>) – pygame.Surfaces to be displayed.</li>
+<li><strong>continue_handler</strong> (<em>callable with arity 0.</em>) – function, that returns when the next slide should
+be displayed.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="eventlistener.html" title="previous chapter">The EventListener module</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/misc.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Felix G. Knorr.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/misc.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
