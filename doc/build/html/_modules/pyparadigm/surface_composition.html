@@ -164,6 +164,9 @@
 <span class="sd">    blitting, and determines the concrete position, and if necessary (or</span>
 <span class="sd">    desired) scales the input surface.</span>
 
+<span class="sd">    Warning: When images are scaled with smoothing, colors will change decently, which</span>
+<span class="sd">    makes it inappropriate to use in combination with colorkeys.</span>
+
 <span class="sd">    :param margin: used to determine the exact location of the pygame.Surfaces within </span>
 <span class="sd">        the available space. The margin value represents the proportion of </span>
 <span class="sd">        the free space, along</span>

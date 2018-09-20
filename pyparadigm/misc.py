@@ -22,11 +22,14 @@ def init(resolution, pygame_flags=0, display_pos=(0, 0)):
         main-monitor would be at position (1920, 0) if the main monitor has the
         width 1920.
     :type display_pos: tuple
+
+    :return: a reference to the display screen
+    :rtype: pygame.Surface
     """
     os.environ['SDL_VIDEO_WINDOW_POS'] = "{}, {}".format(*display_pos)
     pygame.init()
     pygame.font.init()
-    screen = pygame.display.set_mode(resolution, pygame_flags)
+    return pygame.display.set_mode(resolution, pygame_flags)
 
 def display(surface):
     """Displays a pygame.Surface in the window.

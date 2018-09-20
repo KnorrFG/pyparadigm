@@ -46,7 +46,7 @@ chooses the right option.
 
 And this is the script:
 
-.. literalinclude:: examples/itech.py
+.. literalinclude:: ../examples/itech.py
    :language: python
    :linenos:
 

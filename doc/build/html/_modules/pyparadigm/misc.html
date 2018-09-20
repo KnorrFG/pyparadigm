@@ -30,7 +30,7 @@
           <div class="body" role="main">
             
   <h1>Source code for pyparadigm.misc</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;misc&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Contains code that did not make it into an own module.&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">pygame</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">surface_composition</span> <span class="k">as</span> <span class="n">sc</span>
@@ -54,11 +54,14 @@
 <span class="sd">        main-monitor would be at position (1920, 0) if the main monitor has the</span>
 <span class="sd">        width 1920.</span>
 <span class="sd">    :type display_pos: tuple</span>
+
+<span class="sd">    :return: a reference to the display screen</span>
+<span class="sd">    :rtype: pygame.Surface</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;SDL_VIDEO_WINDOW_POS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">, </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">display_pos</span><span class="p">)</span>
     <span class="n">pygame</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
     <span class="n">pygame</span><span class="o">.</span><span class="n">font</span><span class="o">.</span><span class="n">init</span><span class="p">()</span></div>
-    <span class="n">screen</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">set_mode</span><span class="p">(</span><span class="n">resolution</span><span class="p">,</span> <span class="n">pygame_flags</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">set_mode</span><span class="p">(</span><span class="n">resolution</span><span class="p">,</span> <span class="n">pygame_flags</span><span class="p">)</span>
 
 <div class="viewcode-block" id="display"><a class="viewcode-back" href="../../misc.html#pyparadigm.misc.display">[docs]</a><span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="n">surface</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Displays a pygame.Surface in the window.</span>

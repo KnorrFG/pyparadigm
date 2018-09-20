@@ -255,6 +255,8 @@ relative world of the composition functions. A pygame.Surfaces can be bigger tha
 the space that is available to the Surface, or smaller. The Surface does the actual
 blitting, and determines the concrete position, and if necessary (or
 desired) scales the input surface.</p>
+<p>Warning: When images are scaled with smoothing, colors will change decently, which
+makes it inappropriate to use in combination with colorkeys.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />

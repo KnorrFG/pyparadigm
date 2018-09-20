@@ -1,11 +1,11 @@
 [build-system]
-requires = ["flit"]
+requires = ["flit", "pygame"]
 build-backend = "flit.buildapi"
 
 [tool.flit.metadata]
 module = "pyparadigm"
-author = "Felix Knorr"
-author-email = "knorr.felix@tu-dresden.de"
+author = "Felix G. Knorr"
+author-email = "felix.knorr@gmx.de"
 home-page = "http://None.com"
 classifiers = ["License :: OSI Approved :: MIT License"]
 

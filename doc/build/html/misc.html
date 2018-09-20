@@ -32,7 +32,7 @@
             
   <div class="section" id="module-pyparadigm.misc">
 <span id="the-misc-module"></span><h1>The Misc-Module<a class="headerlink" href="#module-pyparadigm.misc" title="Permalink to this headline">¶</a></h1>
-<p>misc</p>
+<p>Contains code that did not make it into an own module.</p>
 <dl class="function">
 <dt id="pyparadigm.misc.display">
 <code class="descclassname">pyparadigm.misc.</code><code class="descname">display</code><span class="sig-paren">(</span><em>surface</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/misc.html#display"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.misc.display" title="Permalink to this definition">¶</a></dt>
@@ -81,7 +81,7 @@ to be the same size as the screen</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>resolution</strong> (<em>tuple</em>) – the resolution of the windows as (width, height) in
 pixels</li>
 <li><strong>pygame_flags</strong> (<em>int</em>) – modify the creation of the window.
@@ -92,6 +92,12 @@ the window on a different monitor. E.g. the monitor to the right of the
 main-monitor would be at position (1920, 0) if the main monitor has the
 width 1920.</li>
 </ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">a reference to the display screen</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pygame.Surface</p>
 </td>
 </tr>
 </tbody>
