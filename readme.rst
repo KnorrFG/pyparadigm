@@ -1,7 +1,10 @@
 PyParadigm
 ==========
 
-Welcome to PyParadigm. You can find the documentation including an introduction
-and a tutorial over at: 
+PyParadigm is a small library to build paradigms for psychological experiments.
+It utilizes pygame, and is installable via pip ::
+    
+    pip install pyparadigm
 
-We have a git-repository too: https://github.com/KnorrFG/pyparadigm
+You can find the documentation including an introduction
+and a tutorial over at: https://pyparadigm.readthedocs.io/en/latest/index.html
