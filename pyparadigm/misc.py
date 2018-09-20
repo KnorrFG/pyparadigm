@@ -1,4 +1,4 @@
-"""misc"""
+"""Contains code that did not make it into an own module."""
 
 import pygame
 from . import surface_composition as sc
