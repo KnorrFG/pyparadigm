@@ -1,4 +1,6 @@
-"""The purpose of this module is to make it easy to compose the 
+"""Easy Image Composition
+
+The purpose of this module is to make it easy to compose the 
 frames that are displayed in a paradigm. For an introduction, please refer to
 the :ref:`tutorial<creating_surfaces>`
 """
