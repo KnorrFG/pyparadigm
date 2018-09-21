@@ -1,2 +1,2 @@
-"""A package to build psychological Paradigms"""
-__version__ = '0.9'
+"""A package to build psychological Paradigms. Based on PyGame"""
+__version__ = '1.0'

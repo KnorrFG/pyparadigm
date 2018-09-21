@@ -7,7 +7,11 @@ from itertools import cycle
 
 def render_frame(screen, frame):
     # This time we dont use :py:func:`misc.display` and instead draw directly
-    # onto the screen, and call flip() then to display it.
+    # onto the screen, and call flip() then to display it. Usually we would want
+    # to generate a screen with a function (with lru_cache), and then use
+    # :py:func:`misc.display` to blit the different screens. This way every
+    # screen is only computed once. This time though, no screens are computed,
+    # it is simply displaying an existing image, and no screens are reused.
     compose(screen)(Surface(scale=1)(frame))
     pygame.display.flip()
 
