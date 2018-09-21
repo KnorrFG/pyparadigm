@@ -14,3 +14,4 @@ requires = [
     "pygame (>=1.9.3)"
 ]
 requires-python = ">=3.5"
+description-file = "readme.rst"
