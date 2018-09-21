@@ -30,7 +30,9 @@
           <div class="body" role="main">
             
   <h1>Source code for pyparadigm.surface_composition</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;The purpose of this module is to make it easy to compose the </span>
+<span></span><span class="sd">&quot;&quot;&quot;Easy Image Composition</span>
+
+<span class="sd">The purpose of this module is to make it easy to compose the </span>
 <span class="sd">frames that are displayed in a paradigm. For an introduction, please refer to</span>
 <span class="sd">the :ref:`tutorial&lt;creating_surfaces&gt;`</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -39,7 +41,6 @@
 <span class="kn">from</span> <span class="nn">operator</span> <span class="k">import</span> <span class="n">add</span><span class="p">,</span> <span class="n">methodcaller</span>
 
 <span class="kn">import</span> <span class="nn">pygame</span>
-<span class="kn">from</span> <span class="nn">fields</span> <span class="k">import</span> <span class="n">Fields</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="n">_lmap</span> <span class="o">=</span> <span class="n">wraps</span><span class="p">(</span><span class="nb">map</span><span class="p">)(</span><span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)))</span>
 <span class="n">_wrap_surface</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">elem</span><span class="p">:</span>\
@@ -148,11 +149,16 @@
                     <span class="nb">zip</span><span class="p">(</span><span class="n">left_offsets</span><span class="p">,</span> <span class="n">top_offsets</span><span class="p">,</span> <span class="n">widths</span><span class="p">,</span> <span class="n">heights</span><span class="p">)]</span>
 
 
-<div class="viewcode-block" id="Margin"><a class="viewcode-back" href="../../surfacecomposition.html#pyparadigm.surface_composition.Margin">[docs]</a><span class="k">class</span> <span class="nc">Margin</span><span class="p">(</span><span class="n">Tuple</span><span class="o">.</span><span class="n">left</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">right</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">top</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">bottom</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span> 
+<div class="viewcode-block" id="Margin"><a class="viewcode-back" href="../../surfacecomposition.html#pyparadigm.surface_composition.Margin">[docs]</a><span class="k">class</span> <span class="nc">Margin</span><span class="p">:</span> 
     <span class="sd">&quot;&quot;&quot;Defines the relative position of an item within a Surface. </span>
 <span class="sd">    For details see Surface.</span>
-<span class="sd">    &quot;&quot;&quot;</span></div>
-    <span class="k">pass</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="s2">&quot;bottom&quot;</span><span class="p">]</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">left</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="o">=</span><span class="n">left</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="o">=</span><span class="n">right</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">top</span><span class="o">=</span><span class="n">top</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bottom</span><span class="o">=</span><span class="n">bottom</span>
 
 
 <div class="viewcode-block" id="Surface"><a class="viewcode-back" href="../../surfacecomposition.html#pyparadigm.surface_composition.Surface">[docs]</a><span class="k">class</span> <span class="nc">Surface</span><span class="p">:</span>
@@ -332,7 +338,7 @@
 
 
 
-<div class="viewcode-block" id="Circle"><a class="viewcode-back" href="../../surfacecomposition.html#pyparadigm.surface_composition.Circle">[docs]</a><span class="k">class</span> <span class="nc">Circle</span><span class="p">(</span><span class="n">Fields</span><span class="o">.</span><span class="n">color</span><span class="o">.</span><span class="n">width</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+<div class="viewcode-block" id="Circle"><a class="viewcode-back" href="../../surfacecomposition.html#pyparadigm.surface_composition.Circle">[docs]</a><span class="k">class</span> <span class="nc">Circle</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Draws a Circle in the assigned space.</span>
 <span class="sd">    </span>
 <span class="sd">    The circle will always be centered, and the radius will be half of the</span>
@@ -346,6 +352,10 @@
 <span class="sd">    </span>
 <span class="sd">    :type width: int</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">color</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">width</span>
+
     <span class="k">def</span> <span class="nf">_draw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> <span class="n">target_rect</span><span class="p">):</span>
         <span class="n">pygame</span><span class="o">.</span><span class="n">draw</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">surface</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">,</span> <span class="n">target_rect</span><span class="o">.</span><span class="n">center</span><span class="p">,</span> </div>
             <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">target_rect</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="n">target_rect</span><span class="o">.</span><span class="n">h</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">)),</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>

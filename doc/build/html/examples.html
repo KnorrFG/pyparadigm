@@ -15,7 +15,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="The Surface Composition module" href="surfacecomposition.html" />
+    <link rel="next" title="The Surface Composition Module" href="surfacecomposition.html" />
     <link rel="prev" title="A tutorial" href="tutorial.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
@@ -264,7 +264,11 @@ folder, and execute it from there.</p>
 48
 49
 50
-51</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pygame</span>
+51
+52
+53
+54
+55</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pygame</span>
 <span class="kn">from</span> <span class="nn">pyparadigm.misc</span> <span class="kn">import</span> <span class="n">init</span><span class="p">,</span> <span class="n">display</span><span class="p">,</span> <span class="n">empty_surface</span>
 <span class="kn">from</span> <span class="nn">pyparadigm.surface_composition</span> <span class="kn">import</span> <span class="n">compose</span><span class="p">,</span> <span class="n">Surface</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">Font</span>
 <span class="kn">from</span> <span class="nn">pyparadigm.eventlistener</span> <span class="kn">import</span> <span class="n">EventListener</span>
@@ -273,7 +277,11 @@ folder, and execute it from there.</p>
 
 <span class="k">def</span> <span class="nf">render_frame</span><span class="p">(</span><span class="n">screen</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
     <span class="c1"># This time we dont use :py:func:`misc.display` and instead draw directly</span>
-    <span class="c1"># onto the screen, and call flip() then to display it.</span>
+    <span class="c1"># onto the screen, and call flip() then to display it. Usually we would want</span>
+    <span class="c1"># to generate a screen with a function (with lru_cache), and then use</span>
+    <span class="c1"># :py:func:`misc.display` to blit the different screens. This way every</span>
+    <span class="c1"># screen is only computed once. This time though, no screens are computed,</span>
+    <span class="c1"># it is simply displaying an existing image, and no screens are reused.</span>
     <span class="n">compose</span><span class="p">(</span><span class="n">screen</span><span class="p">)(</span><span class="n">Surface</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">)(</span><span class="n">frame</span><span class="p">))</span>
     <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
 
@@ -339,7 +347,7 @@ folder, and execute it from there.</p>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
       <li>Previous: <a href="tutorial.html" title="previous chapter">A tutorial</a></li>
-      <li>Next: <a href="surfacecomposition.html" title="next chapter">The Surface Composition module</a></li>
+      <li>Next: <a href="surfacecomposition.html" title="next chapter">The Surface Composition Module</a></li>
   </ul></li>
 </ul>
 </div>
