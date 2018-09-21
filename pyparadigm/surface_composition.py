@@ -9,7 +9,6 @@ from itertools import accumulate
 from operator import add, methodcaller
 
 import pygame
-from fields import Fields, Tuple
 
 _lmap = wraps(map)(lambda *args, **kwargs:list(map(*args, **kwargs)))
 _wrap_surface = lambda elem:\
@@ -118,11 +117,16 @@ class LinLayout:
                     zip(left_offsets, top_offsets, widths, heights)]
 
 
-class Margin(Tuple.left[1].right[1].top[1].bottom[1]): 
+class Margin: 
     """Defines the relative position of an item within a Surface. 
     For details see Surface.
     """
-    pass
+    __slots__ = ["left", "right", "top", "bottom"]
+    def __init__(self, left=1, right=1, top=1, bottom=1):
+        self.left=left
+        self.right=right
+        self.top=top
+        self.bottom=bottom
 
 
 class Surface:
@@ -302,7 +306,7 @@ class RectangleShaper:
 
 
 
-class Circle(Fields.color.width[0]):
+class Circle:
     """Draws a Circle in the assigned space.
     
     The circle will always be centered, and the radius will be half of the
@@ -316,6 +320,10 @@ class Circle(Fields.color.width[0]):
     
     :type width: int
     """
+    def __init__(self, color, width=0):
+        self.color = color
+        self.width = width
+
     def _draw(self, surface, target_rect):
         pygame.draw.circle(surface, self.color, target_rect.center, 
             int(round(min(target_rect.w, target_rect.h) * 0.5)), self.width)
