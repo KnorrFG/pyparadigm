@@ -1,4 +1,14 @@
-"""A package to build psychological Paradigms. Based on PyGame"""
+"""A package to build psychological Paradigms. Based on PyGame
+
+Changelog:
+    pending:
+        * added imports on package level
+
+    1.0.1:
+        * Added PyPi readme
+
+    1.0 - release
+"""
 __version__ = '1.0.1'
 
 

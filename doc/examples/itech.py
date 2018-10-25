@@ -4,6 +4,7 @@ from pyparadigm.misc import empty_surface, display, init
 from pyparadigm.eventlistener import EventListener
 
 import json
+import time
 
 # Scroll to the bottom, and start reading in the main() ;)
 
@@ -47,22 +48,26 @@ def main():
     # Create an Eventlistener object
     event_listener = EventListener()
 
-    # Initiate the data for the paradigm, and create 2 lists to store 
+    # Initiate the data for the paradigm, and create 2 lists to store
     # the results
     immediate_offers = ([10] * 3) + ([20] * 3) + ([30] * 3)
     delays = [10, 20, 30] * 3
-    delayed_offers = [delay + im_offer 
+    delayed_offers = [delay + im_offer
         for delay, im_offer in zip(delays, immediate_offers)]
     chosen_amounts = []
     chosen_delays = []
+    reaction_times = []
 
     # Execute the paradigm
     for im_offer, del_offer, delay in zip(immediate_offers, delayed_offers, delays):
         # display the offer
         display(make_offer(im_offer, del_offer, delay))
+        offer_onset = time.time()
 
         # wait for a decision in form of the left or right arrow-key
         key = event_listener.wait_for_keys([pygame.K_LEFT, pygame.K_RIGHT])
+        # calculate reaction time and save it
+        reaction_times.append(time.time() - offer_onset)
 
         # store results according to decision
         if key == pygame.K_LEFT:
@@ -71,15 +76,16 @@ def main():
         else:
             chosen_amounts.append(del_offer)
             chosen_delays.append(delay)
-        
+
         # display a feedback for 2 seconds
         display(make_feedback(chosen_amounts[-1], chosen_delays[-1]))
         event_listener.wait_for_seconds(2)
 
     # save results to a json File
     with open("results.json", "w") as file:
-        json.dump({"amount": chosen_amounts, "delay": chosen_delays}, file)
+        json.dump({"amount": chosen_amounts, "delay": chosen_delays,
+                   "reaction_times": reaction_times}, file)
 
-        
+
 if __name__ == '__main__':
     main()
