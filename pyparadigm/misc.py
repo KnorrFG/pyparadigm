@@ -6,10 +6,28 @@ import pygame
 from . import surface_composition as sc
 
 import os
+import time
 from functools import lru_cache
+from threading import Thread
+
+class _PumpThread(Thread):
+    """See the documentation for the interactive_mode arg from :ref:`init`"""
+    def run(self):
+        while self._run:
+            pygame.event.pump()
+            time.sleep(0.1)
+
+    def stop(self):
+        self._run = False
+        self.join()
+
+    def __init__(self):
+        super().__init__()
+        self._run = True
+        self.start()
 
 
-def init(resolution, pygame_flags=0, display_pos=(0, 0)):
+def init(resolution, pygame_flags=0, display_pos=(0, 0), interactive_mode=False):
     """Creates a window of given resolution.
 
     :param resolution: the resolution of the windows as (width, height) in
@@ -24,14 +42,28 @@ def init(resolution, pygame_flags=0, display_pos=(0, 0)):
         main-monitor would be at position (1920, 0) if the main monitor has the
         width 1920.
     :type display_pos: tuple
+    :param interactive_mode: Will install a thread, that emptys the
+        event-queue every 100ms. This is neccessary to be able to use the
+        display() function in an interactive console on windows systems.
+        If interactive_mode is set, init() will return a reference to the
+        background thread. This thread has a stop() method which can be used to
+        cancel it. If you use ctrl+d or exit() within ipython, while the thread
+        is still running, ipython will become unusable, but not close. 
+    :type interactive_mode: bool
 
-    :return: a reference to the display screen
+    :return: a reference to the display screen, or a reference to the background
+        thread if interactive_mode was set to true. In the second scenario you
+        can obtain a reference to the display surface via
+        pygame.display.get_surface()
+        
     :rtype: pygame.Surface
     """
+
     os.environ['SDL_VIDEO_WINDOW_POS'] = "{}, {}".format(*display_pos)
     pygame.init()
     pygame.font.init()
-    return pygame.display.set_mode(resolution, pygame_flags)
+    disp = pygame.display.set_mode(resolution, pygame_flags)
+    return _PumpThread() if interactive_mode else disp
 
 def display(surface):
     """Displays a pygame.Surface in the window.
