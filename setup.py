@@ -13,7 +13,7 @@ install_requires = \
 ['pygame>=1.9.3']
 
 setup(name='pyparadigm',
-      version='0.9',
+      version='1.0.2',
       description='A package to build psychological Paradigms',
       author='Felix G. Knorr',
       author_email='knorr.felix@gmx.de',
