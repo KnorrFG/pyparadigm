@@ -212,7 +212,7 @@ has already three methods that should suffice for most needs:
 
 * :py:func:`wait_for_n_keypresses` will return if a specified key was
     pressed n times.
-* :py:func:`wait_for_keys` will return if one of a list of given keys
+* :py:func:`wait_for_keys` will return if one of the given keys
     was pressed and return the pressed key. It also supports a timeout; when the
     timeout is reached without a user pressing one of the keys, ``None`` is
     returned.

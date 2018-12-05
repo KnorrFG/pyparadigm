@@ -1,5 +1,5 @@
 """A package to build psychological Paradigms. Based on PyGame """
-__version__ = '1.0.2'
+__version__ = '1.0.3'
 
 
 from .eventlistener import EventConsumerInfo, EventListener

@@ -9,10 +9,11 @@
     <title>pyparadigm.misc &#8212; PyParadigm 0.1 documentation</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -27,6 +28,8 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <h1>Source code for pyparadigm.misc</h1><div class="highlight"><pre>
@@ -38,10 +41,28 @@
 <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">surface_composition</span> <span class="k">as</span> <span class="n">sc</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">lru_cache</span>
+<span class="kn">from</span> <span class="nn">threading</span> <span class="k">import</span> <span class="n">Thread</span>
+
+<span class="k">class</span> <span class="nc">_PumpThread</span><span class="p">(</span><span class="n">Thread</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;See the documentation for the interactive_mode arg from :ref:`init`&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">:</span>
+            <span class="n">pygame</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">pump</span><span class="p">()</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 
 
-<div class="viewcode-block" id="init"><a class="viewcode-back" href="../../misc.html#pyparadigm.misc.init">[docs]</a><span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="n">resolution</span><span class="p">,</span> <span class="n">pygame_flags</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">display_pos</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)):</span>
+<div class="viewcode-block" id="init"><a class="viewcode-back" href="../../misc.html#pyparadigm.misc.init">[docs]</a><span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="n">resolution</span><span class="p">,</span> <span class="n">pygame_flags</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">display_pos</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">interactive_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Creates a window of given resolution.</span>
 
 <span class="sd">    :param resolution: the resolution of the windows as (width, height) in</span>
@@ -56,14 +77,28 @@
 <span class="sd">        main-monitor would be at position (1920, 0) if the main monitor has the</span>
 <span class="sd">        width 1920.</span>
 <span class="sd">    :type display_pos: tuple</span>
+<span class="sd">    :param interactive_mode: Will install a thread, that emptys the</span>
+<span class="sd">        event-queue every 100ms. This is neccessary to be able to use the</span>
+<span class="sd">        display() function in an interactive console on windows systems.</span>
+<span class="sd">        If interactive_mode is set, init() will return a reference to the</span>
+<span class="sd">        background thread. This thread has a stop() method which can be used to</span>
+<span class="sd">        cancel it. If you use ctrl+d or exit() within ipython, while the thread</span>
+<span class="sd">        is still running, ipython will become unusable, but not close. </span>
+<span class="sd">    :type interactive_mode: bool</span>
 
-<span class="sd">    :return: a reference to the display screen</span>
+<span class="sd">    :return: a reference to the display screen, or a reference to the background</span>
+<span class="sd">        thread if interactive_mode was set to true. In the second scenario you</span>
+<span class="sd">        can obtain a reference to the display surface via</span>
+<span class="sd">        pygame.display.get_surface()</span>
+<span class="sd">        </span>
 <span class="sd">    :rtype: pygame.Surface</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;SDL_VIDEO_WINDOW_POS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">, </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">display_pos</span><span class="p">)</span>
     <span class="n">pygame</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
-    <span class="n">pygame</span><span class="o">.</span><span class="n">font</span><span class="o">.</span><span class="n">init</span><span class="p">()</span></div>
-    <span class="k">return</span> <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">set_mode</span><span class="p">(</span><span class="n">resolution</span><span class="p">,</span> <span class="n">pygame_flags</span><span class="p">)</span>
+    <span class="n">pygame</span><span class="o">.</span><span class="n">font</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+    <span class="n">disp</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">set_mode</span><span class="p">(</span><span class="n">resolution</span><span class="p">,</span> <span class="n">pygame_flags</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_PumpThread</span><span class="p">()</span> <span class="k">if</span> <span class="n">interactive_mode</span> <span class="k">else</span> <span class="n">disp</span></div>
 
 <div class="viewcode-block" id="display"><a class="viewcode-back" href="../../misc.html#pyparadigm.misc.display">[docs]</a><span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="n">surface</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Displays a pygame.Surface in the window.</span>
@@ -81,8 +116,8 @@
 <span class="sd">    :type surface: pygame.Surface</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">screen</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">get_surface</span><span class="p">()</span>
-    <span class="n">screen</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">surface</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span></div>
-    <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
+    <span class="n">screen</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">surface</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="slide_show"><a class="viewcode-back" href="../../misc.html#pyparadigm.misc.slide_show">[docs]</a><span class="k">def</span> <span class="nf">slide_show</span><span class="p">(</span><span class="n">slides</span><span class="p">,</span> <span class="n">continue_handler</span><span class="p">):</span>
@@ -105,8 +140,8 @@
 <span class="sd">    :type continue_handler: callable with arity 0.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">slide</span> <span class="ow">in</span> <span class="n">slides</span><span class="p">:</span>
-        <span class="n">display</span><span class="p">(</span><span class="n">slide</span><span class="p">)</span></div>
-        <span class="n">continue_handler</span><span class="p">()</span>
+        <span class="n">display</span><span class="p">(</span><span class="n">slide</span><span class="p">)</span>
+        <span class="n">continue_handler</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="empty_surface"><a class="viewcode-back" href="../../misc.html#pyparadigm.misc.empty_surface">[docs]</a><span class="k">def</span> <span class="nf">empty_surface</span><span class="p">(</span><span class="n">fill_color</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -121,15 +156,36 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">sr</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">get_surface</span><span class="p">()</span><span class="o">.</span><span class="n">get_rect</span><span class="p">()</span>
     <span class="n">surf</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Surface</span><span class="p">(</span><span class="n">size</span> <span class="ow">or</span> <span class="p">(</span><span class="n">sr</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="n">sr</span><span class="o">.</span><span class="n">h</span><span class="p">))</span>
-    <span class="n">surf</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">fill_color</span><span class="p">)</span></div>
-    <span class="k">return</span> <span class="n">surf</span>
+    <span class="n">surf</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">fill_color</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">surf</span></div>
 </pre></div>
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper"><div class="relations">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">PyParadigm</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">A tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../surfacecomposition.html">The Surface Composition Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../eventlistener.html">The Event Listener Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../misc.html">The Misc-Module</a></li>
+</ul>
+
+<div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../../index.html">Documentation overview</a><ul>
@@ -150,6 +206,14 @@
     </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -158,8 +222,8 @@
       &copy;2018, Felix G. Knorr.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

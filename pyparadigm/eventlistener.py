@@ -39,6 +39,14 @@ class EventConsumerInfo(Enum):
     CONSUMED = 1
 
 
+def _is_iterable(val):
+    try:
+        some_object_iterator = iter(val)
+        return True
+    except TypeError as te:
+        return False
+
+
 class EventListener(object):
     """
     :param permanent_handlers: iterable of permanent handlers
@@ -138,11 +146,12 @@ class EventListener(object):
                 counter += 1
 
 
-    def wait_for_keys(self, keys, timeout=0):
+    def wait_for_keys(self, *keys, timeout=0):
         """Waits until one of the specified keys was pressed, and returns 
         which key was pressed.
 
-        :param keys: iterable of integers of pygame-keycodes
+        :param keys: iterable of integers of pygame-keycodes, or simply 
+            multiple keys passed via multiple arguments
         :type keys: iterable
         :param timeout: number of seconds to wait till the function returns
         :type timeout: float
@@ -150,6 +159,9 @@ class EventListener(object):
         :returns: The keycode of the pressed key, or None in case of timeout
         :rtype: int
         """
+        if len(keys) == 1 and _is_iterable(keys[0]):
+            keys = keys[0]
+            
         listeners = tuple(lambda e, key=key: key \
                         if e.type == pygame.KEYDOWN and e.key == key \
                         else EventConsumerInfo.DONT_CARE 

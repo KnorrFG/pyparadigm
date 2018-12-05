@@ -9,10 +9,11 @@
     <title>Examples &#8212; PyParadigm 0.1 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="The Surface Composition Module" href="surfacecomposition.html" />
@@ -29,6 +30,8 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="examples">
@@ -121,12 +124,19 @@
 82
 83
 84
-85</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pygame</span>
+85
+86
+87
+88
+89
+90
+91</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pygame</span>
 <span class="kn">from</span> <span class="nn">pyparadigm.surface_composition</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">pyparadigm.misc</span> <span class="kn">import</span> <span class="n">empty_surface</span><span class="p">,</span> <span class="n">display</span><span class="p">,</span> <span class="n">init</span>
 <span class="kn">from</span> <span class="nn">pyparadigm.eventlistener</span> <span class="kn">import</span> <span class="n">EventListener</span>
 
 <span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">time</span>
 
 <span class="c1"># Scroll to the bottom, and start reading in the main() ;)</span>
 
@@ -170,22 +180,26 @@
     <span class="c1"># Create an Eventlistener object</span>
     <span class="n">event_listener</span> <span class="o">=</span> <span class="n">EventListener</span><span class="p">()</span>
 
-    <span class="c1"># Initiate the data for the paradigm, and create 2 lists to store </span>
+    <span class="c1"># Initiate the data for the paradigm, and create 2 lists to store</span>
     <span class="c1"># the results</span>
     <span class="n">immediate_offers</span> <span class="o">=</span> <span class="p">([</span><span class="mi">10</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="p">([</span><span class="mi">20</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="p">([</span><span class="mi">30</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span>
     <span class="n">delays</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
-    <span class="n">delayed_offers</span> <span class="o">=</span> <span class="p">[</span><span class="n">delay</span> <span class="o">+</span> <span class="n">im_offer</span> 
+    <span class="n">delayed_offers</span> <span class="o">=</span> <span class="p">[</span><span class="n">delay</span> <span class="o">+</span> <span class="n">im_offer</span>
         <span class="k">for</span> <span class="n">delay</span><span class="p">,</span> <span class="n">im_offer</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">delays</span><span class="p">,</span> <span class="n">immediate_offers</span><span class="p">)]</span>
     <span class="n">chosen_amounts</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">chosen_delays</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">reaction_times</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="c1"># Execute the paradigm</span>
     <span class="k">for</span> <span class="n">im_offer</span><span class="p">,</span> <span class="n">del_offer</span><span class="p">,</span> <span class="n">delay</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">immediate_offers</span><span class="p">,</span> <span class="n">delayed_offers</span><span class="p">,</span> <span class="n">delays</span><span class="p">):</span>
         <span class="c1"># display the offer</span>
         <span class="n">display</span><span class="p">(</span><span class="n">make_offer</span><span class="p">(</span><span class="n">im_offer</span><span class="p">,</span> <span class="n">del_offer</span><span class="p">,</span> <span class="n">delay</span><span class="p">))</span>
+        <span class="n">offer_onset</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 
         <span class="c1"># wait for a decision in form of the left or right arrow-key</span>
         <span class="n">key</span> <span class="o">=</span> <span class="n">event_listener</span><span class="o">.</span><span class="n">wait_for_keys</span><span class="p">([</span><span class="n">pygame</span><span class="o">.</span><span class="n">K_LEFT</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_RIGHT</span><span class="p">])</span>
+        <span class="c1"># calculate reaction time and save it</span>
+        <span class="n">reaction_times</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">offer_onset</span><span class="p">)</span>
 
         <span class="c1"># store results according to decision</span>
         <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_LEFT</span><span class="p">:</span>
@@ -194,16 +208,17 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">chosen_amounts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">del_offer</span><span class="p">)</span>
             <span class="n">chosen_delays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">delay</span><span class="p">)</span>
-        
+
         <span class="c1"># display a feedback for 2 seconds</span>
         <span class="n">display</span><span class="p">(</span><span class="n">make_feedback</span><span class="p">(</span><span class="n">chosen_amounts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">chosen_delays</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
         <span class="n">event_listener</span><span class="o">.</span><span class="n">wait_for_seconds</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 
     <span class="c1"># save results to a json File</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;results.json&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="nb">file</span><span class="p">:</span>
-        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">({</span><span class="s2">&quot;amount&quot;</span><span class="p">:</span> <span class="n">chosen_amounts</span><span class="p">,</span> <span class="s2">&quot;delay&quot;</span><span class="p">:</span> <span class="n">chosen_delays</span><span class="p">},</span> <span class="nb">file</span><span class="p">)</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">({</span><span class="s2">&quot;amount&quot;</span><span class="p">:</span> <span class="n">chosen_amounts</span><span class="p">,</span> <span class="s2">&quot;delay&quot;</span><span class="p">:</span> <span class="n">chosen_delays</span><span class="p">,</span>
+                   <span class="s2">&quot;reaction_times&quot;</span><span class="p">:</span> <span class="n">reaction_times</span><span class="p">},</span> <span class="nb">file</span><span class="p">)</span>
 
-        
+
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
 </pre></div>
@@ -326,22 +341,631 @@ folder, and execute it from there.</p>
 </pre></div>
 </td></tr></table></div>
 </div>
+<div class="section" id="stroop-task">
+<span id="stroop"></span><h2>Stroop Task<a class="headerlink" href="#stroop-task" title="Permalink to this headline">¶</a></h2>
+<p>This example is more serious, and implements a stroop task with a two-stage
+training procedure.</p>
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>  1
+  2
+  3
+  4
+  5
+  6
+  7
+  8
+  9
+ 10
+ 11
+ 12
+ 13
+ 14
+ 15
+ 16
+ 17
+ 18
+ 19
+ 20
+ 21
+ 22
+ 23
+ 24
+ 25
+ 26
+ 27
+ 28
+ 29
+ 30
+ 31
+ 32
+ 33
+ 34
+ 35
+ 36
+ 37
+ 38
+ 39
+ 40
+ 41
+ 42
+ 43
+ 44
+ 45
+ 46
+ 47
+ 48
+ 49
+ 50
+ 51
+ 52
+ 53
+ 54
+ 55
+ 56
+ 57
+ 58
+ 59
+ 60
+ 61
+ 62
+ 63
+ 64
+ 65
+ 66
+ 67
+ 68
+ 69
+ 70
+ 71
+ 72
+ 73
+ 74
+ 75
+ 76
+ 77
+ 78
+ 79
+ 80
+ 81
+ 82
+ 83
+ 84
+ 85
+ 86
+ 87
+ 88
+ 89
+ 90
+ 91
+ 92
+ 93
+ 94
+ 95
+ 96
+ 97
+ 98
+ 99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot; This script contains an example implementation of the stroop task. </span>
+
+<span class="sd">The easiest way to understand this code is to start reading in the main</span>
+<span class="sd">function, and then read every function when it&#39;s called first</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">islice</span><span class="p">,</span> <span class="n">repeat</span>
+
+<span class="kn">import</span> <span class="nn">pygame</span>
+
+<span class="kn">from</span> <span class="nn">pyparadigm</span> <span class="kn">import</span> <span class="p">(</span><span class="n">EventListener</span><span class="p">,</span> <span class="n">Fill</span><span class="p">,</span> <span class="n">Font</span><span class="p">,</span> <span class="n">LinLayout</span><span class="p">,</span> <span class="n">LLItem</span><span class="p">,</span> <span class="n">Padding</span><span class="p">,</span>
+                        <span class="n">RectangleShaper</span><span class="p">,</span> <span class="n">Surface</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">compose</span><span class="p">,</span> <span class="n">display</span><span class="p">,</span>
+                        <span class="n">empty_surface</span><span class="p">,</span> <span class="n">init</span><span class="p">,</span> <span class="n">slide_show</span><span class="p">)</span>
+
+<span class="c1"># ================================================================================</span>
+<span class="c1"># Just Configuration</span>
+<span class="c1"># ================================================================================</span>
+<span class="n">n_train_1_trials</span> <span class="o">=</span> <span class="mi">30</span>
+<span class="n">n_train_2_trials</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">trials_per_block</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">intro_text</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Welcome to the Stroop-demo.</span>
+<span class="s2">In this task you will be presented with words naming colors</span>
+<span class="s2">which are written in a colored font.</span>
+<span class="s2">You will either have to indicate the name of the color, or the</span>
+<span class="s2">color of the font, using the arrow keys.</span>
+
+<span class="s2">Press Return to continue.</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">,</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">To indicate the color you will have to use the number keys,</span>
+
+<span class="sd">1 for red</span>
+<span class="sd">2 for green</span>
+<span class="sd">3 for blue</span>
+
+<span class="sd">press Return to continue</span>
+<span class="sd">&quot;&quot;&quot;</span><span class="p">,</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">First you will learn the mappings by heart.</span>
+<span class="sd">To do so you will be displayed with the mappings, after %d trials</span>
+<span class="sd">the mappings won&#39;t be shown any more. Then after %d</span>
+<span class="sd">correct trials, the main task will start.</span>
+<span class="sd">&quot;&quot;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">n_train_1_trials</span><span class="p">,</span> <span class="n">n_train_2_trials</span><span class="p">)]</span>
+
+
+<span class="n">pre_hidden_training_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Now we will hide the mapping, and the task will continue until you answered</span>
+<span class="s2">correctly </span><span class="si">%d</span><span class="s2"> times.</span>
+
+<span class="s2">Press Return to continue&quot;&quot;&quot;</span> <span class="o">%</span> <span class="n">n_train_2_trials</span>
+
+
+<span class="n">post_hidden_training_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">The training was succesful.</span>
+
+<span class="s2">Press Return to continue&quot;&quot;&quot;</span>
+
+
+<span class="n">pre_text_block_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Now, we begin with the test. Please indicate the color </span>
+<span class="s2">that is named by the letters</span>
+
+<span class="s2">Press Return to continue</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+
+<span class="n">post_test_block_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Now, please indicate the color in which </span>
+<span class="s2">the word is written</span>
+
+<span class="s2">Press Return to continue</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+
+<span class="n">end_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">The task is complete, thank you for your participation</span>
+<span class="s2">Press Return to escape</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="c1"># ================================================================================</span>
+<span class="c1"># some utility functions</span>
+<span class="c1"># ================================================================================</span>
+
+<span class="nd">@lru_cache</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">text</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="c1"># This is our configuration of how to display text, with the arial font, and</span>
+    <span class="c1"># a pointsize of 30.</span>
+    <span class="c1"># Due to the way text is plotted it needs the information of an alphachannel</span>
+    <span class="c1"># therefore it is not possible to simply pass the hex-code of the color, but it </span>
+    <span class="c1"># is necessary to create a pygame.Color object. For which, again, it is necessary</span>
+    <span class="c1"># to multiply the hex code with 0x100 to respect the alphachannel</span>
+    <span class="k">return</span> <span class="n">Text</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">Font</span><span class="p">(</span><span class="s2">&quot;Arial&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">30</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="n">pygame</span><span class="o">.</span><span class="n">Color</span><span class="p">(</span><span class="n">color</span> <span class="o">*</span> <span class="mh">0x100</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">_bg</span><span class="p">():</span>
+    <span class="c1"># short for background</span>
+    <span class="k">return</span> <span class="n">empty_surface</span><span class="p">(</span><span class="mh">0xFFFFFF</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">display_text</span><span class="p">(</span><span class="n">s</span><span class="p">:</span><span class="nb">str</span><span class="p">):</span>
+    <span class="n">display</span><span class="p">(</span><span class="n">compose</span><span class="p">(</span><span class="n">_bg</span><span class="p">())(</span><span class="n">text</span><span class="p">(</span><span class="n">s</span><span class="p">)))</span>
+
+
+<span class="k">def</span> <span class="nf">display_text_and_wait</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">el</span><span class="p">:</span> <span class="n">EventListener</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_RETURN</span><span class="p">):</span>
+    <span class="n">display_text</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="n">el</span><span class="o">.</span><span class="n">wait_for_keys</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+
+<span class="c1"># ================================================================================</span>
+<span class="c1"># Main Program</span>
+<span class="c1"># ================================================================================</span>
+<span class="k">class</span> <span class="nc">Color</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">red</span> <span class="o">=</span> <span class="mh">0xFF0000</span>
+    <span class="n">green</span> <span class="o">=</span> <span class="mh">0x00FF00</span>
+    <span class="n">blue</span> <span class="o">=</span> <span class="mh">0x0000FF</span>
+
+
+<span class="n">colors</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">Color</span><span class="p">)</span>
+
+
+<span class="n">key_color_mapping</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nb">eval</span><span class="p">(</span><span class="s2">&quot;pygame.K_</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)):</span> <span class="n">color</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">Color</span><span class="p">)</span>
+<span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">display_intro</span><span class="p">(</span><span class="n">el</span><span class="p">:</span> <span class="n">EventListener</span><span class="p">):</span>
+    <span class="c1"># the first argument for slide_show must be an iterable of pygame.Surface</span>
+    <span class="c1"># to create it we render the text onto an empty surface with the map()</span>
+    <span class="c1"># function. slide_show displays one slide, and then calls the function that</span>
+    <span class="c1"># is passed to it as second argument. When this function returns, the next</span>
+    <span class="c1"># slide is displayed and the function is called again. The function that is </span>
+    <span class="c1"># passed simply waits for the return key</span>
+    <span class="n">slides</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">compose</span><span class="p">(</span><span class="n">_bg</span><span class="p">())(</span><span class="n">text</span><span class="p">(</span><span class="n">s</span><span class="p">)),</span> <span class="n">intro_text</span><span class="p">)</span>
+    <span class="n">slide_show</span><span class="p">(</span><span class="n">slides</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">el</span><span class="o">.</span><span class="n">wait_for_keys</span><span class="p">(</span><span class="n">pygame</span><span class="o">.</span><span class="n">K_RETURN</span><span class="p">))</span>
+
+
+<span class="nd">@lru_cache</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">make_train_stim</span><span class="p">(</span><span class="nb">type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="n">Color</span><span class="p">):</span>
+    <span class="c1"># encapsulates the creation of a training stim. Either a square of the given</span>
+    <span class="c1"># or the name of the color as text, they are wrapped by a RectangleShaper, </span>
+    <span class="c1"># by default, will create a square</span>
+    <span class="k">assert</span> <span class="nb">type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;color&quot;</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">RectangleShaper</span><span class="p">()(</span>
+        <span class="n">text</span><span class="p">(</span><span class="n">color</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="s2">&quot;text&quot;</span> <span class="k">else</span> <span class="n">Fill</span><span class="p">(</span><span class="n">color</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">make_color_mapping</span><span class="p">():</span>
+    <span class="c1"># The mapping is a horizontal layout consisting of groups of</span>
+    <span class="c1"># a text element describing the key, and a square containing the color</span>
+    <span class="c1"># we use make_train_stim() to create the square, and add a LLItem(1) in</span>
+    <span class="c1"># the back and the front to get visible gaps between the groups.</span>
+    <span class="c1"># The * in from of the list is used to expand the list to the arguments</span>
+    <span class="c1"># for the LinLayouts inner function.</span>
+    <span class="k">return</span> <span class="n">LinLayout</span><span class="p">(</span><span class="s2">&quot;h&quot;</span><span class="p">)(</span><span class="o">*</span><span class="p">[</span><span class="n">LinLayout</span><span class="p">(</span><span class="s2">&quot;h&quot;</span><span class="p">)(</span><span class="n">LLItem</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">text</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">key</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)),</span>
+                                           <span class="n">make_train_stim</span><span class="p">(</span><span class="s2">&quot;color&quot;</span><span class="p">,</span> <span class="n">color</span><span class="p">),</span> <span class="n">LLItem</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+                            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">Color</span><span class="p">)])</span>
+
+
+<span class="nd">@lru_cache</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">render_train_screen</span><span class="p">(</span><span class="n">show_mapping</span><span class="p">,</span> <span class="n">stim_type</span><span class="p">,</span> <span class="n">target_color</span><span class="p">):</span>
+    <span class="c1"># the contents are aranged in a vertical layout, topmost is the</span>
+    <span class="c1"># title &quot;target color&quot;, followed by the stim for training (either a</span>
+    <span class="c1"># square containing the color, or the word naming the color)</span>
+    <span class="c1"># in the Bottom there is the information which key is mapped to which</span>
+    <span class="c1"># color. But its only displayed optionally</span>
+
+    <span class="k">return</span> <span class="n">compose</span><span class="p">(</span><span class="n">_bg</span><span class="p">(),</span> <span class="n">LinLayout</span><span class="p">(</span><span class="s2">&quot;v&quot;</span><span class="p">))(</span>
+        <span class="c1"># Create the Text</span>
+        <span class="n">text</span><span class="p">(</span><span class="s2">&quot;target color:&quot;</span><span class="p">),</span>
+
+        <span class="c1"># Create the stimulus, and scale it down a little.</span>
+        <span class="n">Padding</span><span class="o">.</span><span class="n">from_scale</span><span class="p">(</span><span class="mf">0.3</span><span class="p">)(</span><span class="n">make_train_stim</span><span class="p">(</span><span class="n">stim_type</span><span class="p">,</span> <span class="n">target_color</span><span class="p">)),</span>
+
+        <span class="c1"># Up till here the content is static, but displaying the mapping is optionally</span>
+        <span class="c1"># and depends on the parameter, therefore we either add the mapping, or</span>
+        <span class="c1"># an LLItem(1) as placeholder</span>
+        <span class="n">make_color_mapping</span><span class="p">()</span> <span class="k">if</span> <span class="n">show_mapping</span> <span class="k">else</span> <span class="n">LLItem</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">do_train_trial</span><span class="p">(</span><span class="n">event_listener</span><span class="p">:</span> <span class="n">EventListener</span><span class="p">,</span> <span class="n">show_mapping</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">stim_type</span><span class="p">:</span>
+                   <span class="nb">str</span><span class="p">,</span> <span class="n">target_color</span><span class="p">:</span> <span class="n">Color</span><span class="p">):</span>
+    <span class="c1"># displays a training_screen</span>
+    <span class="n">display</span><span class="p">(</span><span class="n">render_train_screen</span><span class="p">(</span><span class="n">show_mapping</span><span class="p">,</span> <span class="n">stim_type</span><span class="p">,</span> <span class="n">target_color</span><span class="p">))</span>
+
+    <span class="c1"># waits for a response</span>
+    <span class="n">response_key</span> <span class="o">=</span> <span class="n">event_listener</span><span class="o">.</span><span class="n">wait_for_keys</span><span class="p">(</span><span class="n">key_color_mapping</span><span class="p">)</span>
+
+    <span class="c1"># returns whether the response was correct</span>
+    <span class="k">return</span> <span class="n">key_color_mapping</span><span class="p">[</span><span class="n">response_key</span><span class="p">]</span> <span class="o">==</span> <span class="n">target_color</span>
+
+
+<span class="k">def</span> <span class="nf">rand_elem</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;returns a random element from seq n times. If n is None, it continues indefinitly&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">map</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">,</span> <span class="n">repeat</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="k">if</span> <span class="n">n</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">repeat</span><span class="p">(</span><span class="n">seq</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">until_n_correct</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+    <span class="n">n_correct</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">n_correct</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">func</span><span class="p">():</span>
+            <span class="n">n_correct</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">n_correct</span> <span class="o">=</span> <span class="mi">0</span>
+
+
+<span class="k">def</span> <span class="nf">do_training</span><span class="p">(</span><span class="n">el</span><span class="p">:</span> <span class="n">EventListener</span><span class="p">):</span>
+    <span class="n">arguments</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">rand_elem</span><span class="p">([</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;color&quot;</span><span class="p">]),</span> <span class="n">rand_elem</span><span class="p">(</span><span class="n">colors</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">stim_type</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="n">islice</span><span class="p">(</span><span class="n">arguments</span><span class="p">,</span> <span class="n">n_train_1_trials</span><span class="p">):</span>
+        <span class="n">do_train_trial</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="n">stim_type</span><span class="p">,</span> <span class="n">color</span><span class="p">)</span>
+
+    <span class="n">display_text_and_wait</span><span class="p">(</span><span class="n">pre_hidden_training_text</span><span class="p">,</span> <span class="n">el</span><span class="p">)</span>
+    <span class="n">until_n_correct</span><span class="p">(</span><span class="n">n_train_2_trials</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">do_train_trial</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="o">*</span><span class="nb">next</span><span class="p">(</span><span class="n">arguments</span><span class="p">)))</span>    
+    <span class="n">display_text_and_wait</span><span class="p">(</span><span class="n">post_hidden_training_text</span><span class="p">,</span> <span class="n">el</span><span class="p">)</span>
+
+
+<span class="nd">@lru_cache</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">render_trial_screen</span><span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="n">font_color</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">compose</span><span class="p">(</span><span class="n">_bg</span><span class="p">(),</span> <span class="n">LinLayout</span><span class="p">(</span><span class="s2">&quot;v&quot;</span><span class="p">))(</span>
+        <span class="c1"># Create the Text</span>
+        <span class="n">text</span><span class="p">(</span><span class="s2">&quot;Which color is named by the letters?&quot;</span> <span class="k">if</span> <span class="n">target</span> <span class="o">==</span> <span class="s2">&quot;text&quot;</span>
+             <span class="k">else</span> <span class="s2">&quot;What&#39;s the color of the word?&quot;</span><span class="p">),</span>
+
+        <span class="c1"># Create the stimulus, and scale it down a little.</span>
+        <span class="n">Padding</span><span class="o">.</span><span class="n">from_scale</span><span class="p">(</span><span class="mf">0.3</span><span class="p">)(</span><span class="n">text</span><span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="n">font_color</span><span class="p">)),</span>
+        <span class="n">LLItem</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">)</span>
+
+
+<span class="n">BlockResult</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;BlockResult&quot;</span><span class="p">,</span> <span class="s2">&quot;RT word font_color response was_correct&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">run_block</span><span class="p">(</span><span class="n">event_listener</span><span class="p">:</span> <span class="n">EventListener</span><span class="p">,</span> <span class="n">by</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">n_trials</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span><span class="o">-&gt;</span> <span class="n">BlockResult</span><span class="p">:</span>
+    <span class="k">assert</span> <span class="n">by</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;color&quot;</span><span class="p">]</span>
+    <span class="n">RTs</span> <span class="o">=</span> <span class="p">[];</span> <span class="n">words</span> <span class="o">=</span> <span class="p">[];</span> <span class="n">fonts</span> <span class="o">=</span> <span class="p">[];</span> <span class="n">responses</span> <span class="o">=</span> <span class="p">[];</span> <span class="n">was_correct</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">word</span><span class="p">,</span> <span class="n">font</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">rand_elem</span><span class="p">(</span><span class="n">colors</span><span class="p">,</span> <span class="n">n_trials</span><span class="p">),</span> <span class="n">rand_elem</span><span class="p">(</span><span class="n">colors</span><span class="p">)):</span>
+        <span class="n">words</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+        <span class="n">fonts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">font</span><span class="p">)</span>
+        <span class="n">display</span><span class="p">(</span><span class="n">render_trial_screen</span><span class="p">(</span><span class="n">word</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">font</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">by</span><span class="p">))</span>
+
+        <span class="c1"># We use this to record reaction times</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">response_key</span> <span class="o">=</span> <span class="n">event_listener</span><span class="o">.</span><span class="n">wait_for_keys</span><span class="p">(</span><span class="n">key_color_mapping</span><span class="p">)</span>
+
+        <span class="c1"># Now the reaction time is just now - then</span>
+        <span class="n">RTs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">key_color_mapping</span><span class="p">[</span><span class="n">response_key</span><span class="p">]</span> 
+        <span class="n">responses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+        <span class="n">was_correct</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">response</span> <span class="o">==</span> <span class="p">(</span><span class="n">word</span> <span class="k">if</span> <span class="n">by</span> <span class="o">==</span> <span class="s2">&quot;text&quot;</span> <span class="k">else</span> <span class="n">font</span><span class="p">))</span>
+    
+    <span class="k">return</span> <span class="n">BlockResult</span><span class="p">(</span><span class="n">RTs</span><span class="p">,</span> <span class="n">words</span><span class="p">,</span> <span class="n">fonts</span><span class="p">,</span> <span class="n">responses</span><span class="p">,</span> <span class="n">was_correct</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">save_results</span><span class="p">(</span><span class="n">text_res</span><span class="p">:</span> <span class="n">BlockResult</span><span class="p">,</span> <span class="n">font_res</span><span class="p">:</span> <span class="n">BlockResult</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;results.tsv&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">((</span><span class="s2">&quot;by&quot;</span><span class="p">,)</span> <span class="o">+</span> <span class="n">BlockResult</span><span class="o">.</span><span class="n">_fields</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">text_res</span><span class="p">):</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">((</span><span class="s2">&quot;text&quot;</span><span class="p">,)</span> <span class="o">+</span> <span class="n">line</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">font_res</span><span class="p">):</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">((</span><span class="s2">&quot;font&quot;</span><span class="p">,)</span> <span class="o">+</span> <span class="n">line</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="c1"># create the pygame window. It has a resolution of 1024 x 800 pixels</span>
+    <span class="n">init</span><span class="p">((</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">800</span><span class="p">))</span>
+
+    <span class="c1"># create an event listener that will be used through the whole program</span>
+    <span class="n">event_listener</span> <span class="o">=</span> <span class="n">EventListener</span><span class="p">()</span>
+    <span class="n">display_intro</span><span class="p">(</span><span class="n">event_listener</span><span class="p">)</span>
+    <span class="n">do_training</span><span class="p">(</span><span class="n">event_listener</span><span class="p">)</span>
+    
+    <span class="n">display_text_and_wait</span><span class="p">(</span><span class="n">pre_text_block_text</span><span class="p">,</span> <span class="n">event_listener</span><span class="p">)</span>
+    <span class="n">text_block_results</span> <span class="o">=</span> <span class="n">run_block</span><span class="p">(</span><span class="n">event_listener</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span>
+                                   <span class="n">n_trials</span><span class="o">=</span><span class="n">trials_per_block</span><span class="p">)</span>
+    <span class="n">display_text_and_wait</span><span class="p">(</span><span class="n">post_test_block_text</span><span class="p">,</span> <span class="n">event_listener</span><span class="p">)</span>
+    <span class="n">color_block_results</span> <span class="o">=</span> <span class="n">run_block</span><span class="p">(</span><span class="n">event_listener</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="s2">&quot;color&quot;</span><span class="p">,</span>
+                                    <span class="n">n_trials</span><span class="o">=</span><span class="n">trials_per_block</span><span class="p">)</span>
+    <span class="n">display_text_and_wait</span><span class="p">(</span><span class="n">end_text</span><span class="p">,</span> <span class="n">event_listener</span><span class="p">)</span>
+
+    <span class="n">save_results</span><span class="p">(</span><span class="n">text_block_results</span><span class="p">,</span> <span class="n">color_block_results</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</td></tr></table></div>
+</div>
 </div>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">Examples</a><ul>
-<li><a class="reference internal" href="#inter-temporal-choice-task">Inter-temporal Choice Task</a></li>
-<li><a class="reference internal" href="#flashing-checkerboard">Flashing Checkerboard</a></li>
+<h1 class="logo"><a href="index.html">PyParadigm</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">A tutorial</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#inter-temporal-choice-task">Inter-temporal Choice Task</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#flashing-checkerboard">Flashing Checkerboard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#stroop-task">Stroop Task</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="surfacecomposition.html">The Surface Composition Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eventlistener.html">The Event Listener Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="misc.html">The Misc-Module</a></li>
 </ul>
+
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
@@ -351,13 +975,6 @@ folder, and execute it from there.</p>
   </ul></li>
 </ul>
 </div>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/examples.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <div class="searchformwrapper">
@@ -370,6 +987,14 @@ folder, and execute it from there.</p>
     </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -378,8 +1003,8 @@ folder, and execute it from there.</p>
       &copy;2018, Felix G. Knorr.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="_sources/examples.rst.txt"

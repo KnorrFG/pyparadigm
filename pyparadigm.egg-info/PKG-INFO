@@ -1,0 +1,11 @@
+Metadata-Version: 1.2
+Name: pyparadigm
+Version: 1.0.2
+Summary: A package to build psychological Paradigms
+Home-page: https://github.com/KnorrFG/pyparadigm
+Author: Felix G. Knorr
+Author-email: knorr.felix@gmx.de
+License: UNKNOWN
+Description: UNKNOWN
+Platform: UNKNOWN
+Requires-Python: >=3.5

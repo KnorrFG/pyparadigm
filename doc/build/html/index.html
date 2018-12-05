@@ -9,10 +9,11 @@
     <title>Welcome to PyParadigm &#8212; PyParadigm 0.1 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="A tutorial" href="tutorial.html" />
@@ -28,6 +29,8 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="welcome-to-pyparadigm">
@@ -148,12 +151,19 @@ chooses the right option.</p>
 82
 83
 84
-85</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pygame</span>
+85
+86
+87
+88
+89
+90
+91</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pygame</span>
 <span class="kn">from</span> <span class="nn">pyparadigm.surface_composition</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">pyparadigm.misc</span> <span class="kn">import</span> <span class="n">empty_surface</span><span class="p">,</span> <span class="n">display</span><span class="p">,</span> <span class="n">init</span>
 <span class="kn">from</span> <span class="nn">pyparadigm.eventlistener</span> <span class="kn">import</span> <span class="n">EventListener</span>
 
 <span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">time</span>
 
 <span class="c1"># Scroll to the bottom, and start reading in the main() ;)</span>
 
@@ -197,22 +207,26 @@ chooses the right option.</p>
     <span class="c1"># Create an Eventlistener object</span>
     <span class="n">event_listener</span> <span class="o">=</span> <span class="n">EventListener</span><span class="p">()</span>
 
-    <span class="c1"># Initiate the data for the paradigm, and create 2 lists to store </span>
+    <span class="c1"># Initiate the data for the paradigm, and create 2 lists to store</span>
     <span class="c1"># the results</span>
     <span class="n">immediate_offers</span> <span class="o">=</span> <span class="p">([</span><span class="mi">10</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="p">([</span><span class="mi">20</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="p">([</span><span class="mi">30</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span>
     <span class="n">delays</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
-    <span class="n">delayed_offers</span> <span class="o">=</span> <span class="p">[</span><span class="n">delay</span> <span class="o">+</span> <span class="n">im_offer</span> 
+    <span class="n">delayed_offers</span> <span class="o">=</span> <span class="p">[</span><span class="n">delay</span> <span class="o">+</span> <span class="n">im_offer</span>
         <span class="k">for</span> <span class="n">delay</span><span class="p">,</span> <span class="n">im_offer</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">delays</span><span class="p">,</span> <span class="n">immediate_offers</span><span class="p">)]</span>
     <span class="n">chosen_amounts</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">chosen_delays</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">reaction_times</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="c1"># Execute the paradigm</span>
     <span class="k">for</span> <span class="n">im_offer</span><span class="p">,</span> <span class="n">del_offer</span><span class="p">,</span> <span class="n">delay</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">immediate_offers</span><span class="p">,</span> <span class="n">delayed_offers</span><span class="p">,</span> <span class="n">delays</span><span class="p">):</span>
         <span class="c1"># display the offer</span>
         <span class="n">display</span><span class="p">(</span><span class="n">make_offer</span><span class="p">(</span><span class="n">im_offer</span><span class="p">,</span> <span class="n">del_offer</span><span class="p">,</span> <span class="n">delay</span><span class="p">))</span>
+        <span class="n">offer_onset</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 
         <span class="c1"># wait for a decision in form of the left or right arrow-key</span>
         <span class="n">key</span> <span class="o">=</span> <span class="n">event_listener</span><span class="o">.</span><span class="n">wait_for_keys</span><span class="p">([</span><span class="n">pygame</span><span class="o">.</span><span class="n">K_LEFT</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_RIGHT</span><span class="p">])</span>
+        <span class="c1"># calculate reaction time and save it</span>
+        <span class="n">reaction_times</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">offer_onset</span><span class="p">)</span>
 
         <span class="c1"># store results according to decision</span>
         <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_LEFT</span><span class="p">:</span>
@@ -221,16 +235,17 @@ chooses the right option.</p>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">chosen_amounts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">del_offer</span><span class="p">)</span>
             <span class="n">chosen_delays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">delay</span><span class="p">)</span>
-        
+
         <span class="c1"># display a feedback for 2 seconds</span>
         <span class="n">display</span><span class="p">(</span><span class="n">make_feedback</span><span class="p">(</span><span class="n">chosen_amounts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">chosen_delays</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
         <span class="n">event_listener</span><span class="o">.</span><span class="n">wait_for_seconds</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 
     <span class="c1"># save results to a json File</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;results.json&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="nb">file</span><span class="p">:</span>
-        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">({</span><span class="s2">&quot;amount&quot;</span><span class="p">:</span> <span class="n">chosen_amounts</span><span class="p">,</span> <span class="s2">&quot;delay&quot;</span><span class="p">:</span> <span class="n">chosen_delays</span><span class="p">},</span> <span class="nb">file</span><span class="p">)</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">({</span><span class="s2">&quot;amount&quot;</span><span class="p">:</span> <span class="n">chosen_amounts</span><span class="p">,</span> <span class="s2">&quot;delay&quot;</span><span class="p">:</span> <span class="n">chosen_delays</span><span class="p">,</span>
+                   <span class="s2">&quot;reaction_times&quot;</span><span class="p">:</span> <span class="n">reaction_times</span><span class="p">},</span> <span class="nb">file</span><span class="p">)</span>
 
-        
+
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
 </pre></div>
@@ -252,6 +267,7 @@ chooses the right option.</p>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="examples.html#inter-temporal-choice-task">Inter-temporal Choice Task</a></li>
 <li class="toctree-l2"><a class="reference internal" href="examples.html#flashing-checkerboard">Flashing Checkerboard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#stroop-task">Stroop Task</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="surfacecomposition.html">The Surface Composition Module</a></li>
@@ -263,10 +279,31 @@ chooses the right option.</p>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper"><div class="relations">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">PyParadigm</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">A tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="surfacecomposition.html">The Surface Composition Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eventlistener.html">The Event Listener Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="misc.html">The Misc-Module</a></li>
+</ul>
+
+<div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="#">Documentation overview</a><ul>
@@ -274,13 +311,6 @@ chooses the right option.</p>
   </ul></li>
 </ul>
 </div>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/index.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <div class="searchformwrapper">
@@ -293,6 +323,14 @@ chooses the right option.</p>
     </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -301,8 +339,8 @@ chooses the right option.</p>
       &copy;2018, Felix G. Knorr.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="_sources/index.rst.txt"

@@ -28,3 +28,14 @@ folder, and execute it from there.
    :language: python
    :linenos:
 
+
+.. _stroop:
+
+Stroop Task
+-----------
+This example is more serious, and implements a stroop task with a two-stage
+training procedure.
+
+.. literalinclude:: ../examples/stroop.py
+   :language: python
+   :linenos:

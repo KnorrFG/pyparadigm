@@ -11,6 +11,9 @@ and a tutorial over at: https://pyparadigm.readthedocs.io/en/latest/index.html
 
 Changelog
 ---------
+* Pending for 1.0.3
+    * EventListener.wait_for_keys supports varargs now
+
 * 1.0.2:
     * added imports on package level
     * added interactive parameter for misc

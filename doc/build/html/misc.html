@@ -9,10 +9,11 @@
     <title>The Misc-Module &#8212; PyParadigm 0.1 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="The Event Listener Module" href="eventlistener.html" />
@@ -28,6 +29,8 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="module-pyparadigm.misc">
@@ -75,7 +78,7 @@ to be the same size as the screen</li>
 
 <dl class="function">
 <dt id="pyparadigm.misc.init">
-<code class="descclassname">pyparadigm.misc.</code><code class="descname">init</code><span class="sig-paren">(</span><em>resolution</em>, <em>pygame_flags=0</em>, <em>display_pos=(0</em>, <em>0)</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/misc.html#init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.misc.init" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pyparadigm.misc.</code><code class="descname">init</code><span class="sig-paren">(</span><em>resolution</em>, <em>pygame_flags=0</em>, <em>display_pos=(0</em>, <em>0)</em>, <em>interactive_mode=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/misc.html#init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.misc.init" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a window of given resolution.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -91,10 +94,20 @@ window is created. In a multi monitor system this can be used to position
 the window on a different monitor. E.g. the monitor to the right of the
 main-monitor would be at position (1920, 0) if the main monitor has the
 width 1920.</li>
+<li><strong>interactive_mode</strong> (<em>bool</em>) – Will install a thread, that emptys the
+event-queue every 100ms. This is neccessary to be able to use the
+display() function in an interactive console on windows systems.
+If interactive_mode is set, init() will return a reference to the
+background thread. This thread has a stop() method which can be used to
+cancel it. If you use ctrl+d or exit() within ipython, while the thread
+is still running, ipython will become unusable, but not close.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">a reference to the display screen</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">a reference to the display screen, or a reference to the background
+thread if interactive_mode was set to true. In the second scenario you
+can obtain a reference to the display surface via
+pygame.display.get_surface()</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pygame.Surface</p>
@@ -135,10 +148,31 @@ be displayed.</li>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper"><div class="relations">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">PyParadigm</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">A tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="surfacecomposition.html">The Surface Composition Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eventlistener.html">The Event Listener Module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">The Misc-Module</a></li>
+</ul>
+
+<div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
@@ -146,13 +180,6 @@ be displayed.</li>
   </ul></li>
 </ul>
 </div>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/misc.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <div class="searchformwrapper">
@@ -165,6 +192,14 @@ be displayed.</li>
     </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -173,8 +208,8 @@ be displayed.</li>
       &copy;2018, Felix G. Knorr.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="_sources/misc.rst.txt"
