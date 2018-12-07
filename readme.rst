@@ -11,7 +11,14 @@ and a tutorial over at: https://pyparadigm.readthedocs.io/en/latest/index.html
 
 Changelog
 ---------
-* Pending for 1.0.3
+
+* 1.0.4
+    * Added EventListener.wait_for_keys_modified
+    * Added the extra module containing functions to use numpy arrays
+        and Matplotlib colormaps
+    * This is not documented yet
+    
+* 1.0.3
     * EventListener.wait_for_keys supports varargs now
 
 * 1.0.2:

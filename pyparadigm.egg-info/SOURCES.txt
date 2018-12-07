@@ -1,5 +1,6 @@
 pyparadigm/__init__.py
 pyparadigm/eventlistener.py
+pyparadigm/extras.py
 pyparadigm/misc.py
 pyparadigm/surface_composition.py
 pyparadigm.egg-info/PKG-INFO

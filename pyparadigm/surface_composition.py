@@ -8,7 +8,9 @@ from functools import reduce, wraps, lru_cache, partial
 from itertools import accumulate
 from operator import add, methodcaller
 
-import pygame
+import contextlib
+with contextlib.redirect_stdout(None):
+    import pygame
 
 _lmap = wraps(map)(lambda *args, **kwargs:list(map(*args, **kwargs)))
 _wrap_surface = lambda elem:\
