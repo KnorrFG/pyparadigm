@@ -1,0 +1,154 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>pyparadigm.extras &#8212; PyParadigm 0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for pyparadigm.extras</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Using functionality from this file requires extra dependencies.&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">cm</span>
+
+<span class="kn">import</span> <span class="nn">contextlib</span>
+<span class="k">with</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">redirect_stdout</span><span class="p">(</span><span class="kc">None</span><span class="p">):</span>
+    <span class="kn">import</span> <span class="nn">pygame</span>
+
+
+<span class="k">def</span> <span class="nf">_normalize</span><span class="p">(</span><span class="n">mat</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;rescales a numpy array, so that min is 0 and max is 255&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">((</span><span class="n">mat</span> <span class="o">-</span> <span class="n">mat</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">*</span> <span class="p">(</span><span class="mi">255</span> <span class="o">/</span> <span class="n">mat</span><span class="o">.</span><span class="n">max</span><span class="p">()))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="to_24bit_gray"><a class="viewcode-back" href="../../extras.html#pyparadigm.extras.to_24bit_gray">[docs]</a><span class="k">def</span> <span class="nf">to_24bit_gray</span><span class="p">(</span><span class="n">mat</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;returns a matrix that contains RGB channels, and colors scaled</span>
+<span class="sd">    from 0 to 255&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">_normalize</span><span class="p">(</span><span class="n">mat</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="mi">3</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="apply_color_map"><a class="viewcode-back" href="../../extras.html#pyparadigm.extras.apply_color_map">[docs]</a><span class="k">def</span> <span class="nf">apply_color_map</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mat</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;returns an RGB matrix scaled by a matplotlib color map&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">apply_map</span><span class="p">(</span><span class="n">mat</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">cm</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="n">name</span><span class="p">)(</span><span class="n">_normalize</span><span class="p">(</span><span class="n">mat</span><span class="p">))[:,</span> <span class="p">:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="mi">255</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+        
+    <span class="k">return</span> <span class="n">apply_map</span> <span class="k">if</span> <span class="n">mat</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">apply_map</span><span class="p">(</span><span class="n">mat</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="mat_to_surface"><a class="viewcode-back" href="../../extras.html#pyparadigm.extras.mat_to_surface">[docs]</a><span class="k">def</span> <span class="nf">mat_to_surface</span><span class="p">(</span><span class="n">mat</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">transformer</span><span class="o">=</span><span class="n">to_24bit_gray</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Can be used to create a pygame.Surface from a 2d numpy array.</span>
+
+<span class="sd">    By default a grey image with scaled colors is returned, but using the</span>
+<span class="sd">    transformer argument any transformation can be used.</span>
+
+<span class="sd">    :param mat: the matrix to create the surface of.</span>
+<span class="sd">    :type mat: np.ndarray</span>
+
+<span class="sd">    :param transformer: function that transforms the matrix to a valid color</span>
+<span class="sd">        matrix, i.e. it must have 3dimension, were the 3rd dimension are the color</span>
+<span class="sd">        channels. For each channel a value between 0 and 255 is allowed</span>
+<span class="sd">    :type transformer: Callable[np.ndarray[np.ndarray]]&quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">pygame</span><span class="o">.</span><span class="n">pixelcopy</span><span class="o">.</span><span class="n">make_surface</span><span class="p">(</span><span class="n">transformer</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">transpose</span><span class="p">())</span> 
+        <span class="k">if</span> <span class="n">transformer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">mat</span><span class="o">.</span><span class="n">transpose</span><span class="p">())</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">PyParadigm</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">A tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../surfacecomposition.html">The Surface Composition Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../eventlistener.html">The Event Listener Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../misc.html">The Misc-Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../extras.html">Extras</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Felix G. Knorr.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

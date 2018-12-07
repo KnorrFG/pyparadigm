@@ -156,6 +156,22 @@ multiple keys passed via multiple arguments</li>
 </dd></dl>
 
 <dl class="method">
+<dt id="pyparadigm.eventlistener.EventListener.wait_for_keys_modified">
+<code class="descname">wait_for_keys_modified</code><span class="sig-paren">(</span><em>*keys</em>, <em>modifiers_to_check={1</em>, <em>2</em>, <em>3</em>, <em>64</em>, <em>128</em>, <em>192</em>, <em>256</em>, <em>512</em>, <em>768</em>, <em>1024</em>, <em>2048</em>, <em>3072</em>, <em>4096</em>, <em>8192</em>, <em>16384}</em>, <em>timeout=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/eventlistener.html#EventListener.wait_for_keys_modified"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.eventlistener.EventListener.wait_for_keys_modified" title="Permalink to this definition">¶</a></dt>
+<dd><p>The same as wait_for_keys, but returns a frozen_set which contains 
+the pressed key, and the modifier keys.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>modifiers_to_check</strong> – iterable of modifiers for which the function
+will check whether they are pressed</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="pyparadigm.eventlistener.EventListener.wait_for_n_keypresses">
 <code class="descname">wait_for_n_keypresses</code><span class="sig-paren">(</span><em>key</em>, <em>n=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/eventlistener.html#EventListener.wait_for_n_keypresses"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.eventlistener.EventListener.wait_for_n_keypresses" title="Permalink to this definition">¶</a></dt>
 <dd><p>Waits till one key was pressed n times.</p>

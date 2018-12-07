@@ -61,3 +61,4 @@ The next step now would be to read the :doc:`tutorial</tutorial>`
     surfacecomposition
     eventlistener
     misc
+    extras
