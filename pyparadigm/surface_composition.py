@@ -401,7 +401,7 @@ class Border:
 
     def __call__(self, child):
         _check_call_op(None if not self.child_was_added else 1)
-        self.overlay.children.append(child)
+        self.overlay.children.append(_wrap_children(child))
         return self
 
     def _draw(self, surface, target_rect):

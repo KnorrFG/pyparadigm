@@ -18,7 +18,8 @@ the developement of experimental paradigms.
 
 * wait_for_keypress() will return once a key was pressed n times.
 * wait_for_keys_timed_out() will wait for one of multiple possible keys, 
-    but return after the given timeout in any case
+    but return after the given timeout in an
+    y case
 * and wait_for_seconds will simply wait the given time, but in the mean-time run
   what ever handlers were passed to the EventListener.
 
@@ -34,9 +35,13 @@ from pygame import (KMOD_LSHIFT, KMOD_RSHIFT, KMOD_SHIFT, KMOD_CAPS,
                     KMOD_ALT, KMOD_LMETA, KMOD_RMETA, KMOD_META, KMOD_NUM, KMOD_MODE)
 
 from enum import Enum
+from typing import Callable, Any
+from collections import defaultdict
 
 import time
 import itertools as itt
+
+from .surface_composition import _wrap_children
 
 
 class EventConsumerInfo(Enum):
@@ -52,6 +57,59 @@ def _is_iterable(val):
         return True
     except TypeError as te:
         return False
+
+class Handler:
+    @staticmethod
+    def key_press(keys):
+        """returns a handler that can be used with EventListener.listen()
+        and returns when a key in keys is pressed"""
+        return lambda e: e.key if e.type == pygame.KEYDOWN \
+            and e.key in keys else EventConsumerInfo.DONT_CARE
+
+    @staticmethod
+    def unicode_char(ignored_chars=None):
+        """returns a handler that listens for unicode characters"""
+        return lambda e: e.unicode if e.type == pygame.KEYDOWN \
+            and ((ignored_chars is None) 
+                  or (e.unicode not in ignored_chars))\
+            else EventConsumerInfo.DONT_CARE
+
+
+class MouseProxy:
+    """has a _draw method so that it can be used with 
+    surface_composition.compose(). When "rendered" it simply saves the own
+    coordinates and then renders its child.
+    The listener method can then be used with EventListener.listen() to execute
+    the provided handler when the mouse interacts with the area.
+    The handler gets the event type, pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN
+    and pygame.MOUSEMOTION and the relative coordinates within the area.
+    For unique identification along all MouseProxies the ident paramenter is used.
+    If ident is None (the default) it is set to id(handler)"""
+
+    mouse_events = {pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN, 
+                    pygame.MOUSEMOTION}
+
+    def __init__(self, handler: Callable[[int, int], int], ident=None):
+        self.handler = handler
+        self.rect = pygame.Rect(0, 0, 0, 0)
+        self.child = None
+        self.ident = ident or id(handler)
+
+    def __call__(self, child):
+        self.child = _wrap_children(child)
+        return self
+
+    def _draw(self, surface, rect):
+        self.rect = rect
+        self.child._draw(surface, rect)
+
+    def listener(self, e):
+        if e.type in MouseProxy.mouse_events:
+            pos = pygame.mouse.get_pos()
+            if self.rect.collidepoint(pos):
+                return self.handler(
+                    e.type, pos[0] - self.rect.x, pos[1] - self.rect.y)
+        return EventConsumerInfo.DONT_CARE    
 
 
 class EventListener(object):
@@ -83,6 +141,8 @@ class EventListener(object):
 
     def __init__(self, permanent_handlers=None, use_ctrl_c_handler=True):
         self._current_q = []
+        self.mouse_proxies = defaultdict(dict)
+        self.proxy_group = 0
         if use_ctrl_c_handler:
             self.permanent_handlers = (
                 EventListener._exit_on_ctrl_c,
@@ -96,7 +156,23 @@ class EventListener(object):
         self._current_q = itt.chain(self._current_q, pygame.event.get())
         return self._current_q
 
-    def listen(self, temporary_handlers=None):
+    def mouse_area(self, handler, group=0, ident=None):
+        """Adds a new MouseProxy for the given group to the 
+        EventListener.mouse_proxies dict if it is not in there yet, and returns
+        the (new) MouseProxy. In listen() all entries in the current group of
+        mouse_proxies are used."""
+        key = ident or id(handler)
+        if key not in self.mouse_proxies[group]:
+            self.mouse_proxies[group][key] = MouseProxy(handler, ident)
+        return self.mouse_proxies[group][key]
+
+    def group(self, group):
+        """sets current mouse proxy group and returns self. 
+        Enables lines like el.group(1).wait_for_keys(...)"""
+        self.proxy_group = group
+        return self
+
+    def listen(self, *temporary_handlers):
         """When listen() is called all queued pygame.Events will be passed to all
         registered listeners. There are two ways to register a listener:
 
@@ -125,10 +201,10 @@ class EventListener(object):
         Therefore all permanent handlers should usually return
         EventConsumerInfo.DONT_CARE
         """
-        if temporary_handlers:
-            funcs = self.permanent_handlers + temporary_handlers
-        else:
-            funcs = self.permanent_handlers
+        funcs = tuple(itt.chain(self.permanent_handlers, 
+                          (proxy.listener for proxy in 
+                            self.mouse_proxies[self.proxy_group].values()), 
+                          temporary_handlers))
 
         for event in self._get_q():
             for func in funcs:
@@ -139,6 +215,16 @@ class EventListener(object):
                     continue
                 else:
                     return ret
+
+    def listen_until_return(self, *temporary_handlers, timeout=0):
+        """Calls listen repeatedly until listen returns something else than None.
+        Then returns listen's result. If timeout is not zero listen_until_return
+        stops after timeout seconds and returns None."""
+        start = time.time()
+        while timeout == 0 or time.time() - start < timeout:
+            res = self.listen(*temporary_handlers)
+            if res is not None:
+                return res
 
     def wait_for_n_keypresses(self, key, n=1):
         """Waits till one key was pressed n times.
@@ -176,18 +262,7 @@ class EventListener(object):
         if len(keys) == 1 and _is_iterable(keys[0]):
             keys = keys[0]
 
-        listeners = tuple(lambda e, key=key: key
-                          if e.type == pygame.KEYDOWN and e.key == key
-                          else EventConsumerInfo.DONT_CARE
-                          for key in keys)
-
-        start = time.time()
-        while timeout == 0 or time.time() - start < timeout:
-            res = self.listen(listeners)
-            if res in keys:
-                return res
-
-        return None
+        return self.listen_until_return(Handler.key_press(keys), timeout=timeout)
 
     def wait_for_keys_modified(self, *keys, modifiers_to_check=_mod_keys,
                                timeout=0):
@@ -207,6 +282,8 @@ class EventListener(object):
     def wait_for_seconds(self, seconds):
         """basically time.sleep() but in the mean-time the permanent handlers 
         are executed"""
-        start = time.time()
-        while time.time() - start < seconds:
-            self.listen()
+        self.listen_until_return(timeout=seconds)
+
+    def wait_for_unicode_char(self, ignored_chars=None, timeout=0):
+       return  self.listen_until_return(Handler.unicode_char(ignored_chars), 
+                                        timeout=timeout)

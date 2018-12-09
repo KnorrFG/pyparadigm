@@ -1,3 +1,4 @@
+
 PyParadigm
 ==========
 
@@ -11,12 +12,20 @@ and a tutorial over at: https://pyparadigm.readthedocs.io/en/latest/index.html
 
 Changelog
 ---------
+* 1.0.5
+    * Fixed surface_composition.Border.__call__()
+    * added EventListener.wait_for_unicode_char() and misc.process_char()
+        for textinput
+    * added EventListener.listen_until_return()
+    * added Handler class which contains factories for handler functions
+        that can be used with EventListener.Listen()
+    * added MouseProxy, EventListener.mouse_area and EventListener.group()
+        for basic mouse support.
 
 * 1.0.4
     * Added EventListener.wait_for_keys_modified
-    * Added the extra module containing functions to use numpy arrays
+    * Added the extras module containing functions to use numpy arrays
         and Matplotlib colormaps
-    * This is not documented yet
     
 * 1.0.3
     * EventListener.wait_for_keys supports varargs now
