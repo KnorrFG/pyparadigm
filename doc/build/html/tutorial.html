@@ -47,7 +47,7 @@
 <div class="section" id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt>PyParadigm is split into 3 modules:</dt>
+<dt>PyParadigm is split into 4 modules:</dt>
 <dd><ul class="first last simple">
 <li><dl class="first docutils">
 <dt><a class="reference internal" href="surfacecomposition.html"><span class="doc">The Surface Composition Module</span></a> which allows to create</dt>
@@ -57,9 +57,13 @@ declarative way.</dd>
 </li>
 <li><a class="reference internal" href="eventlistener.html"><span class="doc">The Event Listener Module</span></a> which allows to react to user input</li>
 <li><a class="reference internal" href="misc.html"><span class="doc">The Misc-Module</span></a> which just contains a few utility functions</li>
+<li><a class="reference internal" href="extras.html"><span class="doc">Extras</span></a> which contains functions to render numpy arrays</li>
 </ul>
 </dd>
 </dl>
+<p>Althout PyParadigm is organized into multiple modules, everything can be
+imported from <cite>pyparadigm</cite> directly. The contents of <a class="reference internal" href="extras.html"><span class="doc">Extras</span></a> is only
+imported if matplotlib and numpy are installed</p>
 </div>
 <div class="section" id="creating-a-window">
 <span id="id1"></span><h2>Creating a Window<a class="headerlink" href="#creating-a-window" title="Permalink to this headline">¶</a></h2>
@@ -255,6 +259,18 @@ cache, which lowers computation time.</p>
 <p>The reason this was not done in the <a class="reference internal" href="examples.html#examples-itech"><span class="std std-ref">IteCh example</span></a> was
 that <code class="docutils literal notranslate"><span class="pre">make_offer()</span></code> was never called twice for a unique parameter combination.</p>
 </div>
+<div class="section" id="using-numpy-arrays-as-images">
+<h3>Using numpy arrays as images<a class="headerlink" href="#using-numpy-arrays-as-images" title="Permalink to this headline">¶</a></h3>
+<p>It is possible to use numpy arrays as input for images. The extras module
+contains the <code class="xref py py-func docutils literal notranslate"><span class="pre">mat_to_surface()</span></code> function, which will return a
+pygame.Surface which can then be used within compose. It expects a 2D array of
+rgb values, and applies a transformer function to create a gray-value image.
+Alternatively <code class="xref py py-func docutils literal notranslate"><span class="pre">apply_color_map()</span></code> can be used to get a colored surface
+according to a matplotlib color map.</p>
+<p>To generate a pygame.Surface from a 3D array where the third axis contains rgb
+values you can use <code class="xref py py-func docutils literal notranslate"><span class="pre">pygame.pixelcopy.make_surface()</span></code>. Be aware that it
+will silently transpose your array.</p>
+</div>
 </div>
 <div class="section" id="reacting-to-user-input">
 <h2>Reacting to user input<a class="headerlink" href="#reacting-to-user-input" title="Permalink to this headline">¶</a></h2>
@@ -287,6 +303,172 @@ returned.</dd>
 to use the <code class="xref py py-func docutils literal notranslate"><span class="pre">listen()</span></code>-method to implement your own handlers. The source
 can be viewed from the <a class="reference internal" href="eventlistener.html"><span class="doc">module documentation page</span></a>. There,
 you can also find in-depth explanations on how to use the EventListener class.</p>
+<div class="section" id="getting-text-input">
+<h3>Getting text input<a class="headerlink" href="#getting-text-input" title="Permalink to this headline">¶</a></h3>
+<p>For text input <code class="xref py py-func docutils literal notranslate"><span class="pre">wait_for_unicode_char()</span></code> will return a string with the
+last pressed key expressed as a single character, so pressing the a key, will
+return an “a”, pressing shift + a will return “A” and pressing return will
+return “r”. Therefore it is necessary to have a buffer. You can use
+<code class="xref py py-func docutils literal notranslate"><span class="pre">process_char()</span></code> (from the misc module)
+to update the buffer using the returned character.</p>
+<p>Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyparadigm</span> <span class="kn">import</span> <span class="n">init</span><span class="p">,</span> <span class="n">EventListener</span><span class="p">,</span> <span class="n">compose</span><span class="p">,</span> <span class="n">display</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span>\
+    <span class="n">Font</span><span class="p">,</span> <span class="n">process_char</span><span class="p">,</span> <span class="n">empty_surface</span><span class="p">,</span> <span class="n">Margin</span><span class="p">,</span> <span class="n">Surface</span>
+
+<span class="n">init</span><span class="p">((</span><span class="mi">400</span><span class="p">,</span> <span class="mi">100</span><span class="p">))</span>
+<span class="nb">buffer</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="n">el</span> <span class="o">=</span> <span class="n">EventListener</span><span class="p">()</span>
+<span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+    <span class="n">display</span><span class="p">(</span><span class="n">compose</span><span class="p">(</span><span class="n">empty_surface</span><span class="p">(</span><span class="mh">0xFFFFFF</span><span class="p">))(</span>
+        <span class="c1"># using a left top margin of 0 will put the resulting pygame.Surface</span>
+        <span class="c1"># to the left top corner</span>
+        <span class="n">Surface</span><span class="p">(</span><span class="n">Margin</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="mi">0</span><span class="p">))(</span>
+            <span class="n">Text</span><span class="p">(</span><span class="nb">buffer</span><span class="p">,</span> <span class="n">Font</span><span class="p">(</span><span class="s2">&quot;monospace&quot;</span><span class="p">),</span> <span class="n">align</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">)</span>
+    <span class="p">)))</span>
+
+<span class="n">new_char</span> <span class="o">=</span> <span class="n">el</span><span class="o">.</span><span class="n">wait_for_unicode_char</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">new_char</span> <span class="o">==</span> <span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">&quot;</span><span class="p">:</span> <span class="c1"># Str representation of ESC</span>
+    <span class="k">break</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">buffer</span> <span class="o">=</span> <span class="n">process_char</span><span class="p">(</span><span class="nb">buffer</span><span class="p">,</span> <span class="n">new_char</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="getting-mouse-input">
+<h3>Getting mouse input<a class="headerlink" href="#getting-mouse-input" title="Permalink to this headline">¶</a></h3>
+<p>In this scenario it is easier to use an example. The following code will display
+4 squares of random color:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">random</span>
+
+<span class="kn">from</span> <span class="nn">pyparadigm</span> <span class="kn">import</span> <span class="n">init</span><span class="p">,</span> <span class="n">EventListener</span><span class="p">,</span> <span class="n">compose</span><span class="p">,</span> <span class="n">display</span><span class="p">,</span>\
+    <span class="n">empty_surface</span><span class="p">,</span> <span class="n">GridLayout</span><span class="p">,</span> <span class="n">Fill</span><span class="p">,</span> <span class="n">EventConsumerInfo</span>
+
+<span class="kn">import</span> <span class="nn">pygame</span>
+
+<span class="n">init</span><span class="p">((</span><span class="mi">400</span><span class="p">,</span> <span class="mi">400</span><span class="p">))</span>
+<span class="n">all_colors</span> <span class="o">=</span> <span class="p">[</span><span class="mh">0xFFFFFF</span><span class="p">,</span> <span class="mh">0x000000</span><span class="p">,</span> <span class="mh">0xFF0000</span><span class="p">,</span> <span class="mh">0x00FF00</span><span class="p">,</span> <span class="mh">0x0000FF</span><span class="p">]</span>
+<span class="n">active_colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">all_colors</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)]</span>
+<span class="n">el</span> <span class="o">=</span> <span class="n">EventListener</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">field</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Fill</span><span class="p">(</span><span class="n">active_colors</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+<span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+    <span class="n">display</span><span class="p">(</span><span class="n">compose</span><span class="p">(</span><span class="n">empty_surface</span><span class="p">(</span><span class="mh">0xFFFFFF</span><span class="p">),</span> <span class="n">GridLayout</span><span class="p">())(</span>
+        <span class="p">[</span><span class="n">field</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">field</span><span class="p">(</span><span class="mi">1</span><span class="p">)],</span>
+        <span class="p">[</span><span class="n">field</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">field</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>
+    <span class="p">))</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">el</span><span class="o">.</span><span class="n">wait_for_keys</span><span class="p">(</span><span class="n">pygame</span><span class="o">.</span><span class="n">K_ESCAPE</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">result</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_ESCAPE</span><span class="p">:</span>
+        <span class="k">break</span>
+</pre></div>
+</div>
+<p>We will now introduce mouse support, to change the color of a square, if we
+click on it. For that we install a <code class="xref py py-func docutils literal notranslate"><span class="pre">MouseProxy()</span></code> into the render tree.
+A MouseProxy has a <code class="xref py py-func docutils literal notranslate"><span class="pre">_draw()</span></code> method that will be called by compose, but
+it does not render anything, it only saves the assigned area, and then renders
+its children.
+A MouseProxy takes a handler function that takes 3 arguments, the event itself,
+as well as an x and a y value, which are relative to the mouse area.</p>
+<dl class="docutils">
+<dt>The event object iteself contains a few information:</dt>
+<dd><ol class="first last arabic">
+<li><dl class="first docutils">
+<dt>type:</dt>
+<dd><p class="first last">One of: pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN, or pygame.MOUSEMOTION.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>pos:</dt>
+<dd><p class="first last">a 2-tuple with the window coordinates, x and y, of the click.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>pos_rel:</dt>
+<dd><p class="first last">only for MOUSEMOTION, contains the differences for x and y since the last
+MOUSEMOTION event.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>buttons:</dt>
+<dd><p class="first last">only for MOUSEMOTION, contains a 3-tuple each value is 0 or 1, representing
+whether the correspoding button is pressed (1) or not (0). The order is
+(LEFT, MIDDLE, RIGHT)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>button:</dt>
+<dd><p class="first">only for MOUSEBUTTONUP and MOUSEBUTTONDOWN: contains the keycode of the
+pressed button. Since pygame did not define constants for them, they are
+defined in the eventlistener module. The possible values are:</p>
+<blockquote class="last">
+<div><ul class="simple">
+<li>MOUSE_LEFT</li>
+<li>MOUSE_MIDDLE</li>
+<li>MOUSE_RIGHT</li>
+<li>MOUSE_SCROL_FW (forwards)</li>
+<li>MOUSE_SCROL_BW (backwards)</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+</ol>
+</dd>
+</dl>
+<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">MouseProxy</span></code> class has a method listener, which could be used in
+conjunction with EventListener.listen().</p>
+<p>There is a shortcut though: <code class="xref py py-func docutils literal notranslate"><span class="pre">EventListener.mouse_area()</span></code> it creates
+MouseProxy, stores it internally, and returns it. Every stored proxy is assigned
+a group (0 by default), and only the mouse proxies from within the active group
+are used as permanent handler. To prevent recreation of existing proxies during
+repeated calls every proxy is assigned an id, by default the memory address of
+their handlers are used.
+There is a function <code class="xref py py-func docutils literal notranslate"><span class="pre">EventListener.group()</span></code> which sets the current group,
+so you could use something like <cite>el.group(2).wait_for_keys(…)</cite> to specify
+which group of mouse proxies should be used explicitly. To disable proxies
+simply use the id of a non existing group.</p>
+<p>A version of the upper example which changes the color of a square randomly, if
+you click on it is:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">random</span>
+
+<span class="kn">from</span> <span class="nn">pyparadigm</span> <span class="kn">import</span> <span class="n">init</span><span class="p">,</span> <span class="n">EventListener</span><span class="p">,</span> <span class="n">compose</span><span class="p">,</span> <span class="n">display</span><span class="p">,</span>\
+    <span class="n">empty_surface</span><span class="p">,</span> <span class="n">GridLayout</span><span class="p">,</span> <span class="n">Fill</span><span class="p">,</span> <span class="n">EventConsumerInfo</span><span class="p">,</span> <span class="n">MOUSE_LEFT</span>
+
+<span class="kn">import</span> <span class="nn">pygame</span>
+
+<span class="n">init</span><span class="p">((</span><span class="mi">400</span><span class="p">,</span> <span class="mi">400</span><span class="p">))</span>
+<span class="n">all_colors</span> <span class="o">=</span> <span class="p">[</span><span class="mh">0xFFFFFF</span><span class="p">,</span> <span class="mh">0x000000</span><span class="p">,</span> <span class="mh">0xFF0000</span><span class="p">,</span> <span class="mh">0x00FF00</span><span class="p">,</span> <span class="mh">0x0000FF</span><span class="p">]</span>
+<span class="n">active_colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">all_colors</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)]</span>
+<span class="n">el</span> <span class="o">=</span> <span class="n">EventListener</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">make_id_returner</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+    <span class="k">return</span> <span class="k">lambda</span> <span class="n">e</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">i</span> <span class="k">if</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">MOUSEBUTTONDOWN</span>
+                                <span class="ow">and</span> <span class="n">e</span><span class="o">.</span><span class="n">button</span> <span class="o">==</span> <span class="n">MOUSE_LEFT</span><span class="p">)</span>\
+        <span class="k">else</span> <span class="n">EventConsumerInfo</span><span class="o">.</span><span class="n">DONT_CARE</span>
+
+<span class="k">def</span> <span class="nf">field</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">el</span><span class="o">.</span><span class="n">mouse_area</span><span class="p">(</span><span class="n">make_id_returner</span><span class="p">(</span><span class="n">i</span><span class="p">))(</span><span class="n">Fill</span><span class="p">(</span><span class="n">active_colors</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+
+<span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+    <span class="n">display</span><span class="p">(</span><span class="n">compose</span><span class="p">(</span><span class="n">empty_surface</span><span class="p">(</span><span class="mh">0xFFFFFF</span><span class="p">),</span> <span class="n">GridLayout</span><span class="p">())(</span>
+        <span class="p">[</span><span class="n">field</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">field</span><span class="p">(</span><span class="mi">1</span><span class="p">)],</span>
+        <span class="p">[</span><span class="n">field</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">field</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>
+    <span class="p">))</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">el</span><span class="o">.</span><span class="n">wait_for_keys</span><span class="p">(</span><span class="n">pygame</span><span class="o">.</span><span class="n">K_ESCAPE</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">result</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_ESCAPE</span><span class="p">:</span>
+        <span class="k">break</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">active_colors</span><span class="p">[</span><span class="n">result</span><span class="p">]</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">all_colors</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
 </div>
 <div class="section" id="the-misc-module">
 <h2>The Misc-Module<a class="headerlink" href="#the-misc-module" title="Permalink to this headline">¶</a></h2>
@@ -359,6 +541,7 @@ see how to apply what you just learned.</p>
 <li class="toctree-l1"><a class="reference internal" href="surfacecomposition.html">The Surface Composition Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="eventlistener.html">The Event Listener Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="misc.html">The Misc-Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extras.html">Extras</a></li>
 </ul>
 
 <div class="relations">

@@ -53,7 +53,8 @@
 
 <span class="sd">* wait_for_keypress() will return once a key was pressed n times.</span>
 <span class="sd">* wait_for_keys_timed_out() will wait for one of multiple possible keys, </span>
-<span class="sd">    but return after the given timeout in any case</span>
+<span class="sd">    but return after the given timeout in an</span>
+<span class="sd">    y case</span>
 <span class="sd">* and wait_for_seconds will simply wait the given time, but in the mean-time run</span>
 <span class="sd">  what ever handlers were passed to the EventListener.</span>
 
@@ -69,10 +70,21 @@
                     <span class="n">KMOD_ALT</span><span class="p">,</span> <span class="n">KMOD_LMETA</span><span class="p">,</span> <span class="n">KMOD_RMETA</span><span class="p">,</span> <span class="n">KMOD_META</span><span class="p">,</span> <span class="n">KMOD_NUM</span><span class="p">,</span> <span class="n">KMOD_MODE</span><span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">enum</span> <span class="k">import</span> <span class="n">Enum</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
 
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">itertools</span> <span class="k">as</span> <span class="nn">itt</span>
 
+<span class="kn">from</span> <span class="nn">.surface_composition</span> <span class="k">import</span> <span class="n">_wrap_children</span><span class="p">,</span> <span class="n">Surface</span>
+
+
+<span class="c1"># Seemingly there are no pygame defines for this, so:</span>
+<span class="n">MOUSE_LEFT</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">MOUSE_MIDDLE</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">MOUSE_RIGHT</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">MOUSE_SCROL_FW</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">MOUSE_SCROL_BW</span> <span class="o">=</span> <span class="mi">5</span>
 
 <div class="viewcode-block" id="EventConsumerInfo"><a class="viewcode-back" href="../../eventlistener.html#pyparadigm.eventlistener.EventConsumerInfo">[docs]</a><span class="k">class</span> <span class="nc">EventConsumerInfo</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Can be returned by event-handler functions to communicate with the listener.</span>
@@ -87,6 +99,60 @@
         <span class="k">return</span> <span class="kc">True</span>
     <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">te</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">False</span>
+
+<span class="k">class</span> <span class="nc">Handler</span><span class="p">:</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">key_press</span><span class="p">(</span><span class="n">keys</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;returns a handler that can be used with EventListener.listen()</span>
+<span class="sd">        and returns when a key in keys is pressed&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">e</span><span class="o">.</span><span class="n">key</span> <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">KEYDOWN</span> \
+            <span class="ow">and</span> <span class="n">e</span><span class="o">.</span><span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span> <span class="k">else</span> <span class="n">EventConsumerInfo</span><span class="o">.</span><span class="n">DONT_CARE</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">unicode_char</span><span class="p">(</span><span class="n">ignored_chars</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;returns a handler that listens for unicode characters&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">e</span><span class="o">.</span><span class="n">unicode</span> <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">KEYDOWN</span> \
+            <span class="ow">and</span> <span class="p">((</span><span class="n">ignored_chars</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> 
+                  <span class="ow">or</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">unicode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ignored_chars</span><span class="p">))</span>\
+            <span class="k">else</span> <span class="n">EventConsumerInfo</span><span class="o">.</span><span class="n">DONT_CARE</span>
+
+
+<div class="viewcode-block" id="MouseProxy"><a class="viewcode-back" href="../../eventlistener.html#pyparadigm.eventlistener.MouseProxy">[docs]</a><span class="k">class</span> <span class="nc">MouseProxy</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;has a _draw method so that it can be used with </span>
+<span class="sd">    surface_composition.compose(). When &quot;rendered&quot; it simply saves the own</span>
+<span class="sd">    coordinates and then renders its child.</span>
+<span class="sd">    The listener method can then be used with EventListener.listen() to execute</span>
+<span class="sd">    the provided handler when the mouse interacts with the area.</span>
+<span class="sd">    The handler gets the event type, pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN</span>
+<span class="sd">    and pygame.MOUSEMOTION and the relative coordinates within the area.</span>
+<span class="sd">    For unique identification along all MouseProxies the ident paramenter is used.</span>
+<span class="sd">    If ident is None (the default) it is set to id(handler)&quot;&quot;&quot;</span>
+
+    <span class="n">mouse_events</span> <span class="o">=</span> <span class="p">{</span><span class="n">pygame</span><span class="o">.</span><span class="n">MOUSEBUTTONUP</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">MOUSEBUTTONDOWN</span><span class="p">,</span> 
+                    <span class="n">pygame</span><span class="o">.</span><span class="n">MOUSEMOTION</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">handler</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">],</span> <span class="n">ident</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">handler</span> <span class="o">=</span> <span class="n">handler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rect</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Rect</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">child</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ident</span> <span class="o">=</span> <span class="n">ident</span> <span class="ow">or</span> <span class="nb">id</span><span class="p">(</span><span class="n">handler</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">child</span> <span class="o">=</span> <span class="n">_wrap_children</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">_draw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> <span class="n">rect</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rect</span> <span class="o">=</span> <span class="n">rect</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="p">)</span> <span class="o">==</span> <span class="n">Surface</span>\
+            <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="o">.</span><span class="n">compute_render_rect</span><span class="p">(</span><span class="n">rect</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="o">.</span><span class="n">_draw</span><span class="p">(</span><span class="n">surface</span><span class="p">,</span> <span class="n">rect</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">listener</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="n">MouseProxy</span><span class="o">.</span><span class="n">mouse_events</span><span class="p">:</span>
+            <span class="n">pos</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">mouse</span><span class="o">.</span><span class="n">get_pos</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">collidepoint</span><span class="p">(</span><span class="n">pos</span><span class="p">):</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">handler</span><span class="p">(</span>
+                    <span class="n">e</span><span class="p">,</span> <span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">EventConsumerInfo</span><span class="o">.</span><span class="n">DONT_CARE</span>    </div>
 
 
 <div class="viewcode-block" id="EventListener"><a class="viewcode-back" href="../../eventlistener.html#pyparadigm.eventlistener.EventListener">[docs]</a><span class="k">class</span> <span class="nc">EventListener</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -118,6 +184,8 @@
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">permanent_handlers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_ctrl_c_handler</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_current_q</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mouse_proxies</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">proxy_group</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">if</span> <span class="n">use_ctrl_c_handler</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">permanent_handlers</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">EventListener</span><span class="o">.</span><span class="n">_exit_on_ctrl_c</span><span class="p">,</span>
@@ -131,7 +199,23 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_current_q</span> <span class="o">=</span> <span class="n">itt</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_q</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_q</span>
 
-<div class="viewcode-block" id="EventListener.listen"><a class="viewcode-back" href="../../eventlistener.html#pyparadigm.eventlistener.EventListener.listen">[docs]</a>    <span class="k">def</span> <span class="nf">listen</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">temporary_handlers</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="EventListener.mouse_area"><a class="viewcode-back" href="../../eventlistener.html#pyparadigm.eventlistener.EventListener.mouse_area">[docs]</a>    <span class="k">def</span> <span class="nf">mouse_area</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">handler</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ident</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds a new MouseProxy for the given group to the </span>
+<span class="sd">        EventListener.mouse_proxies dict if it is not in there yet, and returns</span>
+<span class="sd">        the (new) MouseProxy. In listen() all entries in the current group of</span>
+<span class="sd">        mouse_proxies are used.&quot;&quot;&quot;</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">ident</span> <span class="ow">or</span> <span class="nb">id</span><span class="p">(</span><span class="n">handler</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mouse_proxies</span><span class="p">[</span><span class="n">group</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mouse_proxies</span><span class="p">[</span><span class="n">group</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">MouseProxy</span><span class="p">(</span><span class="n">handler</span><span class="p">,</span> <span class="n">ident</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mouse_proxies</span><span class="p">[</span><span class="n">group</span><span class="p">][</span><span class="n">key</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="EventListener.group"><a class="viewcode-back" href="../../eventlistener.html#pyparadigm.eventlistener.EventListener.group">[docs]</a>    <span class="k">def</span> <span class="nf">group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;sets current mouse proxy group and returns self. </span>
+<span class="sd">        Enables lines like el.group(1).wait_for_keys(...)&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">proxy_group</span> <span class="o">=</span> <span class="n">group</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="EventListener.listen"><a class="viewcode-back" href="../../eventlistener.html#pyparadigm.eventlistener.EventListener.listen">[docs]</a>    <span class="k">def</span> <span class="nf">listen</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">temporary_handlers</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;When listen() is called all queued pygame.Events will be passed to all</span>
 <span class="sd">        registered listeners. There are two ways to register a listener:</span>
 
@@ -160,10 +244,10 @@
 <span class="sd">        Therefore all permanent handlers should usually return</span>
 <span class="sd">        EventConsumerInfo.DONT_CARE</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">temporary_handlers</span><span class="p">:</span>
-            <span class="n">funcs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">permanent_handlers</span> <span class="o">+</span> <span class="n">temporary_handlers</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">funcs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">permanent_handlers</span>
+        <span class="n">funcs</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">itt</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">permanent_handlers</span><span class="p">,</span> 
+                          <span class="p">(</span><span class="n">proxy</span><span class="o">.</span><span class="n">listener</span> <span class="k">for</span> <span class="n">proxy</span> <span class="ow">in</span> 
+                            <span class="bp">self</span><span class="o">.</span><span class="n">mouse_proxies</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">proxy_group</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span> 
+                          <span class="n">temporary_handlers</span><span class="p">))</span>
 
         <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_q</span><span class="p">():</span>
             <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">funcs</span><span class="p">:</span>
@@ -174,6 +258,16 @@
                     <span class="k">continue</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">return</span> <span class="n">ret</span></div>
+
+<div class="viewcode-block" id="EventListener.listen_until_return"><a class="viewcode-back" href="../../eventlistener.html#pyparadigm.eventlistener.EventListener.listen_until_return">[docs]</a>    <span class="k">def</span> <span class="nf">listen_until_return</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">temporary_handlers</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calls listen repeatedly until listen returns something else than None.</span>
+<span class="sd">        Then returns listen&#39;s result. If timeout is not zero listen_until_return</span>
+<span class="sd">        stops after timeout seconds and returns None.&quot;&quot;&quot;</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="k">while</span> <span class="n">timeout</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span> <span class="o">&lt;</span> <span class="n">timeout</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="o">*</span><span class="n">temporary_handlers</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">res</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">res</span></div>
 
 <div class="viewcode-block" id="EventListener.wait_for_n_keypresses"><a class="viewcode-back" href="../../eventlistener.html#pyparadigm.eventlistener.EventListener.wait_for_n_keypresses">[docs]</a>    <span class="k">def</span> <span class="nf">wait_for_n_keypresses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Waits till one key was pressed n times.</span>
@@ -211,18 +305,7 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">_is_iterable</span><span class="p">(</span><span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
             <span class="n">keys</span> <span class="o">=</span> <span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-        <span class="n">listeners</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="k">lambda</span> <span class="n">e</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">:</span> <span class="n">key</span>
-                          <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">KEYDOWN</span> <span class="ow">and</span> <span class="n">e</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="n">key</span>
-                          <span class="k">else</span> <span class="n">EventConsumerInfo</span><span class="o">.</span><span class="n">DONT_CARE</span>
-                          <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">)</span>
-
-        <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-        <span class="k">while</span> <span class="n">timeout</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span> <span class="o">&lt;</span> <span class="n">timeout</span><span class="p">:</span>
-            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="n">listeners</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">res</span>
-
-        <span class="k">return</span> <span class="kc">None</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">listen_until_return</span><span class="p">(</span><span class="n">Handler</span><span class="o">.</span><span class="n">key_press</span><span class="p">(</span><span class="n">keys</span><span class="p">),</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="EventListener.wait_for_keys_modified"><a class="viewcode-back" href="../../eventlistener.html#pyparadigm.eventlistener.EventListener.wait_for_keys_modified">[docs]</a>    <span class="k">def</span> <span class="nf">wait_for_keys_modified</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">keys</span><span class="p">,</span> <span class="n">modifiers_to_check</span><span class="o">=</span><span class="n">_mod_keys</span><span class="p">,</span>
                                <span class="n">timeout</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
@@ -242,9 +325,17 @@
 <div class="viewcode-block" id="EventListener.wait_for_seconds"><a class="viewcode-back" href="../../eventlistener.html#pyparadigm.eventlistener.EventListener.wait_for_seconds">[docs]</a>    <span class="k">def</span> <span class="nf">wait_for_seconds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seconds</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;basically time.sleep() but in the mean-time the permanent handlers </span>
 <span class="sd">        are executed&quot;&quot;&quot;</span>
-        <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-        <span class="k">while</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span> <span class="o">&lt;</span> <span class="n">seconds</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">listen</span><span class="p">()</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">listen_until_return</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="n">seconds</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="EventListener.wait_for_unicode_char"><a class="viewcode-back" href="../../eventlistener.html#pyparadigm.eventlistener.EventListener.wait_for_unicode_char">[docs]</a>    <span class="k">def</span> <span class="nf">wait_for_unicode_char</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ignored_chars</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a str that contains the single character that was pressed.</span>
+<span class="sd">        This already respects modifier keys and keyboard layouts. If timeout is</span>
+<span class="sd">        not none and no key is pressed within the specified timeout, None is</span>
+<span class="sd">        returned. If a key is ingnored_chars it will be ignored. As argument for</span>
+<span class="sd">        irgnored_chars any object that has a __contains__ method can be used,</span>
+<span class="sd">        e.g. a string, a set, a list, etc&quot;&quot;&quot;</span>
+        <span class="k">return</span>  <span class="bp">self</span><span class="o">.</span><span class="n">listen_until_return</span><span class="p">(</span><span class="n">Handler</span><span class="o">.</span><span class="n">unicode_char</span><span class="p">(</span><span class="n">ignored_chars</span><span class="p">),</span> 
+                                        <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span></div></div>
 </pre></div>
 
           </div>

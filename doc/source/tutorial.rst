@@ -13,12 +13,17 @@ And thats it.
 Overview
 --------
 
-PyParadigm is split into 3 modules:
+PyParadigm is split into 4 modules:
     * :doc:`surfacecomposition` which allows to create
         pygame.Surfaces , which is the class representing images, in a
         declarative way.
     * :doc:`eventlistener` which allows to react to user input
     * :doc:`misc` which just contains a few utility functions
+    * :doc:`extras` which contains functions to render numpy arrays
+
+Althout PyParadigm is organized into multiple modules, everything can be
+imported from `pyparadigm` directly. The contents of :doc:`extras` is only 
+imported if matplotlib and numpy are installed
 
 
 .. _creating_a_window:
@@ -199,6 +204,20 @@ cache, which lowers computation time.
 The reason this was not done in the :ref:`IteCh example<examples_itech>` was 
 that ``make_offer()`` was never called twice for a unique parameter combination.
 
+Using numpy arrays as images
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+It is possible to use numpy arrays as input for images. The extras module
+contains the :py:func:`mat_to_surface` function, which will return a
+pygame.Surface which can then be used within compose. It expects a 2D array of
+rgb values, and applies a transformer function to create a gray-value image.
+Alternatively :py:func:`apply_color_map` can be used to get a colored surface
+according to a matplotlib color map.
+
+To generate a pygame.Surface from a 3D array where the third axis contains rgb
+values you can use :py:func:`pygame.pixelcopy.make_surface`. Be aware that it
+will silently transpose your array.
+
 
 Reacting to user input
 ---------------------- 
@@ -224,6 +243,160 @@ to use the :py:func:`listen`-method to implement your own handlers. The source
 can be viewed from the :doc:`module documentation page <eventlistener>`. There,
 you can also find in-depth explanations on how to use the EventListener class.
 
+Getting text input
+~~~~~~~~~~~~~~~~~~
+
+For text input :py:func:`wait_for_unicode_char` will return a string with the
+last pressed key expressed as a single character, so pressing the a key, will
+return an "a", pressing shift + a will return "A" and pressing return will
+return "\r". Therefore it is necessary to have a buffer. You can use
+:py:func:`process_char` (from the misc module)
+to update the buffer using the returned character.
+
+Example:
+
+.. code-block:: python
+
+    from pyparadigm import init, EventListener, compose, display, Text,\
+        Font, process_char, empty_surface, Margin, Surface
+
+    init((400, 100))
+    buffer = ""
+    el = EventListener()
+    while True:
+        display(compose(empty_surface(0xFFFFFF))(
+            # using a left top margin of 0 will put the resulting pygame.Surface
+            # to the left top corner
+            Surface(Margin(left=0, top=0))(  
+                Text(buffer, Font("monospace"), align="left")
+        )))
+
+    new_char = el.wait_for_unicode_char()
+    if new_char == "\x1b": # Str representation of ESC
+        break
+    else:
+        buffer = process_char(buffer, new_char)
+
+
+Getting mouse input
+~~~~~~~~~~~~~~~~~~~
+In this scenario it is easier to use an example. The following code will display
+4 squares of random color:
+
+.. code-block:: python
+
+    import random
+
+    from pyparadigm import init, EventListener, compose, display,\
+        empty_surface, GridLayout, Fill, EventConsumerInfo
+
+    import pygame
+
+    init((400, 400))
+    all_colors = [0xFFFFFF, 0x000000, 0xFF0000, 0x00FF00, 0x0000FF]
+    active_colors = [random.choice(all_colors) for i in range(4)]
+    el = EventListener()
+
+    def field(i):
+        return Fill(active_colors[i])
+
+    while True:
+        display(compose(empty_surface(0xFFFFFF), GridLayout())(
+            [field(0), field(1)],
+            [field(2), field(3)]
+        ))
+
+        result = el.wait_for_keys(pygame.K_ESCAPE)
+        if result == pygame.K_ESCAPE:
+            break
+
+We will now introduce mouse support, to change the color of a square, if we
+click on it. For that we install a :py:func:`MouseProxy` into the render tree.
+A MouseProxy has a :py:func:`_draw` method that will be called by compose, but
+it does not render anything, it only saves the assigned area, and then renders
+its children.
+A MouseProxy takes a handler function that takes 3 arguments, the event itself,
+as well as an x and a y value, which are relative to the mouse area.
+
+The event object iteself contains a few information:
+    1. type:
+        One of: pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN, or pygame.MOUSEMOTION.
+
+    2. pos:
+        a 2-tuple with the window coordinates, x and y, of the click.
+    
+    3. pos_rel:
+        only for MOUSEMOTION, contains the differences for x and y since the last
+        MOUSEMOTION event.
+
+    4. buttons:
+        only for MOUSEMOTION, contains a 3-tuple each value is 0 or 1, representing
+        whether the correspoding button is pressed (1) or not (0). The order is
+        (LEFT, MIDDLE, RIGHT)
+
+    5. button:
+        only for MOUSEBUTTONUP and MOUSEBUTTONDOWN: contains the keycode of the
+        pressed button. Since pygame did not define constants for them, they are
+        defined in the eventlistener module. The possible values are: 
+
+            * MOUSE_LEFT
+            * MOUSE_MIDDLE
+            * MOUSE_RIGHT
+            * MOUSE_SCROL_FW (forwards)
+            * MOUSE_SCROL_BW (backwards)
+
+The :py:class:`MouseProxy` class has a method listener, which could be used in
+conjunction with EventListener.listen().
+
+There is a shortcut though: :py:func:`EventListener.mouse_area` it creates
+MouseProxy, stores it internally, and returns it. Every stored proxy is assigned
+a group (0 by default), and only the mouse proxies from within the active group
+are used as permanent handler. To prevent recreation of existing proxies during
+repeated calls every proxy is assigned an id, by default the memory address of
+their handlers are used.
+There is a function :py:func:`EventListener.group` which sets the current group,
+so you could use something like `el.group(2).wait_for_keys(...)` to specify
+which group of mouse proxies should be used explicitly. To disable proxies
+simply use the id of a non existing group.  
+
+A version of the upper example which changes the color of a square randomly, if
+you click on it is:
+
+.. code-block:: python
+
+    import random
+
+    from pyparadigm import init, EventListener, compose, display,\
+        empty_surface, GridLayout, Fill, EventConsumerInfo, MOUSE_LEFT
+
+    import pygame
+
+    init((400, 400))
+    all_colors = [0xFFFFFF, 0x000000, 0xFF0000, 0x00FF00, 0x0000FF]
+    active_colors = [random.choice(all_colors) for i in range(4)]
+    el = EventListener()
+
+    def make_id_returner(i):
+        return lambda e, x, y: i if (e.type == pygame.MOUSEBUTTONDOWN 
+                                    and e.button == MOUSE_LEFT)\
+            else EventConsumerInfo.DONT_CARE
+
+    def field(i):
+        return el.mouse_area(make_id_returner(i))(Fill(active_colors[i]))
+
+    while True:
+        display(compose(empty_surface(0xFFFFFF), GridLayout())(
+            [field(0), field(1)],
+            [field(2), field(3)]
+        ))
+
+        result = el.wait_for_keys(pygame.K_ESCAPE)
+        if result == pygame.K_ESCAPE:
+            break
+        else:
+            active_colors[result] = random.choice(all_colors)
+
+
 
 The Misc-Module
 ---------------
@@ -242,6 +415,8 @@ It contains the following functions:
 * :py:func:`empty_surface` creates a new pygame.Surface of the given size
     (or of the size of the pygame window, if no size was specified) and
     automatically fills it with a given background color.
+* :py:func:`process_char` returns a new version of a given buffer, modified
+    based on a string containing a unicode character.
 
 Next Step
 ---------

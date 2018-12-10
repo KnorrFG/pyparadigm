@@ -160,6 +160,39 @@
     <span class="n">surf</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Surface</span><span class="p">(</span><span class="n">size</span> <span class="ow">or</span> <span class="p">(</span><span class="n">sr</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="n">sr</span><span class="o">.</span><span class="n">h</span><span class="p">))</span>
     <span class="n">surf</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">fill_color</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">surf</span></div>
+
+
+<span class="n">_char_mappings</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s2">&quot;    &quot;</span>
+<span class="p">}</span>
+
+<div class="viewcode-block" id="process_char"><a class="viewcode-back" href="../../misc.html#pyparadigm.misc.process_char">[docs]</a><span class="k">def</span> <span class="nf">process_char</span><span class="p">(</span><span class="n">buffer</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">char</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mappings</span><span class="o">=</span><span class="n">_char_mappings</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This is a convinience method for use with </span>
+<span class="sd">    EventListener.wait_for_unicode_char(). In most cases it simply appends </span>
+<span class="sd">    char to buffer. Some replacements are done because presing return will</span>
+<span class="sd">    produce &#39;\\r&#39; but for most cases &#39;\\n&#39; would be desireable.</span>
+<span class="sd">    Also backspace cant just be added to a string either, therefore, if char is</span>
+<span class="sd">    &quot;\\u0008&quot; the last character from buffer will be cut off. The replacement</span>
+<span class="sd">    from &#39;\\r&#39; to &#39;\\n&#39; is done using the mappings argument, the default value</span>
+<span class="sd">    for it also contains a mapping from &#39;\t&#39; to 4 spaces.</span>
+
+<span class="sd">    :param buffer: the string to be updated</span>
+<span class="sd">    :type buffer: str</span>
+
+<span class="sd">    :param char: the unicode character to be processed</span>
+<span class="sd">    :type char: str</span>
+
+<span class="sd">    :param mappings: a dict containing mappings</span>
+<span class="sd">    :type mappings: dict</span>
+
+<span class="sd">    :returns: a new string&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">mappings</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">buffer</span> <span class="o">+</span> <span class="n">mappings</span><span class="p">[</span><span class="n">char</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">char</span> <span class="o">==</span> <span class="s2">&quot;</span><span class="se">\u0008</span><span class="s2">&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">buffer</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">buffer</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">buffer</span> <span class="o">+</span> <span class="n">char</span></div>
 </pre></div>
 
           </div>

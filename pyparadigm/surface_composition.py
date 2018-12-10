@@ -131,6 +131,10 @@ class Margin:
         self.bottom=bottom
 
 
+def _offset_by_margins(space, one, two): 
+    return space * one / (one + two)
+
+
 class Surface:
     """Wraps a pygame surface.
 
@@ -189,6 +193,18 @@ class Surface:
             return 0
         else:
             return target_rect.size
+
+    def compute_render_rect(self, target_rect):
+        target_size = Surface._determine_target_size(self.child, target_rect, 
+                                                        self.scale)\
+                      or self.child.get_rect().size
+        remaining_h_space = target_rect.w - target_size[0]
+        remaining_v_space = target_rect.h - target_size[1]
+        return pygame.Rect(
+            (target_rect.left + _offset_by_margins(remaining_h_space,
+                self.margin.left, self.margin.right),
+            target_rect.top + _offset_by_margins(remaining_v_space,
+                self.margin.top, self.margin.bottom)), target_size)
         
     def _draw(self, surface, target_rect):
         if self.child is None:
@@ -200,11 +216,10 @@ class Surface:
                 if target_size else self.child
         remaining_h_space = target_rect.w - content.get_rect().w
         remaining_v_space = target_rect.h - content.get_rect().h
-        offset_by_margins = lambda space, one, two: space * one / (one + two)
         surface.blit(content, (
-            target_rect.left + offset_by_margins(remaining_h_space,
+            target_rect.left + _offset_by_margins(remaining_h_space,
                 self.margin.left, self.margin.right),
-            target_rect.top + offset_by_margins(remaining_v_space,
+            target_rect.top + _offset_by_margins(remaining_v_space,
                 self.margin.top, self.margin.bottom)))
 
 

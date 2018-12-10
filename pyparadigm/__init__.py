@@ -1,9 +1,10 @@
 """A package to build psychological Paradigms. Based on PyGame """
-__version__ = '1.0.5'
+__version__ = '1.0.6'
 
 
 from .eventlistener import EventConsumerInfo, EventListener, Handler,\
-    MouseProxy
+    MouseProxy, MOUSE_LEFT, MOUSE_MIDDLE, MOUSE_RIGHT, MOUSE_SCROL_FW,\
+    MOUSE_SCROL_BW
 from .misc import init, display, empty_surface, slide_show, process_char
 from .surface_composition import Border, Circle, Fill, LLItem, LinLayout,\
     Line, Margin, Overlay, Padding,\

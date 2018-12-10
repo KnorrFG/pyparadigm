@@ -12,20 +12,19 @@ and a tutorial over at: https://pyparadigm.readthedocs.io/en/latest/index.html
 
 Changelog
 ---------
+* 1.0.6
+    * added special treatment for Surfaces in MouseProxy, so that the actual visible rect is obtained. For that I added a new method, Surface.compute_render_rect
+    
 * 1.0.5
     * Fixed surface_composition.Border.__call__()
-    * added EventListener.wait_for_unicode_char() and misc.process_char()
-        for textinput
+    * added EventListener.wait_for_unicode_char() and misc.process_char() for textinput
     * added EventListener.listen_until_return()
-    * added Handler class which contains factories for handler functions
-        that can be used with EventListener.Listen()
-    * added MouseProxy, EventListener.mouse_area and EventListener.group()
-        for basic mouse support.
+    * added Handler class which contains factories for handler functions that can be used with EventListener.Listen()
+    * added MouseProxy, EventListener.mouse_area and EventListener.group() for basic mouse support.
 
 * 1.0.4
     * Added EventListener.wait_for_keys_modified
-    * Added the extras module containing functions to use numpy arrays
-        and Matplotlib colormaps
+    * Added the extras module containing functions to use numpy arrays and Matplotlib colormaps
     
 * 1.0.3
     * EventListener.wait_for_keys supports varargs now

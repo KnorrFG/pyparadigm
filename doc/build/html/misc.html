@@ -16,6 +16,7 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Extras" href="extras.html" />
     <link rel="prev" title="The Event Listener Module" href="eventlistener.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
@@ -118,6 +119,35 @@ pygame.display.get_surface()</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="pyparadigm.misc.process_char">
+<code class="descclassname">pyparadigm.misc.</code><code class="descname">process_char</code><span class="sig-paren">(</span><em>buffer: str</em>, <em>char: str</em>, <em>mappings={'\t': '    '</em>, <em>'\r': '\n'}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/misc.html#process_char"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.misc.process_char" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a convinience method for use with 
+EventListener.wait_for_unicode_char(). In most cases it simply appends 
+char to buffer. Some replacements are done because presing return will
+produce ‘r’ but for most cases ‘n’ would be desireable.
+Also backspace cant just be added to a string either, therefore, if char is
+“u0008” the last character from buffer will be cut off. The replacement
+from ‘r’ to ‘n’ is done using the mappings argument, the default value
+for it also contains a mapping from ‘       ‘ to 4 spaces.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>buffer</strong> (<em>str</em>) – the string to be updated</li>
+<li><strong>char</strong> (<em>str</em>) – the unicode character to be processed</li>
+<li><strong>mappings</strong> (<em>dict</em>) – a dict containing mappings</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a new string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="pyparadigm.misc.slide_show">
 <code class="descclassname">pyparadigm.misc.</code><code class="descname">slide_show</code><span class="sig-paren">(</span><em>slides</em>, <em>continue_handler</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/misc.html#slide_show"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.misc.slide_show" title="Permalink to this definition">¶</a></dt>
 <dd><p>Displays one “slide” after another.</p>
@@ -170,6 +200,7 @@ be displayed.</li>
 <li class="toctree-l1"><a class="reference internal" href="surfacecomposition.html">The Surface Composition Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="eventlistener.html">The Event Listener Module</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">The Misc-Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extras.html">Extras</a></li>
 </ul>
 
 <div class="relations">
@@ -177,6 +208,7 @@ be displayed.</li>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
       <li>Previous: <a href="eventlistener.html" title="previous chapter">The Event Listener Module</a></li>
+      <li>Next: <a href="extras.html" title="next chapter">Extras</a></li>
   </ul></li>
 </ul>
 </div>

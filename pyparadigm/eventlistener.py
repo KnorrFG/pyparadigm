@@ -41,8 +41,15 @@ from collections import defaultdict
 import time
 import itertools as itt
 
-from .surface_composition import _wrap_children
+from .surface_composition import _wrap_children, Surface
 
+
+# Seemingly there are no pygame defines for this, so:
+MOUSE_LEFT = 1
+MOUSE_MIDDLE = 2
+MOUSE_RIGHT = 3
+MOUSE_SCROL_FW = 4
+MOUSE_SCROL_BW = 5
 
 class EventConsumerInfo(Enum):
     """Can be returned by event-handler functions to communicate with the listener.
@@ -100,7 +107,8 @@ class MouseProxy:
         return self
 
     def _draw(self, surface, rect):
-        self.rect = rect
+        self.rect = rect if not type(self.child) == Surface\
+            else self.child.compute_render_rect(rect)
         self.child._draw(surface, rect)
 
     def listener(self, e):
@@ -108,7 +116,7 @@ class MouseProxy:
             pos = pygame.mouse.get_pos()
             if self.rect.collidepoint(pos):
                 return self.handler(
-                    e.type, pos[0] - self.rect.x, pos[1] - self.rect.y)
+                    e, pos[0] - self.rect.x, pos[1] - self.rect.y)
         return EventConsumerInfo.DONT_CARE    
 
 
@@ -285,5 +293,11 @@ class EventListener(object):
         self.listen_until_return(timeout=seconds)
 
     def wait_for_unicode_char(self, ignored_chars=None, timeout=0):
-       return  self.listen_until_return(Handler.unicode_char(ignored_chars), 
+        """Returns a str that contains the single character that was pressed.
+        This already respects modifier keys and keyboard layouts. If timeout is
+        not none and no key is pressed within the specified timeout, None is
+        returned. If a key is ingnored_chars it will be ignored. As argument for
+        irgnored_chars any object that has a __contains__ method can be used,
+        e.g. a string, a set, a list, etc"""
+        return  self.listen_until_return(Handler.unicode_char(ignored_chars), 
                                         timeout=timeout)

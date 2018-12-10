@@ -166,6 +166,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">bottom</span><span class="o">=</span><span class="n">bottom</span></div>
 
 
+<span class="k">def</span> <span class="nf">_offset_by_margins</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">one</span><span class="p">,</span> <span class="n">two</span><span class="p">):</span> 
+    <span class="k">return</span> <span class="n">space</span> <span class="o">*</span> <span class="n">one</span> <span class="o">/</span> <span class="p">(</span><span class="n">one</span> <span class="o">+</span> <span class="n">two</span><span class="p">)</span>
+
+
 <div class="viewcode-block" id="Surface"><a class="viewcode-back" href="../../surfacecomposition.html#pyparadigm.surface_composition.Surface">[docs]</a><span class="k">class</span> <span class="nc">Surface</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Wraps a pygame surface.</span>
 
@@ -224,6 +228,18 @@
             <span class="k">return</span> <span class="mi">0</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">target_rect</span><span class="o">.</span><span class="n">size</span>
+
+    <span class="k">def</span> <span class="nf">compute_render_rect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_rect</span><span class="p">):</span>
+        <span class="n">target_size</span> <span class="o">=</span> <span class="n">Surface</span><span class="o">.</span><span class="n">_determine_target_size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="p">,</span> <span class="n">target_rect</span><span class="p">,</span> 
+                                                        <span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="p">)</span>\
+                      <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="o">.</span><span class="n">get_rect</span><span class="p">()</span><span class="o">.</span><span class="n">size</span>
+        <span class="n">remaining_h_space</span> <span class="o">=</span> <span class="n">target_rect</span><span class="o">.</span><span class="n">w</span> <span class="o">-</span> <span class="n">target_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">remaining_v_space</span> <span class="o">=</span> <span class="n">target_rect</span><span class="o">.</span><span class="n">h</span> <span class="o">-</span> <span class="n">target_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Rect</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">target_rect</span><span class="o">.</span><span class="n">left</span> <span class="o">+</span> <span class="n">_offset_by_margins</span><span class="p">(</span><span class="n">remaining_h_space</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">margin</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">margin</span><span class="o">.</span><span class="n">right</span><span class="p">),</span>
+            <span class="n">target_rect</span><span class="o">.</span><span class="n">top</span> <span class="o">+</span> <span class="n">_offset_by_margins</span><span class="p">(</span><span class="n">remaining_v_space</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">margin</span><span class="o">.</span><span class="n">top</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">margin</span><span class="o">.</span><span class="n">bottom</span><span class="p">)),</span> <span class="n">target_size</span><span class="p">)</span>
         
     <span class="k">def</span> <span class="nf">_draw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> <span class="n">target_rect</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">child</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -235,11 +251,10 @@
                 <span class="k">if</span> <span class="n">target_size</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">child</span>
         <span class="n">remaining_h_space</span> <span class="o">=</span> <span class="n">target_rect</span><span class="o">.</span><span class="n">w</span> <span class="o">-</span> <span class="n">content</span><span class="o">.</span><span class="n">get_rect</span><span class="p">()</span><span class="o">.</span><span class="n">w</span>
         <span class="n">remaining_v_space</span> <span class="o">=</span> <span class="n">target_rect</span><span class="o">.</span><span class="n">h</span> <span class="o">-</span> <span class="n">content</span><span class="o">.</span><span class="n">get_rect</span><span class="p">()</span><span class="o">.</span><span class="n">h</span>
-        <span class="n">offset_by_margins</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">space</span><span class="p">,</span> <span class="n">one</span><span class="p">,</span> <span class="n">two</span><span class="p">:</span> <span class="n">space</span> <span class="o">*</span> <span class="n">one</span> <span class="o">/</span> <span class="p">(</span><span class="n">one</span> <span class="o">+</span> <span class="n">two</span><span class="p">)</span>
         <span class="n">surface</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="p">(</span>
-            <span class="n">target_rect</span><span class="o">.</span><span class="n">left</span> <span class="o">+</span> <span class="n">offset_by_margins</span><span class="p">(</span><span class="n">remaining_h_space</span><span class="p">,</span>
+            <span class="n">target_rect</span><span class="o">.</span><span class="n">left</span> <span class="o">+</span> <span class="n">_offset_by_margins</span><span class="p">(</span><span class="n">remaining_h_space</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">margin</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">margin</span><span class="o">.</span><span class="n">right</span><span class="p">),</span>
-            <span class="n">target_rect</span><span class="o">.</span><span class="n">top</span> <span class="o">+</span> <span class="n">offset_by_margins</span><span class="p">(</span><span class="n">remaining_v_space</span><span class="p">,</span>
+            <span class="n">target_rect</span><span class="o">.</span><span class="n">top</span> <span class="o">+</span> <span class="n">_offset_by_margins</span><span class="p">(</span><span class="n">remaining_v_space</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">margin</span><span class="o">.</span><span class="n">top</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">margin</span><span class="o">.</span><span class="n">bottom</span><span class="p">)))</span></div>
 
 
@@ -436,7 +451,7 @@
 
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">):</span>
         <span class="n">_check_call_op</span><span class="p">(</span><span class="kc">None</span> <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">child_was_added</span> <span class="k">else</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">overlay</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">overlay</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_wrap_children</span><span class="p">(</span><span class="n">child</span><span class="p">))</span>
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span> <span class="nf">_draw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> <span class="n">target_rect</span><span class="p">):</span>

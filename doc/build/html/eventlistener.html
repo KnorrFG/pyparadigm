@@ -54,7 +54,8 @@ the developement of experimental paradigms.</p>
 <li>wait_for_keypress() will return once a key was pressed n times.</li>
 <li><dl class="first docutils">
 <dt>wait_for_keys_timed_out() will wait for one of multiple possible keys, </dt>
-<dd>but return after the given timeout in any case</dd>
+<dd>but return after the given timeout in an
+y case</dd>
 </dl>
 </li>
 <li>and wait_for_seconds will simply wait the given time, but in the mean-time run
@@ -86,8 +87,15 @@ script when ctrl + c is pressed should be used</li>
 </tbody>
 </table>
 <dl class="method">
+<dt id="pyparadigm.eventlistener.EventListener.group">
+<code class="descname">group</code><span class="sig-paren">(</span><em>group</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/eventlistener.html#EventListener.group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.eventlistener.EventListener.group" title="Permalink to this definition">¶</a></dt>
+<dd><p>sets current mouse proxy group and returns self. 
+Enables lines like el.group(1).wait_for_keys(…)</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="pyparadigm.eventlistener.EventListener.listen">
-<code class="descname">listen</code><span class="sig-paren">(</span><em>temporary_handlers=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/eventlistener.html#EventListener.listen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.eventlistener.EventListener.listen" title="Permalink to this definition">¶</a></dt>
+<code class="descname">listen</code><span class="sig-paren">(</span><em>*temporary_handlers</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/eventlistener.html#EventListener.listen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.eventlistener.EventListener.listen" title="Permalink to this definition">¶</a></dt>
 <dd><p>When listen() is called all queued pygame.Events will be passed to all
 registered listeners. There are two ways to register a listener:</p>
 <ol class="arabic simple">
@@ -127,6 +135,23 @@ the result of the handler.</dd>
 </ol>
 <p>Therefore all permanent handlers should usually return
 EventConsumerInfo.DONT_CARE</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyparadigm.eventlistener.EventListener.listen_until_return">
+<code class="descname">listen_until_return</code><span class="sig-paren">(</span><em>*temporary_handlers</em>, <em>timeout=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/eventlistener.html#EventListener.listen_until_return"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.eventlistener.EventListener.listen_until_return" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls listen repeatedly until listen returns something else than None.
+Then returns listen’s result. If timeout is not zero listen_until_return
+stops after timeout seconds and returns None.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyparadigm.eventlistener.EventListener.mouse_area">
+<code class="descname">mouse_area</code><span class="sig-paren">(</span><em>handler</em>, <em>group=0</em>, <em>ident=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/eventlistener.html#EventListener.mouse_area"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.eventlistener.EventListener.mouse_area" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a new MouseProxy for the given group to the 
+EventListener.mouse_proxies dict if it is not in there yet, and returns
+the (new) MouseProxy. In listen() all entries in the current group of
+mouse_proxies are used.</p>
 </dd></dl>
 
 <dl class="method">
@@ -197,6 +222,31 @@ pygame.K_LEFT for the left arrow key</li>
 are executed</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="pyparadigm.eventlistener.EventListener.wait_for_unicode_char">
+<code class="descname">wait_for_unicode_char</code><span class="sig-paren">(</span><em>ignored_chars=None</em>, <em>timeout=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/eventlistener.html#EventListener.wait_for_unicode_char"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.eventlistener.EventListener.wait_for_unicode_char" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a str that contains the single character that was pressed.
+This already respects modifier keys and keyboard layouts. If timeout is
+not none and no key is pressed within the specified timeout, None is
+returned. If a key is ingnored_chars it will be ignored. As argument for
+irgnored_chars any object that has a __contains__ method can be used,
+e.g. a string, a set, a list, etc</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pyparadigm.eventlistener.MouseProxy">
+<em class="property">class </em><code class="descclassname">pyparadigm.eventlistener.</code><code class="descname">MouseProxy</code><span class="sig-paren">(</span><em>handler: Callable[[int, int], int], ident=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/eventlistener.html#MouseProxy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.eventlistener.MouseProxy" title="Permalink to this definition">¶</a></dt>
+<dd><p>has a _draw method so that it can be used with 
+surface_composition.compose(). When “rendered” it simply saves the own
+coordinates and then renders its child.
+The listener method can then be used with EventListener.listen() to execute
+the provided handler when the mouse interacts with the area.
+The handler gets the event type, pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN
+and pygame.MOUSEMOTION and the relative coordinates within the area.
+For unique identification along all MouseProxies the ident paramenter is used.
+If ident is None (the default) it is set to id(handler)</p>
 </dd></dl>
 
 </div>
@@ -225,6 +275,7 @@ are executed</p>
 <li class="toctree-l1"><a class="reference internal" href="surfacecomposition.html">The Surface Composition Module</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">The Event Listener Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="misc.html">The Misc-Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extras.html">Extras</a></li>
 </ul>
 
 <div class="relations">
