@@ -1,6 +1,11 @@
 """Using functionality from this file requires extra dependencies."""
-import numpy as np
-from matplotlib import cm
+import warnings
+
+try:
+    import numpy as np
+    from matplotlib import cm
+except ImportError:
+    warnings.warn("This module requires numpy and matplotlib, which seem to be missing.")
 
 import contextlib
 with contextlib.redirect_stdout(None):
