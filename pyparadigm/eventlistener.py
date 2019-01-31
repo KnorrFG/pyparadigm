@@ -251,7 +251,7 @@ class EventListener(object):
             else EventConsumerInfo.DONT_CARE
 
         while counter < n:
-            if self.listen((keypress_listener,)) == my_const:
+            if self.listen(keypress_listener) == my_const:
                 counter += 1
 
     def wait_for_keys(self, *keys, timeout=0):

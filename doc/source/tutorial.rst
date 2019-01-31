@@ -271,11 +271,11 @@ Example:
                 Text(buffer, Font("monospace"), align="left")
         )))
 
-    new_char = el.wait_for_unicode_char()
-    if new_char == "\x1b": # Str representation of ESC
-        break
-    else:
-        buffer = process_char(buffer, new_char)
+        new_char = el.wait_for_unicode_char()
+        if new_char == "\x1b": # Str representation of ESC
+            break
+        else:
+            buffer = process_char(buffer, new_char)
 
 
 Getting mouse input

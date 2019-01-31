@@ -12,6 +12,10 @@ and a tutorial over at: https://pyparadigm.readthedocs.io/en/latest/index.html
 
 Changelog
 ---------
+* 1.0.7
+    * fixed a bug in EventListener.wait_for_n_key_presses()
+    * fixed a code sample in the tutorial
+    
 * 1.0.6
     * added special treatment for Surfaces in MouseProxy, so that the actual visible rect is obtained. For that I added a new method, Surface.compute_render_rect
     
