@@ -5,7 +5,7 @@ frames that are displayed in a paradigm. For an introduction, please refer to
 the :ref:`tutorial<creating_surfaces>`
 """
 from functools import reduce, wraps, lru_cache, partial
-from itertools import accumulate
+from itertools import accumulate, chain
 from operator import add, methodcaller
 
 import contextlib
@@ -457,11 +457,20 @@ class Line:
             self.width)
 
 _fill_col = lambda target_len: lambda col: col + [None] * (target_len - len(col))
-_to_h_layout = lambda cols: lambda children: LinLayout("h")(
-    *_lmap(lambda it, child: it(child), map(LLItem, cols),  
-                                         _lmap(_wrap_surface, children)))
 
-def GridLayout(row_proportions=None, col_proportions=None):
+def _interleave_with_lines(line, contents):
+    return chain(chain.from_iterable(zip([line] * len(contents), contents)), [line])
+
+
+def _to_h_layout(cols, line_width, color): 
+    def inner_wrap(children): 
+        contents = _lmap(lambda it, child: it(child), 
+                         map(LLItem, cols), _lmap(_wrap_surface, children)))
+        return LinLayout("h")(*(contents if line_width == 0 else
+                                _interleave_with_lines(Line("v", line_width, color), 
+                                                       contents)))
+
+def GridLayout(row_proportions=None, col_proportions=None, line_width=0, color=0):
     def inner_grid_layout(*children):
         nonlocal row_proportions, col_proportions
         assert all(type(child) == list for child in children)
@@ -472,11 +481,14 @@ def GridLayout(row_proportions=None, col_proportions=None):
         if col_proportions: assert len(col_proportions) == col_width
         else: col_proportions = [1] * col_width
         filled_cols = _lmap(_fill_col(col_width), children)
+
+        contents = map(lambda it, child: it(child), 
+                       map(LLItem, row_proportions),
+                       _lmap(_to_h_layout(col_proportions, line_width, color), children))
         
-        return LinLayout("v")(*_lmap(
-            lambda it, child: it(child), 
-            map(LLItem, row_proportions),
-            _lmap(_to_h_layout(col_proportions), children)))
+        return LinLayout("v")(*_interleave_with_lines(
+            Line("h", line_width, color), contents)
+            if line_width else contents)
 
     return inner_grid_layout
     
