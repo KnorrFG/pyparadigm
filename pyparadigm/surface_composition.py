@@ -64,7 +64,8 @@ class LLItem:
         self.relative_size = relative_size
 
     def __call__(self, child):
-        self.child = _wrap_children(child)
+        if child:
+            self.child = _wrap_children(child)
         return self
 
 
