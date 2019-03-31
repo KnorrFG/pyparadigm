@@ -15,6 +15,9 @@ Changelog
 * 1.0.8
     * Fixed a bug, that would cause a Gridlayout to crash if 
         a None is added
+    * Added functions:
+        * is_left_click()
+        * is_key_press()
 * 1.0.7
     * fixed a bug in EventListener.wait_for_n_key_presses()
     * fixed a code sample in the tutorial

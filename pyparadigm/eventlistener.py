@@ -58,6 +58,17 @@ class EventConsumerInfo(Enum):
     CONSUMED = 1
 
 
+def is_left_click(event):
+    """checks whether the provided pygame event is a left mouse click"""
+    return (event.type == pygame.MOUSEBUTTONDOWN
+                and event.button == MOUSE_LEFT)
+
+
+def is_key_press(event, key):
+    return event.type == pygame.KEYDOWN \
+            and event.key == key
+
+
 def _is_iterable(val):
     try:
         some_object_iterator = iter(val)
@@ -109,7 +120,8 @@ class MouseProxy:
     def _draw(self, surface, rect):
         self.rect = rect if not type(self.child) == Surface\
             else self.child.compute_render_rect(rect)
-        self.child._draw(surface, rect)
+        if self.child:
+            self.child._draw(surface, rect)
 
     def listener(self, e):
         if e.type in MouseProxy.mouse_events:

@@ -12,6 +12,8 @@ import contextlib
 with contextlib.redirect_stdout(None):
     import pygame
 
+from ._primitives import PPError
+
 _lmap = wraps(map)(lambda *args, **kwargs:list(map(*args, **kwargs)))
 _wrap_surface = lambda elem:\
      Surface()(elem) if type(elem) == pygame.Surface else elem
@@ -68,6 +70,8 @@ class LLItem:
             self.child = _wrap_children(child)
         return self
 
+    def __repr__(self):
+        return "LLItem({})({})".format(self.relative_size, repr(self.child))
 
 class LinLayout:
     """A linear layout to order items horizontally or vertically.
@@ -89,12 +93,14 @@ class LinLayout:
 
 
     def __call__(self, *children):
+        if len(children) == 0:
+            raise PPError("You tried to add no children to layout")
+
         _check_call_op(self.children)
         self.children = _lmap(lambda child: 
                                 child if type(child) == LLItem else LLItem(1)(child), 
                               _wrap_children(children))
         return self
-
 
     def _draw(self, surface, target_rect):
         child_rects = self._compute_child_rects(target_rect)
@@ -102,11 +108,15 @@ class LinLayout:
             child.child._draw(surface, rect)
 
     def _compute_child_rects(self, target_rect):
-        flip_if_not_horizontal = lambda t: \
-            t if self.orientation == "h" else (t[1], t[0])
+        def flip_if_not_horizontal(t): 
+            return t if self.orientation == "h" else (t[1], t[0])
+
         target_rect_size = target_rect.size
+        sum_child_weights = sum(child.relative_size for child in self.children)
+        if sum_child_weights == 0:
+            raise PPError("LinLayout Children all have weight 0: " + repr(self.children))
         divider, full = flip_if_not_horizontal(target_rect_size) 
-        dyn_size_per_unit = divider / sum(child.relative_size for child in self.children)
+        dyn_size_per_unit = divider / sum_child_weights
         strides = [child.relative_size * dyn_size_per_unit for child in self.children]
         dyn_offsets = [0] + list(accumulate(strides))[:-1]
         left_offsets, top_offsets = flip_if_not_horizontal((dyn_offsets, 
@@ -459,16 +469,19 @@ class Line:
 _fill_col = lambda target_len: lambda col: col + [None] * (target_len - len(col))
 
 def _interleave_with_lines(line, contents):
-    return chain(chain.from_iterable(zip([line] * len(contents), contents)), [line])
+    ll = [LLItem(0)(line)]
+    return chain(*zip(ll * len(contents), contents), ll)
 
 
 def _to_h_layout(cols, line_width, color): 
     def inner_wrap(children): 
-        contents = _lmap(lambda it, child: it(child), 
-                         map(LLItem, cols), _lmap(_wrap_surface, children)))
+        contents = [it(child) for it, child in zip( 
+                         map(LLItem, cols), 
+                         map(_wrap_surface, children))]
         return LinLayout("h")(*(contents if line_width == 0 else
                                 _interleave_with_lines(Line("v", line_width, color), 
                                                        contents)))
+    return inner_wrap
 
 def GridLayout(row_proportions=None, col_proportions=None, line_width=0, color=0):
     def inner_grid_layout(*children):
@@ -482,9 +495,9 @@ def GridLayout(row_proportions=None, col_proportions=None, line_width=0, color=0
         else: col_proportions = [1] * col_width
         filled_cols = _lmap(_fill_col(col_width), children)
 
-        contents = map(lambda it, child: it(child), 
-                       map(LLItem, row_proportions),
-                       _lmap(_to_h_layout(col_proportions, line_width, color), children))
+        llitems = map(LLItem, row_proportions)
+        mapped_rows = map(_to_h_layout(col_proportions, line_width, color), children)
+        contents = [it(child) for it, child in zip(llitems, mapped_rows)]
         
         return LinLayout("v")(*_interleave_with_lines(
             Line("h", line_width, color), contents)
@@ -568,9 +581,9 @@ def Text(text, font, color=pygame.Color(0, 0, 0), antialias=False, align="center
     margin = Margin(margin_l, margin_r)
     color_key = pygame.Color(0, 0, 1) if pygame.Color(0, 0, 1) != color else 0x000002
     
-    text_surfaces = _lmap(lambda text: _text(text, font=font, 
-                                   color=color, antialias=antialias),
-                                   map(methodcaller("strip"), text.split("\n")))
+    text_surfaces = [_text(text.strip(), font=font, 
+                           color=color, antialias=antialias)
+                     for text in text.split("\n")]
     w = max(surf.get_rect().w for surf in text_surfaces)
     h = sum(surf.get_rect().h for surf in text_surfaces)
     surf = compose((w, h), Fill(color_key))(LinLayout("v")(
