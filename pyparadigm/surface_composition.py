@@ -461,6 +461,19 @@ _to_h_layout = lambda cols: lambda children: LinLayout("h")(
                                          _lmap(_wrap_surface, children)))
 
 def GridLayout(row_proportions=None, col_proportions=None):
+    """Layout that arranges its children on a grid.
+    
+    Proportions are given as lists of integers, where the nth element
+    represents the proportion of the nth row or column.
+
+    Children are added in lists, every list represents one row,
+    if row or column proportions are provided, the number of rows or columns in
+    the children must match the provided proportions.
+    To define an empty cell use None as child.
+    
+    If no column proportions are provided, rows can have different lengths. In
+    this case the width of the layout will be the length of the longest row,
+    and the other rows will be filled with Nones"""
     def inner_grid_layout(*children):
         nonlocal row_proportions, col_proportions
         assert all(type(child) == list for child in children)
