@@ -1,3 +1,17 @@
+Metadata-Version: 2.1
+Name: pyparadigm
+Version: 1.0.7
+Summary: A package to build psychological Paradigms. Based on PyGame 
+Home-page: https://github.com/KnorrFG/pyparadigm
+License: UNKNOWN
+Author: Felix G. Knorr
+Author-email: knorr.felix@gmx.de
+Requires-Python: >=3.5
+Description-Content-Type: text/x-rst
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Requires-Dist: pygame (>=1.9.3)
+
 
 PyParadigm
 ==========
@@ -13,10 +27,7 @@ and a tutorial over at: https://pyparadigm.readthedocs.io/en/latest/index.html
 Changelog
 ---------
 * 1.0.8
-    * added misc.rgba for conversion of color codes to pygame.Color with alpha
-        channel, useful for text-colors
-    * Fixed a bug, that
-    would cause a Gridlayout to crash if 
+    * Fixed a bug, that would cause a Gridlayout to crash if 
         a None is added
     * Fixed a bug that would cause crashes when adding iterable objects with a
         draw method to a render object with a single child

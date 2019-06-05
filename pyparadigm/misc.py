@@ -132,6 +132,11 @@ _char_mappings = {
         "\t": "    "
 }
 
+def rgba(colorcode, alpha=255):
+    """Returns a pygame rgba color object, with the provided 
+    alpha value."""
+    return pygame.Color(colorcode * 0x100 + alpha)
+
 def process_char(buffer: str, char: str, mappings=_char_mappings):
     """This is a convinience method for use with 
     EventListener.wait_for_unicode_char(). In most cases it simply appends 

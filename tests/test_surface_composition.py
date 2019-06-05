@@ -71,7 +71,7 @@ class testSurface:
             row_proportions=[2, 1], col_proportions=[1, 2]
         )(
             [text("Top left\nLine2", 0xFF0000, "left"), text("Top right\nLine2Blalalal", 0xFF00FF, "right")],
-            [text("Bottom left", 0xFFFF00, "center"), _text("Bottom right", font)]
+            [None, _text("Bottom right", font)]
         ))
         screen.blit(frame, (0, 0))
         pygame.display.flip()

@@ -15,11 +15,15 @@ with contextlib.redirect_stdout(None):
 from ._primitives import PPError
 
 _lmap = wraps(map)(lambda *args, **kwargs:list(map(*args, **kwargs)))
-_wrap_surface = lambda elem:\
-     Surface()(elem) if type(elem) == pygame.Surface else elem
-_round_to_int = lambda val: int(round(val))
-_call_function = lambda elem:\
-    elem() if callable(elem) else elem
+
+def _wrap_surface(elem):
+    return Surface()(elem) if type(elem) == pygame.Surface else elem
+    
+def _round_to_int(val): 
+    return int(round(val))
+
+def _call_function(elem):
+    return elem() if callable(elem) else elem
 
 
 def _inner_func_anot(func):
@@ -33,10 +37,7 @@ def _inner_func_anot(func):
 
 
 def _wrap_children(children):
-    try:
-        return _lmap(_wrap_surface, children)
-    except TypeError:
-        return _wrap_surface(children)
+    return [_wrap_surface(c) for c in children]
 
 
 def _check_call_op(child): 
@@ -67,7 +68,7 @@ class LLItem:
 
     def __call__(self, child):
         if child:
-            self.child = _wrap_children(child)
+            self.child = _wrap_surface(child)
         return self
 
     def __repr__(self):
@@ -268,7 +269,7 @@ class Padding:
 
     def __call__(self, child):
         _check_call_op(self.child)
-        self.child = _wrap_children(child)
+        self.child = _wrap_surface(child)
         return self
 
     @staticmethod
@@ -308,7 +309,7 @@ class RectangleShaper:
 
     def __call__(self, child):
         _check_call_op(self.child)
-        self.child = _wrap_children(child)
+        self.child = _wrap_surface(child)
         return self
         
     def _draw(self, surface, target_rect):
@@ -370,7 +371,7 @@ class Fill:
 
     def __call__(self, child):
         _check_call_op(self.child)
-        self.child = _wrap_children(child)
+        self.child = _wrap_surface(child)
         return self
     
     def _draw(self, surface, target_rect):
@@ -427,7 +428,7 @@ class Border:
 
     def __call__(self, child):
         _check_call_op(None if not self.child_was_added else 1)
-        self.overlay.children.append(_wrap_children(child))
+        self.overlay.children.append(_wrap_surface(child))
         return self
 
     def _draw(self, surface, target_rect):
