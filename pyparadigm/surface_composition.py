@@ -467,7 +467,8 @@ class Line:
                 target_rect.top + target_rect.h - 1), 
             self.width)
 
-_fill_col = lambda target_len: lambda col: col + [None] * (target_len - len(col))
+def _fill_col(target_len): 
+    return lambda col: col + [None] * (target_len - len(col))
 
 def _interleave_with_lines(line, contents):
     ll = [LLItem(0)(line)]
@@ -484,7 +485,21 @@ def _to_h_layout(cols, line_width, color):
                                                        contents)))
     return inner_wrap
 
+
 def GridLayout(row_proportions=None, col_proportions=None, line_width=0, color=0):
+    """Layout that arranges its children on a grid.
+    
+    Proportions are given as lists of integers, where the nth element
+    represents the proportion of the nth row or column.
+
+    Children are added in lists, every list represents one row,
+    if row or column proportions are provided, the number of rows or columns in
+    the children must match the provided proportions.
+    To define an empty cell use None as child.
+    
+    If no column proportions are provided, rows can have different lengths. In
+    this case the width of the layout will be the length of the longest row,
+    and the other rows will be filled with Nones"""
     def inner_grid_layout(*children):
         nonlocal row_proportions, col_proportions
         assert all(type(child) == list for child in children)
