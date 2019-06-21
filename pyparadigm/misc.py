@@ -111,7 +111,7 @@ def slide_show(slides, continue_handler):
         continue_handler()
 
 
-def empty_surface(fill_color, size=None):
+def empty_surface(fill_color, size=None, flags=0):
     """Returns an empty surface filled with fill_color.
 
     :param fill_color: color to fill the surface with
@@ -121,8 +121,11 @@ def empty_surface(fill_color, size=None):
         to be the same size as the screen
     :type size: int-2-tuple
     """
-    sr = pygame.display.get_surface().get_rect()
-    surf = pygame.Surface(size or (sr.w, sr.h))
+    if size is None:
+        sr = pygame.display.get_surface().get_rect()
+        surf = pygame.Surface((sr.w, sr.h), flags=flags)
+    else:
+        surf = pygame.Surface(size, flags=flags)
     surf.fill(fill_color)
     return surf
 
@@ -163,3 +166,33 @@ def process_char(buffer: str, char: str, mappings=_char_mappings):
         return buffer[:-1] if len(buffer) > 0 else buffer
     else:
         return buffer + char
+
+
+def make_transparent_by_mask(surf, mask, copy=True):
+    """Sets all voxels that are 1 in the mask to transparent.
+    if surf has no alpha channel a new image is returned, if it does have 
+    one the behavior depends on the copy
+    parameter"""
+    if surf.get_flags() & pygame.SRCALPHA == 0:
+        surf = surf.convert_alpha()
+    elif copy:
+        surf = surf.copy()
+    pix_arr = pygame.surfarray.pixels_alpha(surf)
+    pix_arr[mask.astype(bool)] = 0
+    return surf
+
+
+def make_transparent_by_colorkey(surf, colorkey, copy=True):
+    """Makes image transparent, and sets all pixel of a certain color
+    transparent
+
+    This is useful if images should be scaled and smoothed, as this will change
+    the colors and make colorkeys useless, if surf has no alpha channel a new
+    image is returned, if it does have one the behavior depends on the copy
+    parameter"""
+    if type(colorkey) != int:
+        colorkey = surf.map_rgb(colorkey)
+
+    pix_arr = pygame.surfarray.array2d(surf)
+    mask = pix_arr == colorkey
+    return make_transparent_by_mask(surf, mask, copy)

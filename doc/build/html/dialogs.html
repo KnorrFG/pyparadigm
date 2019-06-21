@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Python Module Index &#8212; PyParadigm 0.1 documentation</title>
+    <title>The Dialogs-Module &#8212; PyParadigm 0.1 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -14,14 +14,12 @@
     <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-
+    <link rel="prev" title="Extras" href="extras.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
-
 
   </head><body>
   
@@ -33,49 +31,23 @@
 
           <div class="body" role="main">
             
+  <div class="section" id="module-pyparadigm.dialogs">
+<span id="the-dialogs-module"></span><h1>The Dialogs-Module<a class="headerlink" href="#module-pyparadigm.dialogs" title="Permalink to this headline">¶</a></h1>
+<p>This module contains dialogues, which will query user input</p>
+<dl class="function">
+<dt id="pyparadigm.dialogs.string_dialog">
+<code class="sig-prename descclassname">pyparadigm.dialogs.</code><code class="sig-name descname">string_dialog</code><span class="sig-paren">(</span><em class="sig-param">caption: str</em>, <em class="sig-param">renderer: callable = &lt;function _center_renderer&gt;</em>, <em class="sig-param">el: pyparadigm.eventlistener.EventListener = None</em>, <em class="sig-param">text_renderer=&lt;functools._lru_cache_wrapper object&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/dialogs.html#string_dialog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.dialogs.string_dialog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Will display a dialog which gets a string as input from the user.
+By default the dialog will be rendered to the screen directly, to control
+the target pass a callable as renderer which takes a single argument, which
+is an element tree. This will be called by string_dialog to display itself.
+You can pass an eventlistener instance, which will then be used in case you
+got some important permanent handlers that must be run. You can pass a
+function that converts a string to something that can be used within
+compose() with the text_renderer to control the optic of the text</p>
+</dd></dl>
 
-   <h1>Python Module Index</h1>
-
-   <div class="modindex-jumpbox">
-   <a href="#cap-p"><strong>p</strong></a>
-   </div>
-
-   <table class="indextable modindextable">
-     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
-     <tr class="cap" id="cap-p"><td></td><td>
-       <strong>p</strong></td><td></td></tr>
-     <tr>
-       <td><img src="_static/minus.png" class="toggler"
-              id="toggle-1" style="display: none" alt="-" /></td>
-       <td>
-       <code class="xref">pyparadigm</code></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="dialogs.html#module-pyparadigm.dialogs"><code class="xref">pyparadigm.dialogs</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="eventlistener.html#module-pyparadigm.eventlistener"><code class="xref">pyparadigm.eventlistener</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="extras.html#module-pyparadigm.extras"><code class="xref">pyparadigm.extras</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="misc.html#module-pyparadigm.misc"><code class="xref">pyparadigm.misc</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="surfacecomposition.html#module-pyparadigm.surface_composition"><code class="xref">pyparadigm.surface_composition</code></a></td><td>
-       <em></em></td></tr>
-   </table>
+</div>
 
 
           </div>
@@ -95,20 +67,21 @@
 
 <h3>Navigation</h3>
 <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">A tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="surfacecomposition.html">The Surface Composition Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="eventlistener.html">The Event Listener Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="misc.html">The Misc-Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="extras.html">Extras</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dialogs.html">The Dialogs-Module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">The Dialogs-Module</a></li>
 </ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="extras.html" title="previous chapter">Extras</a></li>
   </ul></li>
 </ul>
 </div>
@@ -141,6 +114,9 @@
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
+      |
+      <a href="_sources/dialogs.rst.txt"
+          rel="nofollow">Page source</a>
     </div>
 
     

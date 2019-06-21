@@ -62,3 +62,4 @@ The next step now would be to read the :doc:`tutorial</tutorial>`
     eventlistener
     misc
     extras
+    dialogs

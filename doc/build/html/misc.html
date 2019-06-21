@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>The Misc-Module &#8212; PyParadigm 0.1 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -13,7 +11,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Extras" href="extras.html" />
@@ -39,7 +37,7 @@
 <p>Contains code that did not make it into an own module.</p>
 <dl class="function">
 <dt id="pyparadigm.misc.display">
-<code class="descclassname">pyparadigm.misc.</code><code class="descname">display</code><span class="sig-paren">(</span><em>surface</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/misc.html#display"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.misc.display" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pyparadigm.misc.</code><code class="sig-name descname">display</code><span class="sig-paren">(</span><em class="sig-param">surface</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/misc.html#display"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.misc.display" title="Permalink to this definition">¶</a></dt>
 <dd><p>Displays a pygame.Surface in the window.</p>
 <p>in pygame the window is represented through a surface, on which you can draw
 as on any other pygame.Surface. A refernce to to the screen can be optained
@@ -48,79 +46,88 @@ contents of the screen surface in the window <code class="xref py py-func docuti
 needs to be called.</p>
 <p><a class="reference internal" href="#pyparadigm.misc.display" title="pyparadigm.misc.display"><code class="xref py py-func docutils literal notranslate"><span class="pre">display()</span></code></a> draws the surface onto the screen surface at the postion
 (0, 0), and then calls <code class="xref py py-func docutils literal notranslate"><span class="pre">flip()</span></code>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>surface</strong> (<em>pygame.Surface</em>) – the pygame.Surface to display</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>surface</strong> (<em>pygame.Surface</em>) – the pygame.Surface to display</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="pyparadigm.misc.empty_surface">
-<code class="descclassname">pyparadigm.misc.</code><code class="descname">empty_surface</code><span class="sig-paren">(</span><em>fill_color</em>, <em>size=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/misc.html#empty_surface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.misc.empty_surface" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pyparadigm.misc.</code><code class="sig-name descname">empty_surface</code><span class="sig-paren">(</span><em class="sig-param">fill_color</em>, <em class="sig-param">size=None</em>, <em class="sig-param">flags=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/misc.html#empty_surface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.misc.empty_surface" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns an empty surface filled with fill_color.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>fill_color</strong> (<em>pygame.Color</em>) – color to fill the surface with</li>
-<li><strong>size</strong> (<em>int-2-tuple</em>) – the size of the new surface, if None its created
-to be the same size as the screen</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fill_color</strong> (<em>pygame.Color</em>) – color to fill the surface with</p></li>
+<li><p><strong>size</strong> (<em>int-2-tuple</em>) – the size of the new surface, if None its created
+to be the same size as the screen</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="pyparadigm.misc.init">
-<code class="descclassname">pyparadigm.misc.</code><code class="descname">init</code><span class="sig-paren">(</span><em>resolution</em>, <em>pygame_flags=0</em>, <em>display_pos=(0</em>, <em>0)</em>, <em>interactive_mode=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/misc.html#init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.misc.init" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pyparadigm.misc.</code><code class="sig-name descname">init</code><span class="sig-paren">(</span><em class="sig-param">resolution</em>, <em class="sig-param">pygame_flags=0</em>, <em class="sig-param">display_pos=(0</em>, <em class="sig-param">0)</em>, <em class="sig-param">interactive_mode=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/misc.html#init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.misc.init" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a window of given resolution.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>resolution</strong> (<em>tuple</em>) – the resolution of the windows as (width, height) in
-pixels</li>
-<li><strong>pygame_flags</strong> (<em>int</em>) – modify the creation of the window.
-For further information see <a class="reference internal" href="tutorial.html#creating-a-window"><span class="std std-ref">Creating a Window</span></a></li>
-<li><strong>display_pos</strong> (<em>tuple</em>) – determines the position on the desktop where the
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>resolution</strong> (<em>tuple</em>) – the resolution of the windows as (width, height) in
+pixels</p></li>
+<li><p><strong>pygame_flags</strong> (<em>int</em>) – modify the creation of the window.
+For further information see <a class="reference internal" href="tutorial.html#creating-a-window"><span class="std std-ref">Creating a Window</span></a></p></li>
+<li><p><strong>display_pos</strong> (<em>tuple</em>) – determines the position on the desktop where the
 window is created. In a multi monitor system this can be used to position
 the window on a different monitor. E.g. the monitor to the right of the
 main-monitor would be at position (1920, 0) if the main monitor has the
-width 1920.</li>
-<li><strong>interactive_mode</strong> (<em>bool</em>) – Will install a thread, that emptys the
+width 1920.</p></li>
+<li><p><strong>interactive_mode</strong> (<em>bool</em>) – Will install a thread, that emptys the
 event-queue every 100ms. This is neccessary to be able to use the
 display() function in an interactive console on windows systems.
 If interactive_mode is set, init() will return a reference to the
 background thread. This thread has a stop() method which can be used to
 cancel it. If you use ctrl+d or exit() within ipython, while the thread
-is still running, ipython will become unusable, but not close.</li>
+is still running, ipython will become unusable, but not close.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">a reference to the display screen, or a reference to the background
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a reference to the display screen, or a reference to the background
 thread if interactive_mode was set to true. In the second scenario you
 can obtain a reference to the display surface via
 pygame.display.get_surface()</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pygame.Surface</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pygame.Surface</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyparadigm.misc.make_transparent_by_colorkey">
+<code class="sig-prename descclassname">pyparadigm.misc.</code><code class="sig-name descname">make_transparent_by_colorkey</code><span class="sig-paren">(</span><em class="sig-param">surf</em>, <em class="sig-param">colorkey</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/misc.html#make_transparent_by_colorkey"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.misc.make_transparent_by_colorkey" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes image transparent, and sets all pixel of a certain color
+transparent</p>
+<p>This is useful if images should be scaled and smoothed, as this will change
+the colors and make colorkeys useless, if surf has no alpha channel a new
+image is returned, if it does have one the behavior depends on the copy
+parameter</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyparadigm.misc.make_transparent_by_mask">
+<code class="sig-prename descclassname">pyparadigm.misc.</code><code class="sig-name descname">make_transparent_by_mask</code><span class="sig-paren">(</span><em class="sig-param">surf</em>, <em class="sig-param">mask</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/misc.html#make_transparent_by_mask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.misc.make_transparent_by_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets all voxels that are 1 in the mask to transparent.
+if surf has no alpha channel a new image is returned, if it does have 
+one the behavior depends on the copy
+parameter</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pyparadigm.misc.process_char">
-<code class="descclassname">pyparadigm.misc.</code><code class="descname">process_char</code><span class="sig-paren">(</span><em>buffer: str</em>, <em>char: str</em>, <em>mappings={'\t': '    '</em>, <em>'\r': '\n'}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/misc.html#process_char"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.misc.process_char" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pyparadigm.misc.</code><code class="sig-name descname">process_char</code><span class="sig-paren">(</span><em class="sig-param">buffer: str</em>, <em class="sig-param">char: str</em>, <em class="sig-param">mappings={'\t': '    '</em>, <em class="sig-param">'\r': '\n'}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/misc.html#process_char"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.misc.process_char" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is a convinience method for use with 
 EventListener.wait_for_unicode_char(). In most cases it simply appends 
 char to buffer. Some replacements are done because presing return will
@@ -129,27 +136,30 @@ Also backspace cant just be added to a string either, therefore, if char is
 “u0008” the last character from buffer will be cut off. The replacement
 from ‘r’ to ‘n’ is done using the mappings argument, the default value
 for it also contains a mapping from ‘       ‘ to 4 spaces.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buffer</strong> (<em>str</em>) – the string to be updated</li>
-<li><strong>char</strong> (<em>str</em>) – the unicode character to be processed</li>
-<li><strong>mappings</strong> (<em>dict</em>) – a dict containing mappings</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>buffer</strong> (<em>str</em>) – the string to be updated</p></li>
+<li><p><strong>char</strong> (<em>str</em>) – the unicode character to be processed</p></li>
+<li><p><strong>mappings</strong> (<em>dict</em>) – a dict containing mappings</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a new string</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a new string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyparadigm.misc.rgba">
+<code class="sig-prename descclassname">pyparadigm.misc.</code><code class="sig-name descname">rgba</code><span class="sig-paren">(</span><em class="sig-param">colorcode</em>, <em class="sig-param">alpha=255</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/misc.html#rgba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.misc.rgba" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a pygame rgba color object, with the provided 
+alpha value.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pyparadigm.misc.slide_show">
-<code class="descclassname">pyparadigm.misc.</code><code class="descname">slide_show</code><span class="sig-paren">(</span><em>slides</em>, <em>continue_handler</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/misc.html#slide_show"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.misc.slide_show" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pyparadigm.misc.</code><code class="sig-name descname">slide_show</code><span class="sig-paren">(</span><em class="sig-param">slides</em>, <em class="sig-param">continue_handler</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/misc.html#slide_show"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.misc.slide_show" title="Permalink to this definition">¶</a></dt>
 <dd><p>Displays one “slide” after another.</p>
 <p>After displaying a slide, continue_handler is called without arguments.
 When continue_handler returns, the next slide is displayed.</p>
@@ -159,19 +169,15 @@ When continue_handler returns, the next slide is displayed.</p>
 </pre></div>
 </div>
 <p>(partial is imported from the functools module.)</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>slides</strong> (<em>iterable</em>) – pygame.Surfaces to be displayed.</li>
-<li><strong>continue_handler</strong> (<em>callable with arity 0.</em>) – function, that returns when the next slide should
-be displayed.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>slides</strong> (<em>iterable</em>) – pygame.Surfaces to be displayed.</p></li>
+<li><p><strong>continue_handler</strong> (<em>callable with arity 0.</em>) – function, that returns when the next slide should
+be displayed.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -201,6 +207,7 @@ be displayed.</li>
 <li class="toctree-l1"><a class="reference internal" href="eventlistener.html">The Event Listener Module</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">The Misc-Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="extras.html">Extras</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dialogs.html">The Dialogs-Module</a></li>
 </ul>
 
 <div class="relations">
@@ -213,13 +220,11 @@ be displayed.</li>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -240,7 +245,7 @@ be displayed.</li>
       &copy;2018, Felix G. Knorr.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

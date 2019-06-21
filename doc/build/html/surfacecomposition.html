@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>The Surface Composition Module &#8212; PyParadigm 0.1 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -13,7 +11,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="The Event Listener Module" href="eventlistener.html" />
@@ -42,96 +40,92 @@ frames that are displayed in a paradigm. For an introduction, please refer to
 the <a class="reference internal" href="tutorial.html#creating-surfaces"><span class="std std-ref">tutorial</span></a></p>
 <dl class="class">
 <dt id="pyparadigm.surface_composition.Border">
-<em class="property">class </em><code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">Border</code><span class="sig-paren">(</span><em>width=3</em>, <em>color=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Border"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Border" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pyparadigm.surface_composition.</code><code class="sig-name descname">Border</code><span class="sig-paren">(</span><em class="sig-param">width=3</em>, <em class="sig-param">color=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Border"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Border" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draws a border around the contained area. Can have a single child.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>width</strong> (<em>int</em>) – width of the border in pixels</li>
-<li><strong>color</strong> (<em>pygame.Color</em>) – color of the border</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>width</strong> (<em>int</em>) – width of the border in pixels</p></li>
+<li><p><strong>color</strong> (<em>pygame.Color</em>) – color of the border</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="class">
 <dt id="pyparadigm.surface_composition.Circle">
-<em class="property">class </em><code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">Circle</code><span class="sig-paren">(</span><em>color</em>, <em>width=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Circle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Circle" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pyparadigm.surface_composition.</code><code class="sig-name descname">Circle</code><span class="sig-paren">(</span><em class="sig-param">color</em>, <em class="sig-param">width=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Circle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Circle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draws a Circle in the assigned space.</p>
 <p>The circle will always be centered, and the radius will be half of the
 shorter side of the assigned space.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>color</strong> (<em>pygame.Color</em><em> or </em><em>int</em>) – The color of the circle</li>
-<li><strong>width</strong> (<em>int</em>) – width of the circle (in pixels). If 0 the circle will be filled</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>color</strong> (<em>pygame.Color</em><em> or </em><em>int</em>) – The color of the circle</p></li>
+<li><p><strong>width</strong> (<em>int</em>) – width of the circle (in pixels). If 0 the circle will be filled</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="pyparadigm.surface_composition.Cross">
-<code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">Cross</code><span class="sig-paren">(</span><em>width=3</em>, <em>color=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Cross"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Cross" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pyparadigm.surface_composition.</code><code class="sig-name descname">Cross</code><span class="sig-paren">(</span><em class="sig-param">width=3</em>, <em class="sig-param">color=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Cross"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Cross" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draws a cross centered in the target area</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>width</strong> (<em>int</em>) – width of the lines of the cross in pixels</li>
-<li><strong>color</strong> (<em>pygame.Color</em>) – color of the lines of the cross</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>width</strong> (<em>int</em>) – width of the lines of the cross in pixels</p></li>
+<li><p><strong>color</strong> (<em>pygame.Color</em>) – color of the lines of the cross</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="class">
 <dt id="pyparadigm.surface_composition.Fill">
-<em class="property">class </em><code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">Fill</code><span class="sig-paren">(</span><em>color</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Fill"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Fill" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pyparadigm.surface_composition.</code><code class="sig-name descname">Fill</code><span class="sig-paren">(</span><em class="sig-param">color</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Fill"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Fill" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fills the assigned area. Afterwards, the children are rendered</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>color</strong> (<em>pygame.Color</em><em> or </em><em>int</em>) – the color with which the area is filled</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>color</strong> (<em>pygame.Color</em><em> or </em><em>int</em>) – the color with which the area is filled</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="pyparadigm.surface_composition.Font">
-<code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">Font</code><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Font"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Font" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pyparadigm.surface_composition.</code><code class="sig-name descname">Font</code><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Font"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Font" title="Permalink to this definition">¶</a></dt>
 <dd><p>Unifies loading of fonts.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> (<em>str</em>) – name of system-font or filepath, if None is passed the default
-system-font is loaded</li>
-<li><strong>source</strong> (<em>str</em>) – “sys” for system font, or “file” to load a file</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – name of system-font or filepath, if None is passed the default
+system-font is loaded</p></li>
+<li><p><strong>source</strong> (<em>str</em>) – “sys” for system font, or “file” to load a file</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyparadigm.surface_composition.GridLayout">
+<code class="sig-prename descclassname">pyparadigm.surface_composition.</code><code class="sig-name descname">GridLayout</code><span class="sig-paren">(</span><em class="sig-param">row_proportions=None</em>, <em class="sig-param">col_proportions=None</em>, <em class="sig-param">line_width=0</em>, <em class="sig-param">color=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#GridLayout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.GridLayout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Layout that arranges its children on a grid.</p>
+<p>Proportions are given as lists of integers, where the nth element
+represents the proportion of the nth row or column.</p>
+<p>Children are added in lists, every list represents one row,
+if row or column proportions are provided, the number of rows or columns in
+the children must match the provided proportions.
+To define an empty cell use None as child.</p>
+<p>If no column proportions are provided, rows can have different lengths. In
+this case the width of the layout will be the length of the longest row,
+and the other rows will be filled with Nones</p>
 </dd></dl>
 
 <dl class="class">
 <dt id="pyparadigm.surface_composition.LLItem">
-<em class="property">class </em><code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">LLItem</code><span class="sig-paren">(</span><em>relative_size</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#LLItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.LLItem" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pyparadigm.surface_composition.</code><code class="sig-name descname">LLItem</code><span class="sig-paren">(</span><em class="sig-param">relative_size</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#LLItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.LLItem" title="Permalink to this definition">¶</a></dt>
 <dd><p>Defines the relative size of an element in a LinLayout</p>
 <p>All Elements that are passed to a linear layout are automatically wrapped
 into an LLItem with relative_size=1. Therefore by default all elements
@@ -139,75 +133,64 @@ within a layout will be of the same size. To change the proportions a LLItem
 can be used explicitely with another relative size.</p>
 <p>It is also possible to use an LLItem as placeholde in a layout, to generate
 an empty space like this:</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-<dl class="docutils">
-<dt>LinLayout(“h”)(</dt>
-<dd>LLItem(1),
-LLItem(1)(Circle(0xFFFF00)))</dd>
+<dl class="field-list simple">
+<dt class="field-odd">Example</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<dl class="simple">
+<dt>LinLayout(“h”)(</dt><dd><p>LLItem(1),
+LLItem(1)(Circle(0xFFFF00)))</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="class">
 <dt id="pyparadigm.surface_composition.LinLayout">
-<em class="property">class </em><code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">LinLayout</code><span class="sig-paren">(</span><em>orientation</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#LinLayout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.LinLayout" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pyparadigm.surface_composition.</code><code class="sig-name descname">LinLayout</code><span class="sig-paren">(</span><em class="sig-param">orientation</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#LinLayout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.LinLayout" title="Permalink to this definition">¶</a></dt>
 <dd><p>A linear layout to order items horizontally or vertically.</p>
 <p>Every element in the layout is automatically wrapped within a LLItem with
 relative_size=1, i.e. all elements get assigned an equal amount of space, to
 change that elements can be wrappend in LLItems manually to get desired
 proportions</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>orientation</strong> (<em>str</em>) – orientation of the layout, either ‘v’ for vertica, or
-‘h’ for horizontal.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>orientation</strong> (<em>str</em>) – orientation of the layout, either ‘v’ for vertica, or
+‘h’ for horizontal.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="class">
 <dt id="pyparadigm.surface_composition.Line">
-<em class="property">class </em><code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">Line</code><span class="sig-paren">(</span><em>orientation</em>, <em>width=3</em>, <em>color=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Line" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pyparadigm.surface_composition.</code><code class="sig-name descname">Line</code><span class="sig-paren">(</span><em class="sig-param">orientation</em>, <em class="sig-param">width=3</em>, <em class="sig-param">color=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Line" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draws a line.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>width</strong> – width of the line in pixels</li>
-<li><strong>orientation</strong> (<em>str</em>) – “v” or “h”. Indicates whether the line should be
-horizontal or vertical.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>width</strong> – width of the line in pixels</p></li>
+<li><p><strong>orientation</strong> (<em>str</em>) – “v” or “h”. Indicates whether the line should be
+horizontal or vertical.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="class">
 <dt id="pyparadigm.surface_composition.Margin">
-<em class="property">class </em><code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">Margin</code><span class="sig-paren">(</span><em>left=1</em>, <em>right=1</em>, <em>top=1</em>, <em>bottom=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Margin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Margin" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pyparadigm.surface_composition.</code><code class="sig-name descname">Margin</code><span class="sig-paren">(</span><em class="sig-param">left=1</em>, <em class="sig-param">right=1</em>, <em class="sig-param">top=1</em>, <em class="sig-param">bottom=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Margin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Margin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Defines the relative position of an item within a Surface. 
 For details see Surface.</p>
 </dd></dl>
 
 <dl class="class">
 <dt id="pyparadigm.surface_composition.Overlay">
-<em class="property">class </em><code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">Overlay</code><span class="sig-paren">(</span><em>*children</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Overlay"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Overlay" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pyparadigm.surface_composition.</code><code class="sig-name descname">Overlay</code><span class="sig-paren">(</span><em class="sig-param">*children</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Overlay"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Overlay" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draws all its children on top of each other in the same rect</p>
 </dd></dl>
 
 <dl class="class">
 <dt id="pyparadigm.surface_composition.Padding">
-<em class="property">class </em><code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">Padding</code><span class="sig-paren">(</span><em>left</em>, <em>right</em>, <em>top</em>, <em>bottom</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Padding"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Padding" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pyparadigm.surface_composition.</code><code class="sig-name descname">Padding</code><span class="sig-paren">(</span><em class="sig-param">left</em>, <em class="sig-param">right</em>, <em class="sig-param">top</em>, <em class="sig-param">bottom</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Padding"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Padding" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pads a child element</p>
 <p>Each argument refers to a percentage of the axis it belongs to.
 A padding of (0.25, 0.25, 0.25, 0.25) would generate blocked area a quater of the
@@ -215,34 +198,30 @@ available height in size above and below the child, and a quarter of the
 available width left and right of the child.</p>
 <p>If left and right or top and bottom sum up to one that would mean no space
 for the child is remaining</p>
-<dl class="staticmethod">
+<dl class="method">
 <dt id="pyparadigm.surface_composition.Padding.from_scale">
-<em class="property">static </em><code class="descname">from_scale</code><span class="sig-paren">(</span><em>scale_w</em>, <em>scale_h=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Padding.from_scale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Padding.from_scale" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">from_scale</code><span class="sig-paren">(</span><em class="sig-param">scale_w</em>, <em class="sig-param">scale_h=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Padding.from_scale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Padding.from_scale" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a padding by the remaining space after scaling the content.</p>
 <p>E.g. Padding.from_scale(0.5) would produce Padding(0.25, 0.25, 0.25, 0.25) and
 Padding.from_scale(0.5, 1) would produce Padding(0.25, 0.25, 0, 0)
 because the content would not be scaled (since scale_h=1) and therefore
 there would be no vertical padding.</p>
 <p>If scale_h is not specified scale_h=scale_w is used as default</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>scale_w</strong> (<em>float</em>) – horizontal scaling factors</li>
-<li><strong>scale_h</strong> (<em>float</em>) – vertical scaling factor</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scale_w</strong> (<em>float</em>) – horizontal scaling factors</p></li>
+<li><p><strong>scale_h</strong> (<em>float</em>) – vertical scaling factor</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="class">
 <dt id="pyparadigm.surface_composition.RectangleShaper">
-<em class="property">class </em><code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">RectangleShaper</code><span class="sig-paren">(</span><em>width=1</em>, <em>height=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#RectangleShaper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.RectangleShaper" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pyparadigm.surface_composition.</code><code class="sig-name descname">RectangleShaper</code><span class="sig-paren">(</span><em class="sig-param">width=1</em>, <em class="sig-param">height=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#RectangleShaper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.RectangleShaper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a padding, defined by a target Shape.</p>
 <p>Width and height are the relative proportions of the target rectangle.
 E.g RectangleShaper(1, 1) would create a square. and RectangleShaper(2, 1)
@@ -252,7 +231,7 @@ The rectangle always has the maximal possible size within the parent area.</p>
 
 <dl class="class">
 <dt id="pyparadigm.surface_composition.Surface">
-<em class="property">class </em><code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">Surface</code><span class="sig-paren">(</span><em>margin=&lt;pyparadigm.surface_composition.Margin object&gt;</em>, <em>scale=0</em>, <em>smooth=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Surface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Surface" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pyparadigm.surface_composition.</code><code class="sig-name descname">Surface</code><span class="sig-paren">(</span><em class="sig-param">margin=&lt;pyparadigm.surface_composition.Margin object&gt;</em>, <em class="sig-param">scale=0</em>, <em class="sig-param">smooth=True</em>, <em class="sig-param">keep_aspect_ratio=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Surface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Surface" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wraps a pygame surface.</p>
 <p>The Surface is the connection between the absolute world of pygame.Surfaces and the
 relative world of the composition functions. A pygame.Surfaces can be bigger than
@@ -261,60 +240,52 @@ blitting, and determines the concrete position, and if necessary (or
 desired) scales the input surface.</p>
 <p>Warning: When images are scaled with smoothing, colors will change decently, which
 makes it inappropriate to use in combination with colorkeys.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>margin</strong> (<em>Margin object</em>) – used to determine the exact location of the pygame.Surfaces within 
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>margin</strong> (<em>Margin object</em>) – used to determine the exact location of the pygame.Surfaces within 
 the available space. The margin value represents the proportion of 
 the free space, along
 an axis, i.e. Margin(1, 1, 1, 1) is centered, Margin(0, 1, 1, 2) is as far
-left as possible and one/third on the way down.</li>
-<li><strong>scale</strong> (<em>float</em>) – If 0 &lt; scale &lt;= 1 the longer side of the surface is scaled to 
+left as possible and one/third on the way down.</p></li>
+<li><p><strong>scale</strong> (<em>float</em>) – If 0 &lt; scale &lt;= 1 the longer side of the surface is scaled to 
 to the given fraction of the available space, the aspect ratio is 
 will be preserved.
 If scale is 0 the will be no scaling if the image is smaller than the
-available space. It will still be scaled down if it is too big.</li>
-<li><strong>smooth</strong> (<em>float</em>) – if True the result of the scaling will be smoothed</li>
+available space. It will still be scaled down if it is too big.</p></li>
+<li><p><strong>smooth</strong> (<em>float</em>) – if True the result of the scaling will be smoothed</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="pyparadigm.surface_composition.Text">
-<code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">Text</code><span class="sig-paren">(</span><em>text</em>, <em>font</em>, <em>color=(0</em>, <em>0</em>, <em>0</em>, <em>255)</em>, <em>antialias=False</em>, <em>align='center'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Text" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pyparadigm.surface_composition.</code><code class="sig-name descname">Text</code><span class="sig-paren">(</span><em class="sig-param">text</em>, <em class="sig-param">font</em>, <em class="sig-param">color=(0</em>, <em class="sig-param">0</em>, <em class="sig-param">0</em>, <em class="sig-param">255)</em>, <em class="sig-param">antialias=False</em>, <em class="sig-param">align='center'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#Text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.Text" title="Permalink to this definition">¶</a></dt>
 <dd><p>Renders a text. Supports multiline text, the background will be transparent.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>align</strong> (<em>str</em>) – text-alignment must be “center”, “left”, or “righ”</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the input text</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">pygame.Surface</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>align</strong> (<em>str</em>) – text-alignment must be “center”, “left”, or “righ”</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the input text</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pygame.Surface</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="pyparadigm.surface_composition.compose">
-<code class="descclassname">pyparadigm.surface_composition.</code><code class="descname">compose</code><span class="sig-paren">(</span><em>target</em>, <em>root=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#compose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.compose" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pyparadigm.surface_composition.</code><code class="sig-name descname">compose</code><span class="sig-paren">(</span><em class="sig-param">target</em>, <em class="sig-param">root=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyparadigm/surface_composition.html#compose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyparadigm.surface_composition.compose" title="Permalink to this definition">¶</a></dt>
 <dd><p>Top level function to create a surface.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>target</strong> – the pygame.Surface to blit on. Or a (width, height) tuple
-in which case a new surface will be created</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>target</strong> – the pygame.Surface to blit on. Or a (width, height) tuple
+in which case a new surface will be created</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -344,6 +315,7 @@ in which case a new surface will be created</td>
 <li class="toctree-l1"><a class="reference internal" href="eventlistener.html">The Event Listener Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="misc.html">The Misc-Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="extras.html">Extras</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dialogs.html">The Dialogs-Module</a></li>
 </ul>
 
 <div class="relations">
@@ -356,13 +328,11 @@ in which case a new surface will be created</td>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -383,7 +353,7 @@ in which case a new surface will be created</td>
       &copy;2018, Felix G. Knorr.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

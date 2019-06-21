@@ -1,6 +1,6 @@
 import pygame
 
-from pyparadigm.surface_composition import *
+from pyparadigm import *
 from pyparadigm.surface_composition import _text
 
 from time import sleep
@@ -51,11 +51,11 @@ def fill_padding_overlay_cross_border():
 def text_and_grid():
     font = Font(size=60)
     text = lambda text, color, align: Fill(color)(Text(text, font, antialias=True, align=align))
-    frame = compose(screen.get_size(), Fill(0xFFFFFF))(GridLayout(
+    frame = compose(screen.get_size(), Fill(0))(GridLayout(
         row_proportions=[2, 1], col_proportions=[1, 2]
     )(
         [text("Top left\nLine2", 0xFF0000, "left"), text("Top right\nLine2Blalalal", 0xFF00FF, "right")],
-        [None, _text("Bottom right", font)]
+        [None, text("Bottom right", 0xFFFFFF, "center")]
     ))
     screen.blit(frame, (0, 0))
     pygame.display.flip()
@@ -75,6 +75,14 @@ def rectangle_shaper():
     pygame.display.flip()
     sleep(1)    
 
+def scaling_to_form():
+    img = empty_surface(0xFF0000, (100, 100))
+    frame = compose(screen.get_size())(
+        Surface(scale=1, keep_aspect_ratio=False)(img)
+    )
+    display(frame)
+    sleep(2)
+
 def test_main():
     global red_ball, green_ball, screen
     pygame.init()
@@ -90,3 +98,4 @@ def test_main():
     circle_brush_and_padding()
     text_and_grid()
     rectangle_shaper()
+    scaling_to_form()

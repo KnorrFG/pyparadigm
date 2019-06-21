@@ -37,7 +37,10 @@ def _inner_func_anot(func):
 
 
 def _wrap_children(children):
-    return [_wrap_surface(c) for c in children]
+    try:
+        return [_wrap_surface(c) for c in children]
+    except TypeError:
+        return _wrap_surface(children)
 
 
 def _check_call_op(child): 
@@ -179,12 +182,14 @@ class Surface:
 
     :type smooth: float
     """
-    def __init__(self, margin=Margin(1, 1, 1, 1), scale=0, smooth=True):
+    def __init__(self, margin=Margin(1, 1, 1, 1), scale=0, smooth=True,
+                 keep_aspect_ratio=True):
         assert 0 <= scale <= 1
         self.child = None 
         self.margin = margin
         self.scale = scale
         self.smooth = smooth
+        self.keep_aspect_ratio = keep_aspect_ratio
     
     def __call__(self, child):
         _check_call_op(self.child)
@@ -192,11 +197,14 @@ class Surface:
         return self
 
     @staticmethod
-    def _scale_to_target(source, target_rect, smooth=False):
-        target_size = source.get_rect().fit(target_rect).size
+    def _scale_to_target(source, target_rect, smooth=False,
+                         keep_aspect_ratio=True):
+        target_size = source.get_rect().fit(target_rect).size if\
+                keep_aspect_ratio else [int(x) for x in target_rect[2:]]
         return pygame.transform.scale(source, target_size) \
             if not smooth else pygame.transform.smoothscale(source, target_size) 
             
+    @staticmethod
     def _determine_target_size(child, target_rect, scale):
         if scale > 0:
             return tuple(dist * scale for dist in target_rect.size)
@@ -224,7 +232,7 @@ class Surface:
         target_size = Surface._determine_target_size(self.child, target_rect, 
                                                         self.scale)
         content = Surface._scale_to_target(self.child, (0, 0, *target_size), 
-                                            self.smooth)\
+                                            self.smooth, self.keep_aspect_ratio)\
                 if target_size else self.child
         remaining_h_space = target_rect.w - content.get_rect().w
         remaining_v_space = target_rect.h - content.get_rect().h
@@ -512,7 +520,8 @@ def GridLayout(row_proportions=None, col_proportions=None, line_width=0, color=0
         filled_cols = _lmap(_fill_col(col_width), children)
 
         llitems = map(LLItem, row_proportions)
-        mapped_rows = map(_to_h_layout(col_proportions, line_width, color), children)
+        mapped_rows = map(_to_h_layout(col_proportions, line_width, color),
+                filled_cols)
         contents = [it(child) for it, child in zip(llitems, mapped_rows)]
         
         return LinLayout("v")(*_interleave_with_lines(
@@ -579,7 +588,8 @@ def Font(name=None, source="sys", italic=False, bold=False, size=20):
         
 
 def _text(text, font, color=pygame.Color(0, 0, 0), antialias=False):
-    return font.render(text, antialias, color).convert_alpha()
+    text = font.render(text, antialias, color)
+    return text.convert_alpha()
 
 
 def Text(text, font, color=pygame.Color(0, 0, 0), antialias=False, align="center"):
@@ -597,9 +607,9 @@ def Text(text, font, color=pygame.Color(0, 0, 0), antialias=False, align="center
     margin = Margin(margin_l, margin_r)
     color_key = pygame.Color(0, 0, 1) if pygame.Color(0, 0, 1) != color else 0x000002
     
-    text_surfaces = [_text(text.strip(), font=font, 
+    text_surfaces = [_text(line.strip(), font=font, 
                            color=color, antialias=antialias)
-                     for text in text.split("\n")]
+                     for line in text.split("\n")]
     w = max(surf.get_rect().w for surf in text_surfaces)
     h = sum(surf.get_rect().h for surf in text_surfaces)
     surf = compose((w, h), Fill(color_key))(LinLayout("v")(

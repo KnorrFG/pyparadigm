@@ -271,11 +271,11 @@ Example:
                 Text(buffer, Font("monospace"), align="left")
         )))
 
-    new_char = el.wait_for_unicode_char()
-    if new_char == "\x1b": # Str representation of ESC
-        break
-    else:
-        buffer = process_char(buffer, new_char)
+        new_char = el.wait_for_unicode_char()
+        if new_char == "\x1b": # Str representation of ESC
+            break
+        else:
+            buffer = process_char(buffer, new_char)
 
 
 Getting mouse input
@@ -338,7 +338,7 @@ The event object iteself contains a few information:
         only for MOUSEBUTTONUP and MOUSEBUTTONDOWN: contains the keycode of the
         pressed button. Since pygame did not define constants for them, they are
         defined in the eventlistener module. The possible values are: 
-        
+
             * MOUSE_LEFT
             * MOUSE_MIDDLE
             * MOUSE_RIGHT
@@ -415,6 +415,8 @@ It contains the following functions:
 * :py:func:`empty_surface` creates a new pygame.Surface of the given size
     (or of the size of the pygame window, if no size was specified) and
     automatically fills it with a given background color.
+* :py:func:`process_char` returns a new version of a given buffer, modified
+    based on a string containing a unicode character.
 
 Next Step
 ---------

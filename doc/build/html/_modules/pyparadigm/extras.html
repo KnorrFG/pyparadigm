@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>pyparadigm.extras &#8212; PyParadigm 0.1 documentation</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -13,7 +11,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -34,8 +32,14 @@
             
   <h1>Source code for pyparadigm.extras</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Using functionality from this file requires extra dependencies.&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">cm</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+    <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">cm</span>
+    <span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;This module requires numpy and matplotlib, which seem to be missing.&quot;</span><span class="p">)</span>
 
 <span class="kn">import</span> <span class="nn">contextlib</span>
 <span class="k">with</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">redirect_stdout</span><span class="p">(</span><span class="kc">None</span><span class="p">):</span>
@@ -44,19 +48,25 @@
 
 <span class="k">def</span> <span class="nf">_normalize</span><span class="p">(</span><span class="n">mat</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;rescales a numpy array, so that min is 0 and max is 255&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="p">((</span><span class="n">mat</span> <span class="o">-</span> <span class="n">mat</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">*</span> <span class="p">(</span><span class="mi">255</span> <span class="o">/</span> <span class="n">mat</span><span class="o">.</span><span class="n">max</span><span class="p">()))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+    <span class="n">abs_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">mat</span><span class="p">))</span>
+    <span class="n">norm</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="n">vmin</span><span class="o">=-</span><span class="nb">float</span><span class="p">(</span><span class="n">abs_max</span><span class="p">),</span><span class="n">vmax</span><span class="o">=</span><span class="n">abs_max</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">norm</span><span class="p">(</span><span class="n">mat</span><span class="p">)</span><span class="o">.</span><span class="n">data</span>
 
 
 <div class="viewcode-block" id="to_24bit_gray"><a class="viewcode-back" href="../../extras.html#pyparadigm.extras.to_24bit_gray">[docs]</a><span class="k">def</span> <span class="nf">to_24bit_gray</span><span class="p">(</span><span class="n">mat</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;returns a matrix that contains RGB channels, and colors scaled</span>
 <span class="sd">    from 0 to 255&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">_normalize</span><span class="p">(</span><span class="n">mat</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="mi">3</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">_normalize</span><span class="p">(</span><span class="n">mat</span><span class="p">)</span> <span class="o">*</span> <span class="mi">255</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="apply_color_map"><a class="viewcode-back" href="../../extras.html#pyparadigm.extras.apply_color_map">[docs]</a><span class="k">def</span> <span class="nf">apply_color_map</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mat</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;returns an RGB matrix scaled by a matplotlib color map&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="apply_color_map"><a class="viewcode-back" href="../../extras.html#pyparadigm.extras.apply_color_map">[docs]</a><span class="k">def</span> <span class="nf">apply_color_map</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mat</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">normalize</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;returns an RGB matrix scaled by a matplotlib color map,</span>
+<span class="sd">    if normalize is False the matrix must only have values in the range [0, 1]&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">apply_map</span><span class="p">(</span><span class="n">mat</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">cm</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="n">name</span><span class="p">)(</span><span class="n">_normalize</span><span class="p">(</span><span class="n">mat</span><span class="p">))[:,</span> <span class="p">:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="mi">255</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">normalize</span><span class="p">:</span>
+            <span class="n">mat</span> <span class="o">=</span> <span class="n">_normalize</span><span class="p">(</span><span class="n">mat</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">cm</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="n">name</span><span class="p">)(</span><span class="n">mat</span><span class="p">)</span> <span class="o">*</span> <span class="mi">255</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span> 
         
     <span class="k">return</span> <span class="n">apply_map</span> <span class="k">if</span> <span class="n">mat</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">apply_map</span><span class="p">(</span><span class="n">mat</span><span class="p">)</span></div>
 
@@ -75,8 +85,16 @@
 <span class="sd">        channels. For each channel a value between 0 and 255 is allowed</span>
 <span class="sd">    :type transformer: Callable[np.ndarray[np.ndarray]]&quot;&quot;&quot;</span>
 
-    <span class="k">return</span> <span class="n">pygame</span><span class="o">.</span><span class="n">pixelcopy</span><span class="o">.</span><span class="n">make_surface</span><span class="p">(</span><span class="n">transformer</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">transpose</span><span class="p">())</span> 
-        <span class="k">if</span> <span class="n">transformer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">mat</span><span class="o">.</span><span class="n">transpose</span><span class="p">())</span></div>
+    <span class="n">transformed_mat</span> <span class="o">=</span> <span class="n">transformer</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="k">if</span> <span class="n">transformer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">mat</span><span class="o">.</span><span class="n">T</span>
+    <span class="k">if</span> <span class="n">transformed_mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">pixelcopy</span><span class="o">.</span><span class="n">make_surface</span><span class="p">(</span><span class="n">transformed_mat</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">])</span>\
+                <span class="o">.</span><span class="n">convert_alpha</span><span class="p">()</span>
+        <span class="n">pix_arr</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">surfarray</span><span class="o">.</span><span class="n">pixels_alpha</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+        <span class="n">pix_arr</span> <span class="o">=</span> <span class="n">transformed_mat</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">img</span>
+
+
+    <span class="k">return</span> <span class="n">pygame</span><span class="o">.</span><span class="n">pixelcopy</span><span class="o">.</span><span class="n">make_surface</span><span class="p">(</span><span class="n">transformed_mat</span><span class="p">)</span></div>
 </pre></div>
 
           </div>
@@ -103,6 +121,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../eventlistener.html">The Event Listener Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../misc.html">The Misc-Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../extras.html">Extras</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dialogs.html">The Dialogs-Module</a></li>
 </ul>
 
 <div class="relations">
@@ -115,13 +134,11 @@
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -142,7 +159,7 @@
       &copy;2018, Felix G. Knorr.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

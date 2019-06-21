@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Welcome to PyParadigm &#8212; PyParadigm 0.1 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -13,7 +11,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="A tutorial" href="tutorial.html" />
@@ -58,12 +56,12 @@ inter temporal choice task, where the subject chooses between 2 offers with the
 left or the right arrow-key, and gets a short feedback. The decisions, including
 delay and amount, will be stored in a json-file.</p>
 <p>The screens looks like this:</p>
-<div class="figure">
+<div class="figure align-default">
 <a class="reference internal image-reference" href="_images/itech_offer.png"><img alt="Offer Presentation" src="_images/itech_offer.png" style="width: 401.0px; height: 320.0px;" /></a>
 </div>
 <p>Now the subject has to choose an option through a button press, in this case she/he
 chooses the right option.</p>
-<div class="figure">
+<div class="figure align-default">
 <a class="reference internal image-reference" href="_images/itech_feedback.png"><img alt="Feedback" src="_images/itech_feedback.png" style="width: 401.0px; height: 320.0px;" /></a>
 </div>
 <p>And this is the script:</p>
@@ -274,6 +272,7 @@ chooses the right option.</p>
 <li class="toctree-l1"><a class="reference internal" href="eventlistener.html">The Event Listener Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="misc.html">The Misc-Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="extras.html">Extras</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dialogs.html">The Dialogs-Module</a></li>
 </ul>
 </div>
 </div>
@@ -303,6 +302,7 @@ chooses the right option.</p>
 <li class="toctree-l1"><a class="reference internal" href="eventlistener.html">The Event Listener Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="misc.html">The Misc-Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="extras.html">Extras</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dialogs.html">The Dialogs-Module</a></li>
 </ul>
 
 <div class="relations">
@@ -314,13 +314,11 @@ chooses the right option.</p>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -341,7 +339,7 @@ chooses the right option.</p>
       &copy;2018, Felix G. Knorr.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
