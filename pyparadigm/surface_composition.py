@@ -197,27 +197,27 @@ class Surface:
         return self
 
     @staticmethod
-    def _scale_to_target(source, target_rect, smooth=False,
-                         keep_aspect_ratio=True):
-        target_size = source.get_rect().fit(target_rect).size if\
-                keep_aspect_ratio else [int(x) for x in target_rect[2:]]
-        return pygame.transform.scale(source, target_size) \
-            if not smooth else pygame.transform.smoothscale(source, target_size) 
+    def _scale_to_target(source, target_size, smooth=False):
+        return pygame.transform.scale(source, target_size) if not smooth\
+             else pygame.transform.smoothscale(source, target_size) 
             
     @staticmethod
-    def _determine_target_size(child, target_rect, scale):
+    def _determine_target_size(child, target_rect, scale, keep_aspect_ratio):
         if scale > 0:
-            return tuple(dist * scale for dist in target_rect.size)
+            scaled_target_rect = tuple(dist * scale for dist in target_rect)
+            if keep_aspect_ratio:
+                return child.get_rect().fit(scaled_target_rect).size
+            else:
+                return scaled_target_rect[2:4]
         elif all(s_dim <= t_dim 
                 for s_dim, t_dim in zip(child.get_size(), target_rect.size)):
-            return 0
+            return child.get_size()
         else:
             return target_rect.size
 
     def compute_render_rect(self, target_rect):
-        target_size = Surface._determine_target_size(self.child, target_rect, 
-                                                        self.scale)\
-                      or self.child.get_rect().size
+        target_size = Surface._determine_target_size(
+            self.child, target_rect, self.scale, self.keep_aspect_ratio)
         remaining_h_space = target_rect.w - target_size[0]
         remaining_v_space = target_rect.h - target_size[1]
         return pygame.Rect(
@@ -229,18 +229,14 @@ class Surface:
     def _draw(self, surface, target_rect):
         if self.child is None:
             return
-        target_size = Surface._determine_target_size(self.child, target_rect, 
-                                                        self.scale)
-        content = Surface._scale_to_target(self.child, (0, 0, *target_size), 
-                                            self.smooth, self.keep_aspect_ratio)\
-                if target_size else self.child
-        remaining_h_space = target_rect.w - content.get_rect().w
-        remaining_v_space = target_rect.h - content.get_rect().h
-        surface.blit(content, (
-            target_rect.left + _offset_by_margins(remaining_h_space,
-                self.margin.left, self.margin.right),
-            target_rect.top + _offset_by_margins(remaining_v_space,
-                self.margin.top, self.margin.bottom)))
+        render_rect = self.compute_render_rect(target_rect)
+        if render_rect.size == self.child.get_size():
+            content = self.child
+        else:
+            content = Surface._scale_to_target(
+                self.child, render_rect.size, self.smooth)
+
+        surface.blit(content, render_rect)
 
 
 class Padding:

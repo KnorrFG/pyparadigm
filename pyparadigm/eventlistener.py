@@ -27,6 +27,7 @@ By default, there is one permanent handler, which will call exit(1) when
 Ctrl + c is pressed.
 """
 import contextlib
+import inspect
 with contextlib.redirect_stdout(None):
     import pygame
     
@@ -76,6 +77,12 @@ def _is_iterable(val):
     except TypeError as te:
         return False
 
+
+def _get_arity(callable):
+    """returns the number of arguments a callable accepts"""
+    return len(inspect.signature(callable).parameters)
+
+
 class Handler:
     @staticmethod
     def key_press(keys):
@@ -90,6 +97,20 @@ class Handler:
         return lambda e: e.unicode if e.type == pygame.KEYDOWN \
             and ((ignored_chars is None) 
                   or (e.unicode not in ignored_chars))\
+            else EventConsumerInfo.DONT_CARE
+    
+    @staticmethod
+    def resize_event_handler(event_result=pygame.VIDEORESIZE):
+        '''returns a handler that will make a listen function return
+        event_result, when the window is resized'''
+        return lambda e: event_result if e.type == pygame.VIDEORESIZE\
+            else EventConsumerInfo.DONT_CARE
+        
+    @staticmethod
+    def quit_event_handler(event_result=pygame.QUIT):
+        '''returns a handler that will make a listen function return
+        event_result, when the window is resized'''
+        return lambda e: event_result if e.type == pygame.QUIT\
             else EventConsumerInfo.DONT_CARE
 
 
@@ -118,8 +139,10 @@ class MouseProxy:
         return self
 
     def _draw(self, surface, rect):
+        # print("given:", rect)
         self.rect = rect if not type(self.child) == Surface\
             else self.child.compute_render_rect(rect)
+        # print("used:", self.rect)
         if self.child:
             self.child._draw(surface, rect)
 
@@ -127,8 +150,16 @@ class MouseProxy:
         if e.type in MouseProxy.mouse_events:
             pos = pygame.mouse.get_pos()
             if self.rect.collidepoint(pos):
-                return self.handler(
-                    e, pos[0] - self.rect.x, pos[1] - self.rect.y)
+                arity = _get_arity(self.handler)
+                if arity == 3:
+                    return self.handler(
+                        e, pos[0] - self.rect.x, pos[1] - self.rect.y)
+                elif arity == 4:
+                    return self.handler(
+                        e, pos[0] - self.rect.x, pos[1] - self.rect.y, self.rect)
+                else:
+                    raise RuntimeError(
+                        f"Invalid handler. takes {arity} arguments, but only 3 or 4 allowed")
         return EventConsumerInfo.DONT_CARE    
 
 
@@ -236,7 +267,7 @@ class EventListener(object):
                 else:
                     return ret
 
-    def listen_until_return(self, *temporary_handlers, timeout=0):
+    def listen_until_return(self, *temporary_handlers, timeout=0, sleeptime=0):
         """Calls listen repeatedly until listen returns something else than None.
         Then returns listen's result. If timeout is not zero listen_until_return
         stops after timeout seconds and returns None."""
@@ -245,6 +276,8 @@ class EventListener(object):
             res = self.listen(*temporary_handlers)
             if res is not None:
                 return res
+            if sleeptime > 0:
+                time.sleep(sleeptime)
 
     def wait_for_n_keypresses(self, key, n=1):
         """Waits till one key was pressed n times.
@@ -266,7 +299,7 @@ class EventListener(object):
             if self.listen(keypress_listener) == my_const:
                 counter += 1
 
-    def wait_for_keys(self, *keys, timeout=0):
+    def wait_for_keys(self, *keys, timeout=0, sleeptime=0):
         """Waits until one of the specified keys was pressed, and returns 
         which key was pressed.
 
@@ -282,7 +315,8 @@ class EventListener(object):
         if len(keys) == 1 and _is_iterable(keys[0]):
             keys = keys[0]
 
-        return self.listen_until_return(Handler.key_press(keys), timeout=timeout)
+        return self.listen_until_return(Handler.key_press(keys), timeout=timeout,
+            sleeptime=sleeptime)
 
     def wait_for_keys_modified(self, *keys, modifiers_to_check=_mod_keys,
                                timeout=0):
