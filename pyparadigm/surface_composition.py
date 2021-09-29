@@ -4,13 +4,13 @@ The purpose of this module is to make it easy to compose the
 frames that are displayed in a paradigm. For an introduction, please refer to
 the :ref:`tutorial<creating_surfaces>`
 """
-from functools import reduce, wraps, lru_cache, partial
+from functools import wraps, lru_cache
 from itertools import accumulate, chain
-from operator import add, methodcaller
 
 import contextlib
 with contextlib.redirect_stdout(None):
     import pygame
+    import pygame.ftfont
 
 from ._primitives import PPError
 
@@ -132,6 +132,78 @@ class LinLayout:
                             w, h)
                 for left_offset, top_offset, w, h in 
                     zip(left_offsets, top_offsets, widths, heights)]
+
+class FRect:
+    """A wrapper Item for children of the FreeFloatLayout, see description of FreeFloatLayout"""
+    def __init__(self, x, y, w, h):
+        for coord in (x, y, w, h):
+            assert FRect.coord_valid(coord)
+
+        self.x = x
+        self.y = y
+        self.w = w
+        self.h = h
+        self.child = None
+
+    @staticmethod
+    def coord_valid(x):
+        return type(x) is int or (type(x) == float and 0 <= x <= 1) 
+
+    @staticmethod
+    def adjust_coord(x, abs_partner):
+        if type(x) == int:
+            if x >= 0:
+                return x
+            else:
+                return abs_partner + x
+        elif type(x) == float:
+            return x * abs_partner
+
+        # this code should never be reached
+        assert False
+
+    def to_abs_rect(self, target_rect):
+        tmp = pygame.Rect(
+            FRect.adjust_coord(self.x, target_rect.w),
+            FRect.adjust_coord(self.y, target_rect.h),
+            FRect.adjust_coord(self.w, target_rect.w),
+            FRect.adjust_coord(self.h, target_rect.h))
+        return tmp.move(target_rect.topleft)
+
+    def __call__(self, child):
+        if child:
+            self.child = _wrap_surface(child)
+        return self
+
+
+class FreeFloatLayout:
+    """A "Layout" that allows for free positioning of its elements. All children
+    must be Wrapped in an FRect, which takes a rects arguments (x, y, w, h), and
+    determines the childs rect. All values can either be floats, and must then
+    be between 0 and 1 and are relative to the rect-size of the layout, positive
+    integers, in which case the values are interpreded as pixel offsets from the
+    layout rect origin, or negative integers, in which case the absolute value
+    is the available width or height minus the value"""
+    def __init__(self) -> None:
+        self.children = None
+
+    def __call__(self, *children):
+        if len(children) == 0:
+            raise PPError("You tried to add no children to layout")
+
+        _check_call_op(self.children)
+        for child in children:
+            if type(child) != FRect:
+                raise PPError("All children of a FreeFloatLayout must be wrapped in an FRect")
+        self.children = children
+        return self
+
+    def _draw(self, surface, target_rect):
+        for child in self.children:
+            rect = child.to_abs_rect(target_rect)
+            if child.child is None:
+                raise ValueError("There is an FRect without child")
+            child.child._draw(surface, rect)
 
 
 class Margin: 

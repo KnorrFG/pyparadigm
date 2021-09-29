@@ -1,5 +1,5 @@
 """A package to build psychological Paradigms. Based on PyGame """
-__version__ = '1.1.0'
+__version__ = '1.2.0'
 
 
 from .eventlistener import EventConsumerInfo, EventListener, Handler,\
@@ -10,7 +10,7 @@ from .misc import init, display, empty_surface, slide_show, process_char,\
 from .surface_composition import Border, Circle, Fill, LLItem, LinLayout,\
     Line, Margin, Overlay, Padding,\
     RectangleShaper, Surface, Cross, Font,\
-    GridLayout, Text, compose
+    GridLayout, Text, compose, FreeFloatLayout, FRect
 from .dialogs import string_dialog
 
 try:

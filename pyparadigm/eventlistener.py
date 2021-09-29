@@ -319,7 +319,7 @@ class EventListener(object):
             sleeptime=sleeptime)
 
     def wait_for_keys_modified(self, *keys, modifiers_to_check=_mod_keys,
-                               timeout=0):
+                               timeout=0, sleeptime=0.001):
         """The same as wait_for_keys, but returns a frozen_set which contains 
         the pressed key, and the modifier keys.
 
@@ -330,15 +330,15 @@ class EventListener(object):
 
         set_mods = pygame.key.get_mods()
         return frozenset.union(
-            frozenset([self.wait_for_keys(*keys, timeout=timeout)]),
+            frozenset([self.wait_for_keys(*keys, timeout=timeout, sleeptime=sleeptime)]),
             EventListener._contained_modifiers(set_mods, modifiers_to_check))
 
-    def wait_for_seconds(self, seconds):
+    def wait_for_seconds(self, seconds, sleeptime=0.001):
         """basically time.sleep() but in the mean-time the permanent handlers 
         are executed"""
-        self.listen_until_return(timeout=seconds)
+        self.listen_until_return(timeout=seconds, sleeptime=sleeptime)
 
-    def wait_for_unicode_char(self, ignored_chars=None, timeout=0):
+    def wait_for_unicode_char(self, ignored_chars=None, timeout=0, sleeptime=0.001):
         """Returns a str that contains the single character that was pressed.
         This already respects modifier keys and keyboard layouts. If timeout is
         not none and no key is pressed within the specified timeout, None is
@@ -346,4 +346,4 @@ class EventListener(object):
         irgnored_chars any object that has a __contains__ method can be used,
         e.g. a string, a set, a list, etc"""
         return  self.listen_until_return(Handler.unicode_char(ignored_chars), 
-                                        timeout=timeout)
+                                        timeout=timeout, sleeptime=sleeptime)

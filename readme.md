@@ -10,6 +10,9 @@ and a tutorial over at: https://pyparadigm.readthedocs.io/en/latest/index.html
 
 ## Changelog
 
+* 1.2.0
+    * Adds the FreeFloatLayout
+    * Adds the Title argument to misc.init()
 * 1.1.0
     * adds the sleeptime argument to eventlistener.listen_until_return() and
       eventlistener.wait_for_keypresses()

@@ -5,6 +5,7 @@
 import contextlib
 with contextlib.redirect_stdout(None):
     import pygame
+    import pygame.ftfont
 from . import surface_composition as sc
 
 import os
@@ -29,7 +30,8 @@ class _PumpThread(Thread):
         self.start()
 
 
-def init(resolution, pygame_flags=0, display_pos=(0, 0), interactive_mode=False):
+def init(resolution, pygame_flags=0, display_pos=(0, 0), interactive_mode=False, 
+         title='Pygame Window'):
     """Creates a window of given resolution.
 
     :param resolution: the resolution of the windows as (width, height) in
@@ -52,6 +54,8 @@ def init(resolution, pygame_flags=0, display_pos=(0, 0), interactive_mode=False)
         cancel it. If you use ctrl+d or exit() within ipython, while the thread
         is still running, ipython will become unusable, but not close. 
     :type interactive_mode: bool
+    :param title: the Title of the Window
+    :type title: str
 
     :return: a reference to the display screen, or a reference to the background
         thread if interactive_mode was set to true. In the second scenario you
@@ -63,8 +67,9 @@ def init(resolution, pygame_flags=0, display_pos=(0, 0), interactive_mode=False)
 
     os.environ['SDL_VIDEO_WINDOW_POS'] = "{}, {}".format(*display_pos)
     pygame.init()
-    pygame.font.init()
+    pygame.ftfont.init()
     disp = pygame.display.set_mode(resolution, pygame_flags)
+    pygame.display.set_caption(title)
     return _PumpThread() if interactive_mode else disp
 
 def display(surface):
