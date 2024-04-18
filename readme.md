@@ -10,6 +10,9 @@ and a tutorial over at: https://pyparadigm.readthedocs.io/en/latest/index.html
 
 ## Changelog
 
+* 1.2.1
+    * Replaces pygame.init() with pygame.display.init() in pyparadigms init method,
+      so not required modules are not initialized
 * 1.2.0
     * Adds the FreeFloatLayout
     * Adds the Title argument to misc.init()
