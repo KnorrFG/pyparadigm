@@ -10,6 +10,8 @@ and a tutorial over at: https://pyparadigm.readthedocs.io/en/latest/index.html
 
 ## Changelog
 
+* 1.2.2
+    * Adds pygame.font.init() to pp.init()
 * 1.2.1
     * Replaces pygame.init() with pygame.display.init() in pyparadigms init method,
       so not required modules are not initialized

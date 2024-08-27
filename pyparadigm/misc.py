@@ -68,6 +68,7 @@ def init(resolution, pygame_flags=0, display_pos=(0, 0), interactive_mode=False,
     os.environ['SDL_VIDEO_WINDOW_POS'] = "{}, {}".format(*display_pos)
     pygame.display.init()
     pygame.ftfont.init()
+    pygame.font.init()
     disp = pygame.display.set_mode(resolution, pygame_flags)
     pygame.display.set_caption(title)
     return _PumpThread() if interactive_mode else disp
